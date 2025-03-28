@@ -12,6 +12,7 @@ interface PageLayoutProps {
     titleAlign?: "left" | "center";
     hasBack?: boolean;
     backText?: string;
+    headerRight?: React.ReactNode;
 }
 
 export default function PageLayout({
@@ -21,6 +22,7 @@ export default function PageLayout({
     titleAlign = "center",
     hasBack = false,
     backText,
+    headerRight,
 }: PageLayoutProps) {
     return (
         <ThemedSafeView style={styles.container}>
@@ -65,6 +67,12 @@ export default function PageLayout({
                         >
                             {headerTitle}
                         </ThemedText>
+                    )}
+
+                    {headerRight && (
+                        <View style={{ flex: 1, alignItems: "flex-end" }}>
+                            {headerRight}
+                        </View>
                     )}
                 </View>
             )}
