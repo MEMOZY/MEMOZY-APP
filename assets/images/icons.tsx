@@ -171,6 +171,18 @@ const AppleIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const PlusIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            stroke="#3D4248"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 12h14m-7-7v14"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -183,4 +195,5 @@ export {
     KakaoIcon,
     GoogleIcon,
     AppleIcon,
+    PlusIcon,
 };
