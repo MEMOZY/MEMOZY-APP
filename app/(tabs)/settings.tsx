@@ -49,14 +49,32 @@ export default function SettingsScreen() {
                 <SettingsSection>
                     <SettingsItem
                         label="개인정보 처리방침"
-                        onPress={() => {}}
+                        onPress={() => {
+                            router.push({
+                                pathname: "/docs",
+                                params: { tab: "privacy" },
+                            });
+                        }}
                     />
                     <Divider />
-                    <SettingsItem label="이용 약관" onPress={() => {}} />
+                    <SettingsItem
+                        label="이용 약관"
+                        onPress={() => {
+                            router.push({
+                                pathname: "/docs",
+                                params: { tab: "terms" },
+                            });
+                        }}
+                    />
                     <Divider />
                     <SettingsItem
                         label="오픈소스 라이센스"
-                        onPress={() => {}}
+                        onPress={() => {
+                            router.push({
+                                pathname: "/docs",
+                                params: { tab: "license" },
+                            });
+                        }}
                     />
                 </SettingsSection>
             </Titled>
