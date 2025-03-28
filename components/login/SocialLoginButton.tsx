@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/common/ThemedText";
-import { TouchableOpacity, View, StyleSheet, ViewStyle } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import React from "react";
 
 interface Props {

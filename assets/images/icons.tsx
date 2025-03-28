@@ -171,6 +171,27 @@ const AppleIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const PlusIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            stroke="#3D4248"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 12h14m-7-7v14"
+        />
+    </Svg>
+);
+
+const DotsIcon = (props: SvgProps) => (
+    <Svg width={20} height={20} fill="none" {...props}>
+        <Path
+            fill="#3D4248"
+            d="M5.833 10A1.667 1.667 0 1 1 2.5 10a1.667 1.667 0 0 1 3.333 0Zm5.834 0a1.667 1.667 0 1 1-3.334 0 1.667 1.667 0 0 1 3.334 0Zm5.833 0a1.667 1.667 0 1 1-3.333 0 1.667 1.667 0 0 1 3.333 0Z"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -183,4 +204,6 @@ export {
     KakaoIcon,
     GoogleIcon,
     AppleIcon,
+    PlusIcon,
+    DotsIcon,
 };

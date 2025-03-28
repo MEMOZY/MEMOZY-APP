@@ -1,5 +1,5 @@
 import { ThemedSafeView } from "@/components/common/ThemedSafeView";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { BackIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
@@ -12,6 +12,7 @@ interface PageLayoutProps {
     titleAlign?: "left" | "center";
     hasBack?: boolean;
     backText?: string;
+    headerRight?: React.ReactNode;
 }
 
 export default function PageLayout({
@@ -21,6 +22,7 @@ export default function PageLayout({
     titleAlign = "center",
     hasBack = false,
     backText,
+    headerRight,
 }: PageLayoutProps) {
     return (
         <ThemedSafeView style={styles.container}>
@@ -52,6 +54,10 @@ export default function PageLayout({
                                         textAlign: "left",
                                         marginLeft: hasBack ? 10 : 0,
                                     },
+                                titleAlign === "left" &&
+                                    !hasBack && {
+                                        textAlign: "left",
+                                    },
                                 titleAlign === "center" &&
                                     hasBack && {
                                         textAlign: "center",
@@ -61,6 +67,12 @@ export default function PageLayout({
                         >
                             {headerTitle}
                         </ThemedText>
+                    )}
+
+                    {headerRight && (
+                        <View style={{ flex: 1, alignItems: "flex-end" }}>
+                            {headerRight}
+                        </View>
                     )}
                 </View>
             )}
@@ -80,7 +92,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         paddingHorizontal: 30,
-        paddingVertical: 10,
+        paddingBottom: 20,
     },
     backContainer: {
         flexDirection: "row",

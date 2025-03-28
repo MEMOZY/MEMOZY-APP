@@ -1,11 +1,10 @@
 import { AppleIcon, GoogleIcon, KakaoIcon, Logo } from "@/assets/images/icons";
 import PageLayout from "@/components/common/PageLayout";
-import { ThemedSafeView } from "@/components/common/ThemedSafeView";
 import { ThemedText } from "@/components/common/ThemedText";
 import SocialLoginButton from "@/components/login/SocialLoginButton";
 import { Colors } from "@/constants/Colors";
 import { useAuth } from "@/contexts/AuthContext";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
     const { login } = useAuth();
@@ -56,16 +55,5 @@ const styles = StyleSheet.create({
     containerStyle: {
         justifyContent: "space-between",
         alignItems: "center",
-    },
-    loginButtonContainer: {
-        width: "100%",
-        height: 48,
-        borderRadius: 12,
-        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#F5F5F5",
-        flexDirection: "row",
-        gap: 12,
     },
 });
