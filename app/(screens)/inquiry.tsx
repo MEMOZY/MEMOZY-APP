@@ -69,16 +69,14 @@ export default function inQuiryScreen() {
                 disabled={!isContentFilled}
             >
                 <View
-                    style={{
-                        height: 58,
-                        width: "100%",
-                        backgroundColor: isContentFilled
-                            ? Colors.gray5
-                            : Colors.gray4,
-                        borderRadius: 12,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
+                    style={[
+                        styles.saveButton,
+                        {
+                            backgroundColor: isContentFilled
+                                ? Colors.gray5
+                                : Colors.gray4,
+                        },
+                    ]}
                 >
                     <ThemedText
                         type="body1b"
@@ -107,6 +105,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray2,
         borderRadius: 12,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    saveButton: {
+        height: 58,
+        width: "100%",
+        borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
     },

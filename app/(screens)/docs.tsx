@@ -80,5 +80,3 @@ export default function DocsScreen() {
         </PageLayout>
     );
 }
-
-const styles = StyleSheet.create({});

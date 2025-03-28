@@ -55,36 +55,15 @@ export default function EditProfileScreen() {
                     source={{
                         uri: "https://cdn.discordapp.com/attachments/1094232715097129522/1158700451736825916/image.png",
                     }}
-                    style={{
-                        width: 120,
-                        height: 120,
-                        borderRadius: 120,
-                        backgroundColor: Colors.gray3,
-                    }}
+                    style={styles.profileimage}
                 />
-                <View
-                    style={{
-                        height: 50,
-                        width: 150,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: Colors.gray2,
-                        borderRadius: 12,
-                    }}
-                >
+                <View style={styles.nicknameContainer}>
                     <TextInput
                         placeholder="닉네임을 입력하세요"
                         placeholderTextColor={Colors.gray4}
                         value={newNickname}
                         onChangeText={(text) => setNewNickname(text)}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            textAlign: "center",
-                            color: Colors.gray5,
-                            fontFamily: "Pretendard-SemiBold",
-                            fontSize: 20,
-                        }}
+                        style={styles.nicknameInput}
                         autoCapitalize="none"
                         autoCorrect={false}
                         autoComplete="off"
@@ -110,16 +89,14 @@ export default function EditProfileScreen() {
                 }}
             >
                 <View
-                    style={{
-                        height: 58,
-                        width: "100%",
-                        backgroundColor: isNicknameChanged
-                            ? Colors.gray5
-                            : Colors.gray4,
-                        borderRadius: 12,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
+                    style={[
+                        styles.saveButton,
+                        {
+                            backgroundColor: isNicknameChanged
+                                ? Colors.gray5
+                                : Colors.gray4,
+                        },
+                    ]}
                 >
                     <ThemedText
                         type="body1b"
@@ -134,4 +111,34 @@ export default function EditProfileScreen() {
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    profileimage: {
+        width: 120,
+        height: 120,
+        borderRadius: 120,
+        backgroundColor: Colors.gray3,
+    },
+    nicknameContainer: {
+        height: 50,
+        width: 150,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: Colors.gray2,
+        borderRadius: 12,
+    },
+    nicknameInput: {
+        width: "100%",
+        height: "100%",
+        textAlign: "center",
+        color: Colors.gray5,
+        fontFamily: "Pretendard-SemiBold",
+        fontSize: 20,
+    },
+    saveButton: {
+        height: 58,
+        width: "100%",
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});
