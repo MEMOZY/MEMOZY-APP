@@ -192,6 +192,23 @@ const DotsIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const SearchIcon = (props: SvgProps) => (
+    <Svg width={28} height={28} fill="none" {...props}>
+        <Rect width={28} height={28} fill="#3D4248" rx={14} />
+        <Path
+            stroke="#F9FAFB"
+            strokeWidth={1.5}
+            d="M13 18a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"
+        />
+        <Path
+            stroke="#F9FAFB"
+            strokeLinecap="round"
+            strokeWidth={1.5}
+            d="m17 17 3.5 3.5"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -206,4 +223,5 @@ export {
     AppleIcon,
     PlusIcon,
     DotsIcon,
+    SearchIcon,
 };

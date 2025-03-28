@@ -3,6 +3,7 @@ import Titled from "@/components/common/Titled";
 import FriendList from "@/components/friend/FriendList";
 import AddLogItem from "@/components/logs/AddLogItem";
 import LogItem from "@/components/logs/LogItem";
+import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 
@@ -41,7 +42,7 @@ export default function HomeScreen() {
                         "https://example.com/image3.jpg",
                     ]}
                     onAddFriend={() => {
-                        console.log("Add friend pressed");
+                        router.push("/(screens)/friends");
                     }}
                 />
             </Titled>
