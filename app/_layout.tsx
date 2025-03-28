@@ -15,6 +15,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UIProvider } from "@/contexts/UIContext";
 import { GlobalModal } from "@/components/common/GlobalModal";
+import { GlobalSnackbar } from "@/components/common/GlobalSnackbar";
 
 // 사전 로딩을 위해 스플래시 스크린을 숨기지 않음
 SplashScreen.preventAutoHideAsync();
@@ -67,6 +68,7 @@ export default function RootLayout() {
                         </Stack>
                         <StatusBar style="auto" />
                         <GlobalModal />
+                        <GlobalSnackbar />
                     </ThemeProvider>
                 </GestureHandlerRootView>
             </UIProvider>
