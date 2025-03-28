@@ -192,6 +192,61 @@ const DotsIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const SearchIcon = (props: SvgProps) => (
+    <Svg width={28} height={28} fill="none" {...props}>
+        <Rect width={28} height={28} fill="#3D4248" rx={14} />
+        <Path
+            stroke="#F9FAFB"
+            strokeWidth={1.5}
+            d="M13 18a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"
+        />
+        <Path
+            stroke="#F9FAFB"
+            strokeLinecap="round"
+            strokeWidth={1.5}
+            d="m17 17 3.5 3.5"
+        />
+    </Svg>
+);
+
+const XIcon = (props: SvgProps) => (
+    <Svg width={14} height={14} fill="none" {...props}>
+        <Path
+            stroke="#FF3123"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="m7 7 6 6M7 7 1 1m6 6-6 6m6-6 6-6"
+        />
+    </Svg>
+);
+const CheckIcon = (props: SvgProps) => (
+    <Svg width={20} height={14} fill="none" {...props}>
+        <Path
+            stroke="#56FC40"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M18.5 1 6.812 13 1.5 7.545"
+        />
+    </Svg>
+);
+const TrashIcon = (props: SvgProps) => (
+    <Svg width={19} height={20} fill="none" {...props}>
+        <Path
+            stroke="red"
+            strokeLinecap="round"
+            strokeWidth={1.5}
+            d="M18 4H1m15.333 2.5-.46 6.9c-.177 2.654-.265 3.981-1.13 4.79-.865.809-2.196.81-4.856.81h-.774c-2.66 0-3.991 0-4.856-.81-.865-.809-.954-2.136-1.13-4.79l-.46-6.9M7 9l.5 5M12 9l-.5 5"
+        />
+        <Path
+            stroke="red"
+            strokeWidth={1.5}
+            d="M4 4h.11a2 2 0 0 0 1.83-1.32l.034-.103.097-.291c.083-.249.125-.373.18-.479a1.5 1.5 0 0 1 1.094-.788C7.462 1 7.593 1 7.855 1h3.29c.262 0 .393 0 .51.019a1.5 1.5 0 0 1 1.094.788c.055.106.097.23.18.479l.097.291A2 2 0 0 0 15 4"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -206,4 +261,8 @@ export {
     AppleIcon,
     PlusIcon,
     DotsIcon,
+    SearchIcon,
+    XIcon,
+    CheckIcon,
+    TrashIcon,
 };
