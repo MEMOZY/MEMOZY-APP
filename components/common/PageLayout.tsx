@@ -52,6 +52,10 @@ export default function PageLayout({
                                         textAlign: "left",
                                         marginLeft: hasBack ? 10 : 0,
                                     },
+                                titleAlign === "left" &&
+                                    !hasBack && {
+                                        textAlign: "left",
+                                    },
                                 titleAlign === "center" &&
                                     hasBack && {
                                         textAlign: "center",
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         paddingHorizontal: 30,
-        paddingVertical: 10,
+        paddingBottom: 20,
     },
     backContainer: {
         flexDirection: "row",
