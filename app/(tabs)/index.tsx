@@ -33,7 +33,16 @@ export default function HomeScreen() {
     };
 
     return (
-        <PageLayout headerTitle="Memozy" titleAlign="left" style={{ gap: 20 }}>
+        <PageLayout
+            headerTitle="Memozy"
+            titleAlign="left"
+            style={{ gap: 20 }}
+            scrollView
+            onRefresh={async () => {
+                // 여기에 새로고침 로직을 추가하세요.
+                console.log("새로고침");
+            }}
+        >
             <Titled title="Friends">
                 <FriendList
                     friends={[

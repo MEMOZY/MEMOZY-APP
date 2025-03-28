@@ -89,5 +89,3 @@ export default function FriendsScreen() {
         </PageLayout>
     );
 }
-
-const styles = StyleSheet.create({});
