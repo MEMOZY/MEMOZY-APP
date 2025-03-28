@@ -1,9 +1,10 @@
 import { ThemedSafeView } from "@/components/common/ThemedSafeView";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, RefreshControl } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { BackIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
+import { useState } from "react";
 
 interface PageLayoutProps {
     children?: React.ReactNode;
@@ -13,6 +14,8 @@ interface PageLayoutProps {
     hasBack?: boolean;
     backText?: string;
     headerRight?: React.ReactNode;
+    scrollView?: boolean;
+    onRefresh?: () => Promise<void>; // 추가된 prop
 }
 
 export default function PageLayout({
@@ -23,7 +26,19 @@ export default function PageLayout({
     hasBack = false,
     backText,
     headerRight,
+    scrollView = false,
+    onRefresh, // 새로고침 핸들러
 }: PageLayoutProps) {
+    const [refreshing, setRefreshing] = useState(false);
+
+    const handleRefresh = async () => {
+        if (onRefresh) {
+            setRefreshing(true);
+            await onRefresh();
+            setRefreshing(false);
+        }
+    };
+
     return (
         <ThemedSafeView style={styles.container}>
             {(headerTitle || hasBack) && (
@@ -78,7 +93,26 @@ export default function PageLayout({
             )}
 
             {/* Body */}
-            <View style={[styles.body, style]}>{children}</View>
+            {scrollView ? (
+                <ScrollView
+                    style={[styles.body]}
+                    contentContainerStyle={style}
+                    refreshControl={
+                        onRefresh && (
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={handleRefresh}
+                                colors={[Colors.gray2]}
+                                tintColor={Colors.gray3}
+                            />
+                        )
+                    }
+                >
+                    {children}
+                </ScrollView>
+            ) : (
+                <View style={[styles.body, style]}>{children}</View>
+            )}
         </ThemedSafeView>
     );
 }
