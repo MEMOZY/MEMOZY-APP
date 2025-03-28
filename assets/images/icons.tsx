@@ -1,5 +1,5 @@
 import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import Svg, { SvgProps, Path, Rect } from "react-native-svg";
 const HomeIcon = (props: SvgProps) => (
     <Svg width={24} height={24} fill="none" {...props}>
         <Path
@@ -81,6 +81,96 @@ const FilledGearIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const Logo = (props: SvgProps) => (
+    <Svg width={150} height={126} fill="none" {...props}>
+        <Rect
+            width={32.096}
+            height={120.359}
+            fill="#414141"
+            rx={16.048}
+            transform="scale(-1 1) rotate(-20 -2.287 208.138)"
+        />
+        <Rect
+            width={32.096}
+            height={120.359}
+            fill="#000"
+            rx={16.048}
+            transform="scale(-1 1) rotate(-20 -25.422 344.938)"
+        />
+        <Rect
+            width={32.096}
+            height={120.359}
+            x={78.675}
+            y={12.107}
+            fill="#000"
+            rx={16.048}
+            transform="rotate(-20 78.675 12.107)"
+        />
+    </Svg>
+);
+
+const BackIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            stroke="#3D4248"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="m15 5-6 7 6 7"
+        />
+    </Svg>
+);
+
+const KakaoIcon = (props: SvgProps) => (
+    <Svg width={20} height={20} fill="none" {...props}>
+        <Path
+            fill="#000"
+            fillRule="evenodd"
+            d="M10 1.5c-4.71 0-9 3.786-9 6.989 0 2.4 1.558 4.517 3.931 5.775l-.998 3.666c-.089.325.28.583.563.396l4.377-2.905a11.6 11.6 0 0 0 1.127.057c4.97 0 9-3.129 9-6.989C19 5.286 14.97 1.5 10 1.5Z"
+            clipRule="evenodd"
+            opacity={0.902}
+        />
+    </Svg>
+);
+
+const GoogleIcon = (props: SvgProps) => (
+    <Svg width={21} height={20} fill="none" {...props}>
+        <Path
+            fill="#4285F4"
+            fillRule="evenodd"
+            d="M19.14 10.205c0-.639-.057-1.252-.164-1.841H10.5v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615Z"
+            clipRule="evenodd"
+        />
+        <Path
+            fill="#34A853"
+            fillRule="evenodd"
+            d="M10.5 19c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H2.457v2.332A8.997 8.997 0 0 0 10.5 19Z"
+            clipRule="evenodd"
+        />
+        <Path
+            fill="#FBBC05"
+            fillRule="evenodd"
+            d="M5.464 11.71A5.41 5.41 0 0 1 5.182 10c0-.593.102-1.17.282-1.71V5.958H2.457A8.997 8.997 0 0 0 1.5 10c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
+            clipRule="evenodd"
+        />
+        <Path
+            fill="#EA4335"
+            fillRule="evenodd"
+            d="M10.5 4.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C14.963 1.891 12.926 1 10.5 1a8.997 8.997 0 0 0-8.043 4.958L5.464 8.29c.708-2.127 2.692-3.71 5.036-3.71Z"
+            clipRule="evenodd"
+        />
+    </Svg>
+);
+
+const AppleIcon = (props: SvgProps) => (
+    <Svg width={21} height={20} fill="none" {...props}>
+        <Path
+            fill="#F9FAFB"
+            d="M10.723 4.885c.832 0 1.875-.58 2.496-1.353.562-.7.972-1.68.972-2.658 0-.132-.011-.265-.035-.374-.926.036-2.039.64-2.707 1.45-.527.615-1.008 1.582-1.008 2.572 0 .145.024.29.036.338.058.013.152.025.246.025ZM7.793 19.5c1.137 0 1.64-.785 3.059-.785 1.441 0 1.757.76 3.023.76 1.242 0 2.074-1.183 2.86-2.343.878-1.328 1.242-2.633 1.265-2.693-.082-.024-2.46-1.027-2.46-3.841 0-2.44 1.874-3.54 1.98-3.624-1.243-1.836-3.13-1.884-3.645-1.884-1.395 0-2.531.87-3.246.87-.774 0-1.793-.822-3-.822C5.332 5.138 3 7.095 3 10.791c0 2.295.867 4.723 1.934 6.293.914 1.329 1.71 2.416 2.859 2.416Z"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -88,4 +178,9 @@ export {
     FilledHomeIcon,
     FilledCalendarIcon,
     FilledGearIcon,
+    Logo,
+    BackIcon,
+    KakaoIcon,
+    GoogleIcon,
+    AppleIcon,
 };
