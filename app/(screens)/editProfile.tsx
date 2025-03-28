@@ -33,7 +33,7 @@ export default function EditProfileScreen() {
                     onPress={() => {
                         setNewNickname(currentNickname);
                     }}
-                    activeOpacity={isNicknameChanged ? 0.2 : 1}
+                    disabled={!isNicknameChanged}
                 >
                     <ThemedText
                         type="body2b"
@@ -97,7 +97,7 @@ export default function EditProfileScreen() {
             </View>
             <TouchableOpacity
                 style={{ width: "100%" }}
-                activeOpacity={isNicknameChanged ? 0.2 : 1}
+                disabled={!isNicknameChanged}
                 onPress={() => {
                     if (isNicknameChanged) {
                         setCurrentNickname(newNickname);

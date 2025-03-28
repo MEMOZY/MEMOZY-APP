@@ -260,6 +260,27 @@ const CopyIcon = (props: SvgProps) => (
         />
     </Svg>
 );
+const ImageIcon = (props: SvgProps) => (
+    <Svg width={22} height={22} fill="none" {...props}>
+        <Path
+            stroke="#4E5968"
+            strokeWidth={1.5}
+            d="M15 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+        />
+        <Path
+            stroke="#4E5968"
+            strokeLinecap="round"
+            strokeWidth={1.5}
+            d="m4 12.307.81-.753a2.3 2.3 0 0 1 3.24.108l2.647 2.81c.539.572 1.42.65 2.049.18a2.32 2.32 0 0 1 2.986.181L18 17"
+        />
+        <Path
+            stroke="#4E5968"
+            strokeLinecap="round"
+            strokeWidth={1.5}
+            d="M21 11c0 4.714 0 7.071-1.465 8.535C18.072 21 15.714 21 11 21s-7.071 0-8.536-1.465C1 18.072 1 15.714 1 11s0-7.071 1.464-8.536C3.93 1 6.286 1 11 1c4.714 0 7.071 0 8.535 1.464.974.974 1.3 2.343 1.41 4.536"
+        />
+    </Svg>
+);
 
 export {
     HomeIcon,
@@ -280,4 +301,5 @@ export {
     CheckIcon,
     TrashIcon,
     CopyIcon,
+    ImageIcon,
 };

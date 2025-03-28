@@ -80,9 +80,21 @@ export default function SettingsScreen() {
             </Titled>
 
             <SettingsSection>
-                <SettingsItem label="문의 하기" onPress={() => {}} />
+                <SettingsItem
+                    label="문의 하기"
+                    onPress={() => {
+                        router.push("/inquiry");
+                    }}
+                />
                 <Divider />
-                <SettingsItem label="리뷰 남기기" onPress={() => {}} />
+                <SettingsItem
+                    label="리뷰 남기기"
+                    onPress={() => {
+                        showSnackbar({
+                            message: "리뷰 남기기는 현재 준비중입니다.",
+                        });
+                    }}
+                />
             </SettingsSection>
 
             <SettingsSection>
