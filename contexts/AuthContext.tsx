@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -18,28 +19,30 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [isAuthLoaded, setIsAuthLoaded] = useState<boolean>(false);
     const segments = useSegments();
 
-    // 로그인 함수
-    const login = () => {
-        setIsLoggedIn(true);
-    };
+    const login = () => setIsLoggedIn(true);
+    const logout = () => setIsLoggedIn(false);
 
-    // 로그아웃 함수
-    const logout = () => {
-        setIsLoggedIn(false);
-    };
-
-    // 로그인 상태에 따른 페이지 라우팅
     useEffect(() => {
+        async function loadAuth() {
+            const token = await AsyncStorage.getItem("accessToken");
+            // TODO: 토큰 유효성 검증 로직 추가
+            if (token) setIsLoggedIn(true);
+            setIsAuthLoaded(true);
+        }
+        loadAuth();
+    }, []);
+
+    useEffect(() => {
+        if (!isAuthLoaded) return;
+
         const inAuthGroup = segments[0] === "(auth)";
 
-        if (!isLoggedIn && !inAuthGroup) {
-            router.replace("/login");
-        } else if (isLoggedIn && inAuthGroup) {
-            router.replace("/");
-        }
-    }, [isLoggedIn, segments]);
+        if (!isLoggedIn && !inAuthGroup) router.replace("/login");
+        else if (isLoggedIn && inAuthGroup) router.replace("/");
+    }, [isLoggedIn, isAuthLoaded, segments]);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
