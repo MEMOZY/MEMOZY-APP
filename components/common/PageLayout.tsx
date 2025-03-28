@@ -1,5 +1,5 @@
 import { ThemedSafeView } from "@/components/common/ThemedSafeView";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { BackIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
