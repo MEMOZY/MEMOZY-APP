@@ -4,13 +4,14 @@ import { ThemedText } from "./ThemedText";
 interface TitledProps {
     title: string;
     children: React.ReactNode;
+    gap?: number;
 }
 
-export default function Titled({ title, children }: TitledProps) {
+export default function Titled({ title, children, gap = 10 }: TitledProps) {
     return (
         <View style={{ gap: 10 }}>
-            <ThemedText type="body2b">Friends</ThemedText>
-            {children}
+            <ThemedText type="body2b">{title}</ThemedText>
+            <View style={{ gap }}>{children}</View>
         </View>
     );
 }
