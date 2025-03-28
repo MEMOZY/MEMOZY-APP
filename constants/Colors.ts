@@ -5,7 +5,7 @@
 
 const white = "#ffffff";
 const black = "#000000";
-const red = "#ff6726";
+const red = "#FF3123";
 const green = "#56fc40";
 const blue = "#0074ff";
 

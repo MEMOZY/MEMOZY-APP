@@ -246,6 +246,20 @@ const TrashIcon = (props: SvgProps) => (
         />
     </Svg>
 );
+const CopyIcon = (props: SvgProps) => (
+    <Svg width={14} height={16} fill="none" {...props}>
+        <Path
+            stroke="#8B95A1"
+            strokeWidth={1.5}
+            d="M3 7.333c0-1.885 0-2.828.586-3.413.585-.587 1.529-.587 3.414-.587h2c1.885 0 2.829 0 3.414.587C13 4.505 13 5.447 13 7.332v3.334c0 1.885 0 2.829-.586 3.414-.585.586-1.529.586-3.414.586H7c-1.885 0-2.829 0-3.414-.586C3 13.496 3 12.552 3 10.667V7.334Z"
+        />
+        <Path
+            stroke="#8B95A1"
+            strokeWidth={1.5}
+            d="M3 12.667a2 2 0 0 1-2-2v-4c0-2.514 0-3.771.781-4.552.782-.78 2.038-.782 4.552-.782H9a2 2 0 0 1 2 2"
+        />
+    </Svg>
+);
 
 export {
     HomeIcon,
@@ -265,4 +279,5 @@ export {
     XIcon,
     CheckIcon,
     TrashIcon,
+    CopyIcon,
 };
