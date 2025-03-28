@@ -7,7 +7,7 @@ export type ThemedViewProps = ViewProps & {
     darkColor?: string;
 };
 
-export function ThemedView({
+export function ThemedSafeView({
     style,
     lightColor,
     darkColor,

@@ -1,5 +1,5 @@
 import * as React from "react";
-import Svg, { SvgProps, Path } from "react-native-svg";
+import Svg, { SvgProps, Path, Rect } from "react-native-svg";
 const HomeIcon = (props: SvgProps) => (
     <Svg width={24} height={24} fill="none" {...props}>
         <Path
@@ -81,6 +81,46 @@ const FilledGearIcon = (props: SvgProps) => (
     </Svg>
 );
 
+const Logo = (props: SvgProps) => (
+    <Svg width={150} height={126} fill="none" {...props}>
+        <Rect
+            width={32.096}
+            height={120.359}
+            fill="#414141"
+            rx={16.048}
+            transform="scale(-1 1) rotate(-20 -2.287 208.138)"
+        />
+        <Rect
+            width={32.096}
+            height={120.359}
+            fill="#000"
+            rx={16.048}
+            transform="scale(-1 1) rotate(-20 -25.422 344.938)"
+        />
+        <Rect
+            width={32.096}
+            height={120.359}
+            x={78.675}
+            y={12.107}
+            fill="#000"
+            rx={16.048}
+            transform="rotate(-20 78.675 12.107)"
+        />
+    </Svg>
+);
+
+const BackIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            stroke="#3D4248"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="m15 5-6 7 6 7"
+        />
+    </Svg>
+);
+
 export {
     HomeIcon,
     CalendarIcon,
@@ -88,4 +128,6 @@ export {
     FilledHomeIcon,
     FilledCalendarIcon,
     FilledGearIcon,
+    Logo,
+    BackIcon,
 };
