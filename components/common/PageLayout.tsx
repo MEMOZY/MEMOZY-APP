@@ -73,11 +73,15 @@ export default function PageLayout({
                                     !hasBack && {
                                         textAlign: "left",
                                     },
-                                titleAlign === "center" &&
-                                    hasBack && {
-                                        textAlign: "center",
-                                        marginLeft: -24,
-                                    },
+                                titleAlign === "center" && {
+                                    position: "absolute",
+                                    left: 0,
+                                    right: 0,
+                                    textAlign: "center",
+                                    marginLeft: 0,
+                                    marginRight: 0,
+                                    top: 0,
+                                },
                             ]}
                         >
                             {headerTitle}
