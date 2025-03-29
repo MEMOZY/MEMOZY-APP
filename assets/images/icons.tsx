@@ -301,6 +301,16 @@ const SendIcon = (props: SvgProps) => (
         />
     </Svg>
 );
+const DownChevronIcon = (props: SvgProps) => (
+    <Svg width={16} height={16} fill="none" {...props}>
+        <Path
+            fill="#8B95A1"
+            fillRule="evenodd"
+            d="M2.599 5.759c0-.23.09-.46.26-.64a.9.9 0 0 1 1.27 0l3.87 3.87 3.86-3.87a.9.9 0 0 1 1.27 0 .9.9 0 0 1 0 1.27l-4.5 4.5a.9.9 0 0 1-1.27 0l-4.5-4.5a.894.894 0 0 1-.26-.63Z"
+            clipRule="evenodd"
+        />
+    </Svg>
+);
 
 export {
     HomeIcon,
@@ -324,4 +334,5 @@ export {
     ImageIcon,
     SkipIcon,
     SendIcon,
+    DownChevronIcon,
 };

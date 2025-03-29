@@ -1,4 +1,3 @@
-import { TrashIcon } from "@/assets/images/icons";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import LogCard from "@/components/edit/logCard";
@@ -6,7 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { formatDate } from "@/utils/formatDate";
 import { router } from "expo-router";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function EditScreen() {
     const { showModal } = useUI();
