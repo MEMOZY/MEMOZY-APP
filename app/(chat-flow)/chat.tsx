@@ -1,4 +1,3 @@
-import ChatIconSwitch from "@/components/chat/ChatIconSwitch";
 import ChatInputBar from "@/components/chat/ChatInputBar";
 import ChatMessage from "@/components/chat/ChatMessage";
 import PageLayout from "@/components/common/PageLayout";
@@ -6,19 +5,13 @@ import StepProgressBar from "@/components/common/StepProgressBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
+import { router } from "expo-router";
 import { useState } from "react";
-import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function ChatScreen() {
     const { showModal } = useUI();
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(3);
     const totalSteps = 3;
     const isEnd = step === totalSteps;
 
@@ -33,10 +26,18 @@ export default function ChatScreen() {
                     subtitle: "진행 중인 작업이 모두 취소됩니다.",
                     confirmText: "확인",
                     cancelText: "돌아가기",
+                    onConfirm: () => {
+                        router.replace("/(tabs)");
+                    },
                 });
             }}
             headerRight={
-                <TouchableOpacity disabled={!isEnd} onPress={() => {}}>
+                <TouchableOpacity
+                    disabled={!isEnd}
+                    onPress={() => {
+                        router.replace("/edit");
+                    }}
+                >
                     <ThemedText
                         type="body1"
                         lightColor={isEnd ? Colors.gray6 : Colors.gray4}
@@ -50,7 +51,11 @@ export default function ChatScreen() {
             <StepProgressBar totalSteps={totalSteps} currentStep={step} />
             <View style={styles.bodyContainer}>
                 <ScrollView
-                    style={{ flex: 1 }}
+                    style={{
+                        flex: 1,
+                        marginHorizontal: -30,
+                        paddingHorizontal: 30,
+                    }}
                     contentContainerStyle={{ gap: 20 }}
                 >
                     <ChatMessage
