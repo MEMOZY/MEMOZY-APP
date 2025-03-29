@@ -1,32 +1,30 @@
-import { Link, Stack } from "expo-router";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
+import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
-import { ThemedView } from "@/components/common/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { router } from "expo-router";
 
 export default function NotFoundScreen() {
     return (
-        <>
-            <Stack.Screen options={{ title: "Oops!" }} />
-            <ThemedView style={styles.container}>
-                <ThemedText type="title">This screen doesn't exist.</ThemedText>
-                <Link href="/" style={styles.link}>
-                    <ThemedText type="caption">Go to home screen!</ThemedText>
-                </Link>
-            </ThemedView>
-        </>
+        <PageLayout headerTitle="404 Not Found" style={styles.container}>
+            <ThemedText type="body1b">페이지를 찾을 수 없습니다.</ThemedText>
+            <TouchableOpacity onPress={() => router.back()}>
+                <ThemedText
+                    type="body2"
+                    lightColor={Colors.blue}
+                    darkColor={Colors.blue}
+                >
+                    돌아가기
+                </ThemedText>
+            </TouchableOpacity>
+        </PageLayout>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
-    },
-    link: {
-        marginTop: 15,
-        paddingVertical: 15,
     },
 });

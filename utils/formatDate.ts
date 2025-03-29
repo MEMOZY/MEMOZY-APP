@@ -42,3 +42,10 @@ export function formatDateRange(startDate: Date, endDate: Date): string {
         showYear
     )}`;
 }
+
+// nn:nn 형식의 시간으로 포맷하는 함수
+export function formatTime(date: Date): string {
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+}

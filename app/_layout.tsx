@@ -53,6 +53,10 @@ export default function RootLayout() {
                                 options={{ headerShown: false }}
                             />
                             <Stack.Screen
+                                name="(chat-flow)"
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
                                 name="(screens)/friends"
                                 options={{ headerShown: false }}
                             />
@@ -76,7 +80,10 @@ export default function RootLayout() {
                                 name="index"
                                 options={{ headerShown: false }}
                             />
-                            <Stack.Screen name="+not-found" />
+                            <Stack.Screen
+                                name="+not-found"
+                                options={{ headerShown: false }}
+                            />
                         </Stack>
                         <StatusBar style="auto" />
                         <GlobalModal />

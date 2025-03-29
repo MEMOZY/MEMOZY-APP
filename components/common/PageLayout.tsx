@@ -16,6 +16,7 @@ interface PageLayoutProps {
     headerRight?: React.ReactNode;
     scrollView?: boolean;
     onRefresh?: () => Promise<void>; // 추가된 prop
+    onBack?: () => void; // 뒤로가기 핸들러
 }
 
 export default function PageLayout({
@@ -28,6 +29,7 @@ export default function PageLayout({
     headerRight,
     scrollView = false,
     onRefresh, // 새로고침 핸들러
+    onBack = () => router.back(), // 기본적으로 뒤로가기
 }: PageLayoutProps) {
     const [refreshing, setRefreshing] = useState(false);
 
@@ -45,7 +47,7 @@ export default function PageLayout({
                 <View style={styles.headerContainer}>
                     {hasBack && (
                         <View style={styles.backContainer}>
-                            <BackIcon onPress={() => router.back()} />
+                            <BackIcon onPress={onBack} />
                             {backText && (
                                 <ThemedText
                                     type="caption"
@@ -73,11 +75,16 @@ export default function PageLayout({
                                     !hasBack && {
                                         textAlign: "left",
                                     },
-                                titleAlign === "center" &&
-                                    hasBack && {
-                                        textAlign: "center",
-                                        marginLeft: -24,
-                                    },
+                                titleAlign === "center" && {
+                                    position: "absolute",
+                                    left: 0,
+                                    right: 0,
+                                    textAlign: "center",
+                                    marginLeft: 0,
+                                    marginRight: 0,
+                                    top: 0,
+                                    zIndex: -1,
+                                },
                             ]}
                         >
                             {headerTitle}

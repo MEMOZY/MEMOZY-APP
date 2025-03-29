@@ -281,6 +281,36 @@ const ImageIcon = (props: SvgProps) => (
         />
     </Svg>
 );
+const SkipIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            fill="#3D4248"
+            fillRule="evenodd"
+            d="M24 12c0 6.628-5.372 12-12 12S0 18.628 0 12 5.372 0 12 0s12 5.372 12 12ZM13.236 7.764a.9.9 0 1 0-1.272 1.272L14.928 12l-2.964 2.964a.9.9 0 1 0 1.272 1.272l3.6-3.6a.9.9 0 0 0 0-1.272l-3.6-3.6Zm-6.072 0a.9.9 0 0 1 1.272 0l3.6 3.6a.9.9 0 0 1 0 1.272l-3.6 3.6a.9.9 0 0 1-1.272-1.272L10.128 12 7.164 9.036a.9.9 0 0 1 0-1.272Z"
+            clipRule="evenodd"
+        />
+    </Svg>
+);
+const SendIcon = (props: SvgProps) => (
+    <Svg width={24} height={24} fill="none" {...props}>
+        <Path
+            fill="#3D4248"
+            fillRule="evenodd"
+            d="M24 12c0-6.628-5.372-12-12-12S0 5.372 0 12s5.372 12 12 12 12-5.372 12-12Zm-16.236-.564a.9.9 0 0 1 0-1.272l3.6-3.6a.9.9 0 0 1 1.272 0l3.6 3.6a.9.9 0 1 1-1.272 1.272L12.9 9.372V16.8a.9.9 0 1 1-1.8 0V9.372l-2.064 2.064a.9.9 0 0 1-1.272 0Z"
+            clipRule="evenodd"
+        />
+    </Svg>
+);
+const DownChevronIcon = (props: SvgProps) => (
+    <Svg width={16} height={16} fill="none" {...props}>
+        <Path
+            fill="#8B95A1"
+            fillRule="evenodd"
+            d="M2.599 5.759c0-.23.09-.46.26-.64a.9.9 0 0 1 1.27 0l3.87 3.87 3.86-3.87a.9.9 0 0 1 1.27 0 .9.9 0 0 1 0 1.27l-4.5 4.5a.9.9 0 0 1-1.27 0l-4.5-4.5a.894.894 0 0 1-.26-.63Z"
+            clipRule="evenodd"
+        />
+    </Svg>
+);
 
 export {
     HomeIcon,
@@ -302,4 +332,7 @@ export {
     TrashIcon,
     CopyIcon,
     ImageIcon,
+    SkipIcon,
+    SendIcon,
+    DownChevronIcon,
 };
