@@ -36,6 +36,14 @@
                     "resizeMode": "contain",
                     "backgroundColor": "#F9FAFB"
                 }
+            ],
+            [
+                "expo-media-library",
+                {
+                    "photosPermission": "당신의 사진에 접근할 수 있도록 권한을 허용해주세요.",
+                    "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+                    "isAccessMediaLocationEnabled": true
+                }
             ]
         ],
         "experiments": {

@@ -81,6 +81,7 @@ export default function PageLayout({
                                     marginLeft: 0,
                                     marginRight: 0,
                                     top: 0,
+                                    zIndex: -1,
                                 },
                             ]}
                         >
