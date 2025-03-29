@@ -5,6 +5,7 @@ type ModalOptions = {
     title?: string;
     subtitle?: string;
     confirmText?: string;
+    cancelText?: string;
     color?: string;
     content?: React.ReactNode;
     onConfirm?: () => void;

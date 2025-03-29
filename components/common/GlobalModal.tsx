@@ -42,7 +42,8 @@ export const GlobalModal = () => {
                                     <View
                                         style={{
                                             height: 42,
-                                            backgroundColor: modal.color,
+                                            backgroundColor:
+                                                modal.color || Colors.gray5,
                                             justifyContent: "center",
                                             alignItems: "center",
                                             borderRadius: 12,
@@ -69,7 +70,7 @@ export const GlobalModal = () => {
                                         darkColor={Colors.gray4}
                                         style={{ textAlign: "center" }}
                                     >
-                                        취소하기
+                                        {modal.cancelText || "취소하기"}
                                     </ThemedText>
                                 </TouchableOpacity>
                             </View>
