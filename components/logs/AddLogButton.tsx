@@ -1,12 +1,13 @@
 import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
+import { router } from "expo-router";
 
 export default function AddLogButton() {
     return (
         <TouchableOpacity
             onPress={() => {
-                console.log("Add new log pressed");
+                router.push("/(chat-flow)/select");
             }}
         >
             <View
