@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { CheckIcon } from "@/assets/images/icons";
 import Button from "@/components/common/Button";
+import { router } from "expo-router";
+import { useUI } from "@/hooks/useUI";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -29,6 +31,8 @@ export default function SelectScreen() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [permissionResponse, requestPermission] =
         MediaLibrary.usePermissions();
+
+    const { showSnackbar } = useUI();
 
     useEffect(() => {
         loadInitialAssets();
@@ -72,7 +76,13 @@ export default function SelectScreen() {
     const toggleSelect = (id: string) => {
         setSelected((prev) => {
             if (prev.includes(id)) return prev.filter((x) => x !== id);
-            if (prev.length >= MAX_SELECT_COUNT) return prev;
+            if (prev.length >= MAX_SELECT_COUNT) {
+                showSnackbar({
+                    message: `최대 ${MAX_SELECT_COUNT}개까지 선택할 수 있습니다.`,
+                    color: Colors.red,
+                });
+                return prev;
+            }
             return [...prev, id];
         });
     };
@@ -140,6 +150,7 @@ export default function SelectScreen() {
                     disabled={selected.length === 0}
                     onPress={() => {
                         console.log("Selected assets: ", selected);
+                        router.replace("/chat");
                     }}
                     style={{ flex: 4 }}
                 />
