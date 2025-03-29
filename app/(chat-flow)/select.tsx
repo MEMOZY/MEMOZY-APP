@@ -13,6 +13,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { CheckIcon } from "@/assets/images/icons";
+import Button from "@/components/common/Button";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -123,6 +124,26 @@ export default function SelectScreen() {
                     ) : null
                 }
             />
+            <View style={{ flexDirection: "row", gap: 10 }}>
+                <Button
+                    title="해제"
+                    disabled={selected.length === 0}
+                    onPress={() => {
+                        setSelected([]);
+                    }}
+                    backgroundColor={Colors.red}
+                    disabledBackgroundColor="#FF6666"
+                    style={{ flex: 1 }}
+                />
+                <Button
+                    title="선택 완료"
+                    disabled={selected.length === 0}
+                    onPress={() => {
+                        console.log("Selected assets: ", selected);
+                    }}
+                    style={{ flex: 4 }}
+                />
+            </View>
         </PageLayout>
     );
 }

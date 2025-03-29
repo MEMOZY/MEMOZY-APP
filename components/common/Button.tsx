@@ -36,27 +36,24 @@ export default function Button({
             }}
         >
             <View
-                style={[
-                    {
-                        height: height,
-                        width: "100%",
-                        borderRadius: 12,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    },
-                    {
-                        backgroundColor: disabled
-                            ? disabledBackgroundColor
-                            : backgroundColor,
-                    },
-                ]}
+                style={{
+                    height: height,
+                    width: "100%",
+                    borderRadius: 12,
+                    alignItems: "center",
+                    justifyContent: "center",
+
+                    backgroundColor: disabled
+                        ? disabledBackgroundColor
+                        : backgroundColor,
+                }}
             >
                 <ThemedText
                     type="body1b"
-                    lightColor={Colors.gray1}
-                    darkColor={Colors.gray1}
+                    lightColor={disabled ? disabledColor : color}
+                    darkColor={disabled ? disabledColor : color}
                 >
-                    저장
+                    {title}
                 </ThemedText>
             </View>
         </TouchableOpacity>
