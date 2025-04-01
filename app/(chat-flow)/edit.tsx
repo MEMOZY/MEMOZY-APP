@@ -1,6 +1,6 @@
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
-import LogCard from "@/components/edit/logCard";
+import LogCard from "@/components/edit/LogCard";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { formatDate } from "@/utils/formatDate";
