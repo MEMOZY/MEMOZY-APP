@@ -1,100 +1,121 @@
+import CalendarDayComponent from "@/components/calendar/CalendarDayComponent";
 import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
+import AddLogButton from "@/components/logs/AddLogButton";
+import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { useState } from "react";
+import {
+    Dimensions,
+    Modal,
+    Pressable,
+    StyleSheet,
+    Text,
+    TouchableWithoutFeedback,
+    View,
+} from "react-native";
 import { CalendarList } from "react-native-calendars";
+import { Timestamp } from "react-native-reanimated/lib/typescript/commonTypes";
 
 export default function CalendarScreen() {
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [modalVisible, setModalVisible] = useState(true);
+
+    const handleDayPress = (day: Timestamp) => {
+        setSelectedDate(new Date(day));
+        setModalVisible(true);
+        console.log("Selected day:", new Date(day));
+    };
     return (
-        <PageLayout>
-            <CalendarList
-                style={{
-                    borderRadius: 12,
-                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
-                    height: "90%",
-                    width: Dimensions.get("window").width - 20,
-                    alignSelf: "center",
-                }}
-                theme={{
-                    backgroundColor: Colors.white,
-                }}
-                horizontal={true}
-                pagingEnabled={true}
-                hideExtraDays={false}
-                calendarWidth={Dimensions.get("window").width - 20}
-                customHeader={CalendarHeader}
-                dayComponent={({ date, state, marking }) => {
-                    return (
-                        <View style={styles.dayContainer}>
-                            <ThemedText
-                                type="caption"
-                                style={
-                                    state === "disabled"
-                                        ? styles.dayDisabled
-                                        : {}
-                                }
-                            >
-                                {date!.day}
+        <>
+            <PageLayout>
+                <CalendarList
+                    style={{
+                        borderRadius: 12,
+                        boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
+                        height: "90%",
+                        width: Dimensions.get("window").width - 20,
+                        alignSelf: "center",
+                    }}
+                    theme={{
+                        backgroundColor: Colors.white,
+                    }}
+                    horizontal={true}
+                    pagingEnabled={true}
+                    hideExtraDays={false}
+                    calendarWidth={Dimensions.get("window").width - 20}
+                    customHeader={CalendarHeader}
+                    dayComponent={({ date, state }) => (
+                        <CalendarDayComponent
+                            date={date}
+                            state={state}
+                            onDayPress={() => {
+                                if (!date) return;
+                                handleDayPress(date.timestamp);
+                            }}
+                        />
+                    )}
+                />
+            </PageLayout>
+            <Modal
+                visible={modalVisible}
+                animationType="fade"
+                transparent={true}
+            >
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        setModalVisible(false);
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: Colors.gray6 + "20",
+                        }}
+                    >
+                        <Pressable
+                            style={{
+                                backgroundColor: Colors.gray1,
+                                width: Dimensions.get("window").width - 40,
+                                maxHeight: "80%",
+                                padding: 20,
+                                borderRadius: 12,
+                                gap: 20,
+                            }}
+                        >
+                            <ThemedText type="title">
+                                2025년 3월 11일 (금)
                             </ThemedText>
-                            <View style={styles.dayImageContainer}>
-                                <Image
-                                    style={styles.dayImage}
-                                    source={{
-                                        uri: "https://example.com/image.png",
-                                    }}
-                                />
-                                <View style={styles.dayImageOverlay}>
-                                    <ThemedText
-                                        type="body1b"
-                                        style={{ color: Colors.white }}
-                                    >
-                                        +2
-                                    </ThemedText>
-                                </View>
-                            </View>
-                        </View>
-                    );
-                }}
-            />
-        </PageLayout>
+                            <LogItem
+                                id={1}
+                                title="운동"
+                                imageUrl="https://example.com/image.jpg"
+                                startDate={new Date("2025-03-11T12:00:00Z")}
+                                endDate={new Date("2025-03-11T13:00:00Z")}
+                                description="운동을 했습니다."
+                            />
+                            <LogItem
+                                id={1}
+                                title="운동"
+                                imageUrl="https://example.com/image.jpg"
+                                startDate={new Date("2025-03-11T12:00:00Z")}
+                                endDate={new Date("2025-03-11T13:00:00Z")}
+                                description="운동을 했습니다."
+                            />
+                            <AddLogButton
+                                onPress={() => {
+                                    setModalVisible(false);
+                                }}
+                            />
+                        </Pressable>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+        </>
     );
 }
 
-const styles = StyleSheet.create({
-    dayContainer: {
-        backgroundColor: Colors.gray1,
-        width: "80%",
-        minHeight: 50,
-        alignItems: "center",
-        padding: 4,
-        borderRadius: 8,
-        boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
-        gap: 2,
-    },
-    dayDisabled: {
-        color: Colors.gray3,
-    },
-    dayImageContainer: {
-        width: 32,
-        height: 32,
-        borderRadius: 4,
-    },
-    dayImage: {
-        width: "100%",
-        height: "100%",
-        borderRadius: 4,
-        backgroundColor: Colors.gray2,
-    },
-    dayImageOverlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
-        borderRadius: 4,
-    },
-});
+const styles = StyleSheet.create({});

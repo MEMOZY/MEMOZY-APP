@@ -5,9 +5,17 @@ import { router } from "expo-router";
 import * as MediaLibrary from "expo-media-library";
 import { useUI } from "@/hooks/useUI";
 
-export default function AddLogButton() {
+interface AddLogButtonProps {
+    onPress?: () => void;
+}
+
+export default function AddLogButton({ onPress }: AddLogButtonProps) {
     const { showModal, hideModal } = useUI();
     async function handlePress() {
+        if (onPress) {
+            onPress();
+            return;
+        }
         const { canAskAgain, granted } =
             await MediaLibrary.getPermissionsAsync();
 

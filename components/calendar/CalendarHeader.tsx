@@ -13,12 +13,12 @@ export function CalendarHeader({ month }: { month: Date }) {
         <View style={styles.header}>
             <View style={styles.headerTitle}>
                 <ThemedText type="title">{`${year}년 ${paddedMonth}월`}</ThemedText>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                     <View style={styles.dropdownContainer}>
                         <ThemedText type="body2b">전체</ThemedText>
                         <DownChevronIcon color={Colors.gray6} />
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             {/* 요일 헤더 */}
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     header: {
         paddingVertical: 10,
         paddingHorizontal: 10,
-        paddingBottom: 15,
         backgroundColor: Colors.white,
         gap: 20,
     },
