@@ -5,7 +5,7 @@ import { ThemedText } from "@/components/common/ThemedText";
 import AddLogButton from "@/components/logs/AddLogButton";
 import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Dimensions,
     Modal,
@@ -16,25 +16,33 @@ import {
     View,
 } from "react-native";
 import { CalendarList } from "react-native-calendars";
-import { Timestamp } from "react-native-reanimated/lib/typescript/commonTypes";
 
 export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isReady, setIsReady] = useState(false);
 
-    const handleDayPress = (day: Timestamp) => {
+    useEffect(() => {
+        setTimeout(() => setIsReady(true), 300); // 300ms 후 렌더링
+    }, []);
+
+    const handleDayPress = (day: string) => {
         setSelectedDate(new Date(day));
         setModalVisible(true);
         console.log("Selected day:", new Date(day));
     };
+
     return (
         <>
             <PageLayout>
+                {!isReady && <View style={styles.loadingScreen} />}
                 <CalendarList
                     style={styles.calendarContainer}
                     theme={{
                         backgroundColor: Colors.white,
                     }}
+                    futureScrollRange={0}
+                    initialNumToRender={1}
                     horizontal={true}
                     pagingEnabled={true}
                     hideExtraDays={false}
@@ -46,57 +54,70 @@ export default function CalendarScreen() {
                             state={state}
                             onDayPress={() => {
                                 if (!date) return;
-                                handleDayPress(date.timestamp);
+                                handleDayPress(date.dateString);
                             }}
                         />
                     )}
                 />
             </PageLayout>
-            <Modal
-                visible={modalVisible}
-                animationType="fade"
-                transparent={true}
-            >
-                <TouchableWithoutFeedback
-                    onPress={() => {
-                        setModalVisible(false);
-                    }}
+            {modalVisible && (
+                <Modal
+                    visible={modalVisible}
+                    animationType="fade"
+                    transparent={true}
                 >
-                    <View style={styles.modalOverlay}>
-                        <Pressable style={styles.modalContentContainer}>
-                            <ThemedText type="title">
-                                2025년 3월 11일 (금)
-                            </ThemedText>
-                            <LogItem
-                                id={1}
-                                title="운동"
-                                imageUrl="https://example.com/image.jpg"
-                                startDate={new Date("2025-03-11T12:00:00Z")}
-                                endDate={new Date("2025-03-11T13:00:00Z")}
-                                description="운동을 했습니다."
-                            />
-                            <LogItem
-                                id={1}
-                                title="운동"
-                                imageUrl="https://example.com/image.jpg"
-                                startDate={new Date("2025-03-11T12:00:00Z")}
-                                endDate={new Date("2025-03-11T13:00:00Z")}
-                                description="운동을 했습니다."
-                            />
-                            <AddLogButton
-                                onPress={() => {
-                                    setModalVisible(false);
-                                }}
-                            />
-                        </Pressable>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            setModalVisible(false);
+                        }}
+                    >
+                        <View style={styles.modalOverlay}>
+                            <Pressable style={styles.modalContentContainer}>
+                                <ThemedText type="title">
+                                    2025년 3월 11일 (금)
+                                </ThemedText>
+                                <LogItem
+                                    id={1}
+                                    title="운동"
+                                    imageUrl="https://example.com/image.jpg"
+                                    startDate={new Date("2025-03-11T12:00:00Z")}
+                                    endDate={new Date("2025-03-11T13:00:00Z")}
+                                    description="운동을 했습니다."
+                                />
+                                <LogItem
+                                    id={1}
+                                    title="운동"
+                                    imageUrl="https://example.com/image.jpg"
+                                    startDate={new Date("2025-03-11T12:00:00Z")}
+                                    endDate={new Date("2025-03-11T13:00:00Z")}
+                                    description="운동을 했습니다."
+                                />
+                                <AddLogButton
+                                    onPress={() => {
+                                        setModalVisible(false);
+                                    }}
+                                />
+                            </Pressable>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Modal>
+            )}
         </>
     );
 }
 
 const styles = StyleSheet.create({
+    loadingScreen: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        flex: 1,
+        zIndex: 1,
+        backgroundColor: Colors.white,
+        marginHorizontal: 20,
+    },
     calendarContainer: {
         borderRadius: 12,
         boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
