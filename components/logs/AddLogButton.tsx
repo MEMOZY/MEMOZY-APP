@@ -1,4 +1,4 @@
-import { Linking, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
@@ -56,15 +56,7 @@ export default function AddLogButton({ onPress }: AddLogButtonProps) {
                 handlePress();
             }}
         >
-            <View
-                style={{
-                    height: 50,
-                    backgroundColor: Colors.gray2,
-                    justifyContent: "center",
-                    paddingLeft: 20,
-                    borderRadius: 8,
-                }}
-            >
+            <View style={styles.container}>
                 <ThemedText
                     type="body2b"
                     lightColor={Colors.light.tabIconDefault}
@@ -76,3 +68,13 @@ export default function AddLogButton({ onPress }: AddLogButtonProps) {
         </TouchableOpacity>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        height: 50,
+        backgroundColor: Colors.gray2,
+        justifyContent: "center",
+        paddingLeft: 20,
+        borderRadius: 8,
+    },
+});

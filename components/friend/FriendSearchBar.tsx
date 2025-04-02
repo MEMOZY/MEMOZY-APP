@@ -10,11 +10,7 @@ export function FriendSearchBar() {
             <TextInput
                 placeholder="상대방 코드로 검색"
                 placeholderTextColor={Colors.gray5}
-                style={{
-                    flex: 1,
-                    fontSize: 16,
-                    fontFamily: "Pretendard-Regular",
-                }}
+                style={styles.searchInput}
                 value={code}
                 onChangeText={(text) => setCode(text)}
                 autoCapitalize="characters"
@@ -40,5 +36,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray3,
         height: 48,
         gap: 10,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 16,
+        fontFamily: "Pretendard-Regular",
     },
 });

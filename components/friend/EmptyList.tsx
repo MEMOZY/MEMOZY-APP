@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 
 interface EmptyListProps {
@@ -8,13 +8,7 @@ interface EmptyListProps {
 
 export default function EmptyList({ text }: EmptyListProps) {
     return (
-        <View
-            style={{
-                backgroundColor: Colors.gray2,
-                padding: 20,
-                borderRadius: 12,
-            }}
-        >
+        <View style={styles.container}>
             <ThemedText
                 type="body1b"
                 lightColor={Colors.gray4}
@@ -25,3 +19,11 @@ export default function EmptyList({ text }: EmptyListProps) {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: Colors.gray2,
+        padding: 20,
+        borderRadius: 12,
+    },
+});

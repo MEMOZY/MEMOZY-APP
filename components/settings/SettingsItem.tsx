@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 
 interface SettingsItemProps {
@@ -19,21 +19,8 @@ export const SettingsItem = ({
 }: SettingsItemProps) => {
     return (
         <TouchableOpacity onPress={onPress}>
-            <View
-                style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    alignItems: "center",
-                }}
-            >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 5,
-                    }}
-                >
+            <View style={styles.container}>
+                <View style={styles.labelContainer}>
                     <ThemedText
                         type="body2b"
                         lightColor={color}
@@ -56,3 +43,17 @@ export const SettingsItem = ({
         </TouchableOpacity>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+        alignItems: "center",
+    },
+    labelContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+    },
+});

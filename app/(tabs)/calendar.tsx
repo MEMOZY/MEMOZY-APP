@@ -20,7 +20,7 @@ import { Timestamp } from "react-native-reanimated/lib/typescript/commonTypes";
 
 export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [modalVisible, setModalVisible] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleDayPress = (day: Timestamp) => {
         setSelectedDate(new Date(day));
@@ -31,13 +31,7 @@ export default function CalendarScreen() {
         <>
             <PageLayout>
                 <CalendarList
-                    style={{
-                        borderRadius: 12,
-                        boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
-                        height: "90%",
-                        width: Dimensions.get("window").width - 20,
-                        alignSelf: "center",
-                    }}
+                    style={styles.calendarContainer}
                     theme={{
                         backgroundColor: Colors.white,
                     }}
@@ -68,24 +62,8 @@ export default function CalendarScreen() {
                         setModalVisible(false);
                     }}
                 >
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: Colors.gray6 + "20",
-                        }}
-                    >
-                        <Pressable
-                            style={{
-                                backgroundColor: Colors.gray1,
-                                width: Dimensions.get("window").width - 40,
-                                maxHeight: "80%",
-                                padding: 20,
-                                borderRadius: 12,
-                                gap: 20,
-                            }}
-                        >
+                    <View style={styles.modalOverlay}>
+                        <Pressable style={styles.modalContentContainer}>
                             <ThemedText type="title">
                                 2025년 3월 11일 (금)
                             </ThemedText>
@@ -118,4 +96,26 @@ export default function CalendarScreen() {
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    calendarContainer: {
+        borderRadius: 12,
+        boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
+        height: "90%",
+        width: Dimensions.get("window").width - 20,
+        alignSelf: "center",
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: Colors.gray6 + "20",
+    },
+    modalContentContainer: {
+        backgroundColor: Colors.gray1,
+        width: Dimensions.get("window").width - 40,
+        maxHeight: "80%",
+        padding: 20,
+        borderRadius: 12,
+        gap: 20,
+    },
+});

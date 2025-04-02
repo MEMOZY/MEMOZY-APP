@@ -9,9 +9,15 @@ interface TitledProps {
 
 export default function Titled({ title, children, gap = 10 }: TitledProps) {
     return (
-        <View style={{ gap: 10 }}>
+        <View style={styles.container}>
             <ThemedText type="body2b">{title}</ThemedText>
             <View style={{ gap }}>{children}</View>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        gap: 10,
+    },
+});

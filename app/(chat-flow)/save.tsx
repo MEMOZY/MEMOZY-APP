@@ -20,15 +20,7 @@ export default function SaveScreen() {
                 justifyContent: "space-between",
             }}
         >
-            <View
-                style={{
-                    padding: 20,
-                    gap: 20,
-                    backgroundColor: Colors.white,
-                    borderRadius: 12,
-                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                }}
-            >
+            <View style={styles.contentContainer}>
                 <Titled title="제목">
                     <View style={styles.inputContainer}>
                         <TextInput
@@ -46,19 +38,7 @@ export default function SaveScreen() {
 
                 <Titled title="카테고리">
                     <TouchableOpacity>
-                        <View
-                            style={{
-                                backgroundColor: Colors.white,
-                                flexDirection: "row",
-                                gap: 4,
-                                alignItems: "center",
-                                borderRadius: 20,
-                                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                                paddingHorizontal: 16,
-                                height: 34,
-                                alignSelf: "flex-start",
-                            }}
-                        >
+                        <View style={styles.category}>
                             <ThemedText
                                 lightColor={Colors.gray4}
                                 darkColor={Colors.gray4}
@@ -106,5 +86,23 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: Colors.gray6,
         flex: 1,
+    },
+    contentContainer: {
+        padding: 20,
+        gap: 20,
+        backgroundColor: Colors.white,
+        borderRadius: 12,
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+    },
+    category: {
+        backgroundColor: Colors.white,
+        flexDirection: "row",
+        gap: 4,
+        alignItems: "center",
+        borderRadius: 20,
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        paddingHorizontal: 16,
+        height: 34,
+        alignSelf: "flex-start",
     },
 });
