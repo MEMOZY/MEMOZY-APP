@@ -6,13 +6,7 @@ import { Colors } from "@/constants/Colors";
 export const DateRangePicker = () => {
     return (
         <Titled title="기간">
-            <View
-                style={{
-                    flexDirection: "row",
-                    gap: 20,
-                    alignItems: "center",
-                }}
-            >
+            <View style={styles.container}>
                 <View style={styles.inputContainer}>
                     <TextInput
                         placeholder="시작일"
@@ -24,15 +18,7 @@ export const DateRangePicker = () => {
                         maxLength={20}
                     />
                 </View>
-                <View
-                    style={{
-                        width: 8,
-                        height: 3,
-                        backgroundColor: Colors.gray4,
-                        borderRadius: 1.5,
-                        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
-                    }}
-                />
+                <View style={styles.dash} />
                 <View style={styles.inputContainer}>
                     <TextInput
                         placeholder="종료일"
@@ -50,6 +36,18 @@ export const DateRangePicker = () => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        gap: 20,
+        alignItems: "center",
+    },
+    dash: {
+        width: 8,
+        height: 3,
+        backgroundColor: Colors.gray4,
+        borderRadius: 1.5,
+        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
+    },
     inputContainer: {
         height: 42,
         backgroundColor: Colors.white,

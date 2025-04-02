@@ -92,9 +92,7 @@ export default function PageLayout({
                     )}
 
                     {headerRight && (
-                        <View style={{ flex: 1, alignItems: "flex-end" }}>
-                            {headerRight}
-                        </View>
+                        <View style={styles.headerRight}>{headerRight}</View>
                     )}
                 </View>
             )}
@@ -150,5 +148,9 @@ const styles = StyleSheet.create({
         flex: 1,
         width: "100%",
         paddingHorizontal: 30,
+    },
+    headerRight: {
+        flex: 1,
+        alignItems: "flex-end",
     },
 });

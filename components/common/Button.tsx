@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 
@@ -27,7 +27,7 @@ export default function Button({
 }: ButtonProps) {
     return (
         <TouchableOpacity
-            style={{ width: "100%", ...style }}
+            style={[style, styles.container]}
             disabled={disabled}
             onPress={() => {
                 if (!disabled) {
@@ -36,17 +36,15 @@ export default function Button({
             }}
         >
             <View
-                style={{
-                    height: height,
-                    width: "100%",
-                    borderRadius: 12,
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                    backgroundColor: disabled
-                        ? disabledBackgroundColor
-                        : backgroundColor,
-                }}
+                style={[
+                    styles.button,
+                    {
+                        height: height,
+                        backgroundColor: disabled
+                            ? disabledBackgroundColor
+                            : backgroundColor,
+                    },
+                ]}
             >
                 <ThemedText
                     type="body1b"
@@ -59,3 +57,15 @@ export default function Button({
         </TouchableOpacity>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: "100%",
+    },
+    button: {
+        width: "100%",
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});

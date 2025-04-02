@@ -49,7 +49,7 @@ function LogItem({
             </ThemedText>
             <View style={styles.logBody}>
                 <Image source={{ uri: imageUrl }} style={styles.logImage} />
-                <ThemedText type="body2" style={{ flex: 1 }}>
+                <ThemedText type="body2" style={styles.flex}>
                     {description}
                 </ThemedText>
             </View>
@@ -83,5 +83,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: Colors.gray3,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
+    },
+    flex: {
+        flex: 1,
     },
 });

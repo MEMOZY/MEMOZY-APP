@@ -27,7 +27,7 @@ export function ReceivedFriendItem({
             >
                 {name}
             </ThemedText>
-            <TouchableOpacity style={{ marginLeft: "auto" }}>
+            <TouchableOpacity style={styles.marginLeft}>
                 <TrashIcon />
             </TouchableOpacity>
         </View>
@@ -50,5 +50,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray2,
         borderRadius: 12,
         paddingHorizontal: 12,
+    },
+    marginLeft: {
+        marginLeft: "auto",
     },
 });

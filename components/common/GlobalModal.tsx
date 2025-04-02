@@ -20,7 +20,7 @@ export const GlobalModal = () => {
                 <View style={styles.overlay}>
                     <TouchableWithoutFeedback>
                         <View style={styles.modalContainer}>
-                            <View style={{ alignItems: "center", gap: 8 }}>
+                            <View style={styles.titleContainer}>
                                 <ThemedText type="body1b">
                                     {modal.title}
                                 </ThemedText>
@@ -32,7 +32,7 @@ export const GlobalModal = () => {
                                     {modal.subtitle}
                                 </ThemedText>
                             </View>
-                            <View style={{ gap: 10 }}>
+                            <View style={styles.buttonsLayout}>
                                 <TouchableOpacity
                                     onPress={() => {
                                         modal.onConfirm?.();
@@ -40,14 +40,13 @@ export const GlobalModal = () => {
                                     }}
                                 >
                                     <View
-                                        style={{
-                                            height: 42,
-                                            backgroundColor:
-                                                modal.color || Colors.gray5,
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            borderRadius: 12,
-                                        }}
+                                        style={[
+                                            styles.confirmButton,
+                                            {
+                                                backgroundColor:
+                                                    modal.color || Colors.gray5,
+                                            },
+                                        ]}
                                     >
                                         <ThemedText
                                             type="body2b"
@@ -68,7 +67,7 @@ export const GlobalModal = () => {
                                         type="body2b"
                                         lightColor={Colors.gray4}
                                         darkColor={Colors.gray4}
-                                        style={{ textAlign: "center" }}
+                                        style={styles.textCenter}
                                     >
                                         {modal.cancelText || "취소하기"}
                                     </ThemedText>
@@ -95,5 +94,21 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         width: "80%",
         gap: 20,
+    },
+    titleContainer: {
+        alignItems: "center",
+        gap: 8,
+    },
+    textCenter: {
+        textAlign: "center",
+    },
+    buttonsLayout: {
+        gap: 10,
+    },
+    confirmButton: {
+        height: 42,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 12,
     },
 });
