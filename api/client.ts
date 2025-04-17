@@ -1,31 +1,33 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ky, { BeforeRequestHook } from "ky";
+import axios from "axios";
 
-declare module "ky" {
-    export interface NormalizedOptions {
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+declare module "axios" {
+    export interface AxiosRequestConfig {
         withAuth?: boolean;
     }
 }
 
-const kyClient = ky.extend({
-    prefixUrl: process.env.EXPO_PUBLIC_BACKEND_URL,
-    hooks: {
-        beforeRequest: [
-            (request, options) => {
-                setAuthorizationHeader(request, options);
-            },
-        ],
+export const apiClient = axios.create({
+    baseURL: API_URL,
+    timeout: 10000,
+    headers: {
+        "Content-Type": "application/json",
     },
 });
 
-const setAuthorizationHeader: BeforeRequestHook = (request, options) => {
-    if (!options.withAuth) {
-        return;
+apiClient.interceptors.request.use(
+    async (config) => {
+        if (config.withAuth) {
+            const accessToken = await AsyncStorage.getItem("accessToken");
+            if (accessToken) {
+                config.headers.Authorization = `Bearer ${accessToken}`;
+            }
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-
-    const accessToken = AsyncStorage.getItem("accessToken");
-
-    if (!accessToken) return;
-
-    request.headers.set("Authorization", `Bearer ${accessToken}`);
-};
+);

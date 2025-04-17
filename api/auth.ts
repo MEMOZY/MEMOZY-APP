@@ -1,19 +1,65 @@
 import { login } from "@react-native-kakao/user";
+import { apiClient } from "./client";
+import axios from "axios";
 
-const getKakaoToken = async () => {
-    try {
-        const kakaoToken = await login();
-
-        return kakaoToken.accessToken;
-    } catch (error) {
-        throw new Error("Kakao login failed");
+const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
+    let result = null;
+    switch (platform) {
+        case "GOOGLE":
+            // Implement Google login logic here
+            break;
+        case "APPLE":
+            // Implement Apple login logic here
+            break;
+        case "KAKAO":
+            try {
+                result = await login();
+                return result.accessToken;
+            } catch (error) {
+                throw new Error("카카오 로그인에 실패했습니다.");
+            }
+        default:
+            throw new Error("지원하지 않는 플랫폼입니다.");
     }
 };
 
+export const apiTest = async () => {
+    const response = await axios
+        .get("https://jsonplaceholder.typicode.com/posts/1")
+        .catch((error) => {
+            console.log(error);
+        });
+    if (!response) {
+        throw new Error("API 요청에 실패했습니다.");
+    }
+    if (response.status !== 200) {
+        throw new Error("API 요청에 실패했습니다.");
+    }
+    return response.data;
+};
+
 const getToken = async (
-    platfrom: "google" | "apple" | "kakao",
-    accessToken: string
-) => {};
+    platform: "GOOGLE" | "APPLE" | "KAKAO",
+    socialAccessToken: string
+) => {
+    const response = await apiClient
+        .post(`auth/social/${platform}/login`, {
+            socialAccessToken,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("로그인에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("로그인에 실패했습니다.");
+    }
+
+    return response.data;
+};
 
 const getNewToken = async (refreshToken: string) => {
     try {
@@ -23,4 +69,4 @@ const getNewToken = async (refreshToken: string) => {
     }
 };
 
-export { getKakaoToken, getToken, getNewToken };
+export { getSocialAccessToken, getNewToken, getToken };

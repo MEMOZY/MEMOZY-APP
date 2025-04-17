@@ -14,6 +14,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         bundleIdentifier: "com.tym.memozy",
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
+            NSAppTransportSecurity: {
+                NSAllowsArbitraryLoads: true,
+            },
         },
     },
     android: {
@@ -21,6 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             foregroundImage: "./assets/images/adaptive-icon.png",
             backgroundColor: "#F9FAFB",
         },
+        package: "com.tym.memozy",
     },
     web: {
         bundler: "metro",
@@ -54,6 +58,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                     extraMavenRepos: [
                         "https://devrepo.kakao.com/nexus/content/groups/public/",
                     ],
+                    useCleartextTraffic: true,
                 },
             },
         ],
