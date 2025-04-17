@@ -24,27 +24,21 @@ export default function LoginScreen() {
                     label="카카오 계정으로 로그인"
                     backgroundColor="#FFE100"
                     textColor="black"
-                    onPress={() => {
-                        login();
-                    }}
+                    onPress={() => {}}
                 />
                 <SocialLoginButton
                     icon={<GoogleIcon />}
                     label="구글 계정으로 로그인"
                     backgroundColor={Colors.white}
                     textColor="black"
-                    onPress={() => {
-                        login();
-                    }}
+                    onPress={() => {}}
                 />
                 <SocialLoginButton
                     icon={<AppleIcon />}
                     label="애플 계정으로 로그인"
                     backgroundColor={Colors.gray6}
                     textColor="white"
-                    onPress={() => {
-                        login();
-                    }}
+                    onPress={() => {}}
                 />
             </View>
         </PageLayout>
