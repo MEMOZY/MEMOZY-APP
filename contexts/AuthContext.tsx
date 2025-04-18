@@ -4,8 +4,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    login: () => void;
-    logout: () => void;
+    accessToken?: string;
+    refreshToken?: string;
+    login: (accessToken: string, refreshToken: string) => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -19,19 +21,47 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [accessToken, setAccessToken] = useState<string>();
+    const [refreshToken, setRefreshToken] = useState<string>();
     const [isAuthLoaded, setIsAuthLoaded] = useState<boolean>(false);
+
     const segments = useSegments();
 
-    const login = () => setIsLoggedIn(true);
-    const logout = () => setIsLoggedIn(false);
+    const login = async (accessToken: string, refreshToken: string) => {
+        await AsyncStorage.setItem("accessToken", accessToken);
+        await AsyncStorage.setItem("refreshToken", refreshToken);
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
+        setIsLoggedIn(true);
+    };
+
+    const logout = async () => {
+        await AsyncStorage.removeItem("accessToken");
+        await AsyncStorage.removeItem("refreshToken");
+        setAccessToken(undefined);
+        setRefreshToken(undefined);
+        setIsLoggedIn(false);
+    };
 
     useEffect(() => {
         async function loadAuth() {
-            const token = await AsyncStorage.getItem("accessToken");
-            // TODO: 토큰 유효성 검증 로직 추가
-            if (token) setIsLoggedIn(true);
+            const storedAccessToken = await AsyncStorage.getItem("accessToken");
+            const storedRefreshToken = await AsyncStorage.getItem(
+                "refreshToken"
+            );
+
+            console.log("Stored Access Token:", storedAccessToken);
+            console.log("Stored Refresh Token:", storedRefreshToken);
+
+            if (storedAccessToken && storedRefreshToken) {
+                setAccessToken(storedAccessToken);
+                setRefreshToken(storedRefreshToken);
+                setIsLoggedIn(true);
+            }
+
             setIsAuthLoaded(true);
         }
+
         loadAuth();
     }, []);
 
@@ -45,7 +75,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [isLoggedIn, isAuthLoaded, segments]);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                isLoggedIn,
+                accessToken,
+                refreshToken,
+                login,
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
