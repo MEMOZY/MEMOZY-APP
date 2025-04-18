@@ -50,6 +50,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 "refreshToken"
             );
 
+            console.log("Stored Access Token:", storedAccessToken);
+            console.log("Stored Refresh Token:", storedRefreshToken);
+
             if (storedAccessToken && storedRefreshToken) {
                 setAccessToken(storedAccessToken);
                 setRefreshToken(storedRefreshToken);

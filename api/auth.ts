@@ -1,6 +1,5 @@
 import { login } from "@react-native-kakao/user";
 import { apiClient } from "./client";
-import axios from "axios";
 
 const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
     let result = null;
@@ -21,21 +20,6 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
         default:
             throw new Error("지원하지 않는 플랫폼입니다.");
     }
-};
-
-export const apiTest = async () => {
-    const response = await axios
-        .get("https://jsonplaceholder.typicode.com/posts/1")
-        .catch((error) => {
-            console.log(error);
-        });
-    if (!response) {
-        throw new Error("API 요청에 실패했습니다.");
-    }
-    if (response.status !== 200) {
-        throw new Error("API 요청에 실패했습니다.");
-    }
-    return response.data;
 };
 
 const getToken = async (

@@ -1,4 +1,4 @@
-import { apiTest, getSocialAccessToken, getToken } from "@/api/auth";
+import { getSocialAccessToken, getToken } from "@/api/auth";
 import { AppleIcon, GoogleIcon, KakaoIcon, Logo } from "@/assets/images/icons";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
@@ -53,9 +53,7 @@ export default function LoginScreen() {
                     label="구글 계정으로 로그인"
                     backgroundColor={Colors.white}
                     textColor="black"
-                    onPress={() => {
-                        apiTest();
-                    }}
+                    onPress={() => {}}
                 />
                 <SocialLoginButton
                     icon={<AppleIcon />}

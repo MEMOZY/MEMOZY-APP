@@ -33,12 +33,7 @@ export default function RootLayout() {
     });
 
     useEffect(() => {
-        const getHashKey = async () => {
-            const hashKey = await getKeyHashAndroid();
-        };
         initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY || "");
-
-        getHashKey();
         if (loaded) {
             SplashScreen.hideAsync();
         }
