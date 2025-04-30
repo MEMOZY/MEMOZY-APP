@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import {
     FlatList,
     Image,
@@ -14,7 +15,6 @@ import {
 } from "react-native";
 import { CheckIcon } from "@/assets/images/icons";
 import Button from "@/components/common/Button";
-import { router } from "expo-router";
 import { useUI } from "@/hooks/useUI";
 
 const MAX_SELECT_COUNT = 30;
@@ -29,19 +29,27 @@ export default function SelectScreen() {
     const [endCursor, setEndCursor] = useState<string | null>(null);
     const [hasNextPage, setHasNextPage] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [permissionResponse, requestPermission] =
+    const [libraryPermissionResponse, requestLibraryPermission] =
         MediaLibrary.usePermissions();
+    const [locationPermissionResponse, requestLocationPermission] =
+        Location.useForegroundPermissions();
 
     const { showSnackbar } = useUI();
 
     useEffect(() => {
         loadInitialAssets();
-    }, [permissionResponse]);
+    }, [libraryPermissionResponse, locationPermissionResponse]);
 
     const loadInitialAssets = async () => {
-        if (!permissionResponse) return;
-        if (permissionResponse.status !== "granted") {
-            const { status } = await requestPermission();
+        if (!libraryPermissionResponse || !locationPermissionResponse) {
+            return;
+        }
+        if (libraryPermissionResponse.status !== "granted") {
+            const { status } = await requestLibraryPermission();
+            if (status !== "granted") return;
+        }
+        if (locationPermissionResponse.status !== "granted") {
+            const { status } = await requestLocationPermission();
             if (status !== "granted") return;
         }
 
@@ -91,7 +99,9 @@ export default function SelectScreen() {
         const isSelected = selected.includes(item.id);
         return (
             <Pressable
-                onPress={() => toggleSelect(item.id)}
+                onPress={() => {
+                    toggleSelect(item.id);
+                }}
                 style={styles.cell}
             >
                 <Image source={{ uri: item.uri }} style={styles.image} />
@@ -102,6 +112,33 @@ export default function SelectScreen() {
                 )}
             </Pressable>
         );
+    };
+
+    const extractSelectedMetadata = async (selectedIds: string[]) => {
+        const metadataList = [];
+
+        for (const id of selectedIds) {
+            const assetInfo = await MediaLibrary.getAssetInfoAsync(id);
+            let address = null;
+            if (assetInfo.location) {
+                const { latitude, longitude } = assetInfo.location;
+                const location = await Location.reverseGeocodeAsync({
+                    latitude,
+                    longitude,
+                });
+                address = location[0]?.formattedAddress;
+            }
+
+            metadataList.push({
+                id: assetInfo.id,
+                uri: assetInfo.uri,
+                filename: assetInfo.filename,
+                creationTime: new Date(assetInfo.creationTime),
+                location: address,
+            });
+        }
+
+        return metadataList;
     };
 
     return (
@@ -148,9 +185,14 @@ export default function SelectScreen() {
                 <Button
                     title="선택 완료"
                     disabled={selected.length === 0}
-                    onPress={() => {
-                        console.log("Selected assets: ", selected);
-                        router.replace("/chat");
+                    onPress={async () => {
+                        const metadata = await extractSelectedMetadata(
+                            selected
+                        );
+                        console.log("선택된 사진의 메타데이터:", metadata);
+
+                        // 예시: 이후 화면에 넘기거나 전송
+                        // router.replace({ pathname: "/chat", params: { data: JSON.stringify(metadata) } });
                     }}
                     style={{ flex: 4 }}
                 />

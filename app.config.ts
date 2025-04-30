@@ -74,6 +74,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 },
             },
         ],
+        [
+            "expo-location",
+            {
+                locationAlwaysAndWhenInUsePermission:
+                    "당신의 위치에 접근할 수 있도록 권한을 허용해주세요.",
+            },
+        ],
     ],
     experiments: {
         typedRoutes: true,

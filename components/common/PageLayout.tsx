@@ -1,5 +1,11 @@
 import { ThemedSafeView } from "@/components/common/ThemedSafeView";
-import { ScrollView, StyleSheet, View, RefreshControl } from "react-native";
+import {
+    ScrollView,
+    StyleSheet,
+    View,
+    RefreshControl,
+    Platform,
+} from "react-native";
 import { ThemedText } from "./ThemedText";
 import { BackIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
@@ -100,7 +106,7 @@ export default function PageLayout({
             {/* Body */}
             {scrollView ? (
                 <ScrollView
-                    style={[styles.body]}
+                    style={styles.body}
                     contentContainerStyle={style}
                     refreshControl={
                         onRefresh && (
@@ -125,6 +131,7 @@ export default function PageLayout({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        ...(Platform.OS === "android" && { paddingVertical: 20 }),
     },
     headerContainer: {
         flexDirection: "row",

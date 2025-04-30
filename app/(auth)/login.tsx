@@ -76,6 +76,5 @@ const styles = StyleSheet.create({
     containerStyle: {
         justifyContent: "space-between",
         alignItems: "center",
-        ...(Platform.OS === "android" && { marginVertical: 60 }),
     },
 });
