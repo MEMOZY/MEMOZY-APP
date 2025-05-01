@@ -1,9 +1,10 @@
+import { getUser, User } from "@/api/user";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Image,
     StyleSheet,
@@ -13,11 +14,25 @@ import {
 } from "react-native";
 
 export default function EditProfileScreen() {
-    const [currentNickname, setCurrentNickname] = useState("닉네임");
-    const [newNickname, setNewNickname] = useState("닉네임");
+    const [user, setUser] = useState<User | null>(null);
+    const [newNickname, setNewNickname] = useState<string>("");
     const { showSnackbar } = useUI();
 
-    const isNicknameChanged = currentNickname !== newNickname;
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await getUser();
+                setUser(userData);
+                setNewNickname(userData.nickname);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    const isNicknameChanged = user?.nickname !== newNickname;
 
     return (
         <PageLayout
@@ -31,7 +46,7 @@ export default function EditProfileScreen() {
             headerRight={
                 <TouchableOpacity
                     onPress={() => {
-                        setNewNickname(currentNickname);
+                        setNewNickname(user?.nickname || "");
                     }}
                     disabled={!isNicknameChanged}
                 >
@@ -59,7 +74,7 @@ export default function EditProfileScreen() {
                 />
                 <View style={styles.nicknameContainer}>
                     <TextInput
-                        placeholder="닉네임을 입력하세요"
+                        placeholder={user?.nickname}
                         placeholderTextColor={Colors.gray4}
                         value={newNickname}
                         onChangeText={(text) => setNewNickname(text)}
@@ -79,7 +94,6 @@ export default function EditProfileScreen() {
                 disabled={!isNicknameChanged}
                 onPress={() => {
                     if (isNicknameChanged) {
-                        setCurrentNickname(newNickname);
                         showSnackbar({
                             message: "닉네임이 변경되었습니다",
                             color: Colors.green,

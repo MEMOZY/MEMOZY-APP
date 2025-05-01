@@ -7,6 +7,7 @@ import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 interface FriendItemProps {
     name: string;
     imageUrl: string;
+    userId: string; // 추가된 userId prop
     onSwipeLeft?: () => void; // 왼쪽으로 밀었을 때 실행할 함수 추가
 }
 

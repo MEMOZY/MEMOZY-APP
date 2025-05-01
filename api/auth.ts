@@ -48,7 +48,7 @@ const getToken = async (
 const getTestToken = async () => {
     const response = await apiClient
         .post("auth/test-token", {
-            userId: 1,
+            userId: 2,
         })
         .catch((error) => {
             console.log(error);
