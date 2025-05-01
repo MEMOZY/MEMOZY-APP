@@ -14,6 +14,7 @@ import { useState } from "react";
 
 interface PageLayoutProps {
     children?: React.ReactNode;
+    containerStyle?: object;
     style?: object;
     headerTitle?: string;
     titleAlign?: "left" | "center";
@@ -21,12 +22,15 @@ interface PageLayoutProps {
     backText?: string;
     headerRight?: React.ReactNode;
     scrollView?: boolean;
+    safeArea?: boolean;
+    padding?: number;
     onRefresh?: () => Promise<void>; // 추가된 prop
     onBack?: () => void; // 뒤로가기 핸들러
 }
 
 export default function PageLayout({
     children,
+    containerStyle,
     style,
     headerTitle,
     titleAlign = "center",
@@ -34,6 +38,8 @@ export default function PageLayout({
     backText,
     headerRight,
     scrollView = false,
+    safeArea = true,
+    padding = 30,
     onRefresh, // 새로고침 핸들러
     onBack = () => router.back(), // 기본적으로 뒤로가기
 }: PageLayoutProps) {
@@ -48,9 +54,17 @@ export default function PageLayout({
     };
 
     return (
-        <ThemedSafeView style={styles.container}>
+        <ThemedSafeView
+            style={[styles.container, containerStyle]}
+            useSafeArea={safeArea}
+        >
             {(headerTitle || hasBack) && (
-                <View style={styles.headerContainer}>
+                <View
+                    style={[
+                        styles.headerContainer,
+                        { paddingHorizontal: padding },
+                    ]}
+                >
                     {hasBack && (
                         <View style={styles.backContainer}>
                             <BackIcon onPress={onBack} />
@@ -106,7 +120,7 @@ export default function PageLayout({
             {/* Body */}
             {scrollView ? (
                 <ScrollView
-                    style={styles.body}
+                    style={[styles.body, { paddingHorizontal: padding }]}
                     contentContainerStyle={style}
                     refreshControl={
                         onRefresh && (
@@ -122,7 +136,17 @@ export default function PageLayout({
                     {children}
                 </ScrollView>
             ) : (
-                <View style={[styles.body, style]}>{children}</View>
+                <View
+                    style={[
+                        styles.body,
+                        style,
+                        {
+                            paddingHorizontal: padding,
+                        },
+                    ]}
+                >
+                    {children}
+                </View>
             )}
         </ThemedSafeView>
     );

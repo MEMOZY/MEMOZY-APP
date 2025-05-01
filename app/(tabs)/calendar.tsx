@@ -3,6 +3,7 @@ import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import AddLogButton from "@/components/logs/AddLogButton";
+import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
@@ -33,7 +34,8 @@ export default function CalendarScreen() {
 
     return (
         <>
-            <PageLayout>
+            <DetailLog />
+            {/* <PageLayout>
                 {!isReady && <View style={styles.loadingScreen} />}
                 <CalendarList
                     style={styles.calendarContainer}
@@ -59,6 +61,7 @@ export default function CalendarScreen() {
                     )}
                 />
             </PageLayout>
+
             {modalVisible && (
                 <Modal
                     visible={modalVisible}
@@ -100,7 +103,7 @@ export default function CalendarScreen() {
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
-            )}
+            )} */}
         </>
     );
 }
