@@ -15,6 +15,16 @@ export interface Memory {
         | "COUSTOM";
     memoryItems: MemoryItem[];
     sharedUserIds: number[];
+    sessionId: string;
+}
+
+export interface PostMemoryPayload {
+    title: string;
+    category: Memory["category"];
+    startDate: string;
+    endDate: string;
+    sessionId: string;
+    sharedUserId: number[];
 }
 
 export interface MemoryItem {
@@ -83,7 +93,8 @@ const getMemories = async () => {
     return response.data;
 };
 
-const postMemory = async (memory: Memory) => {
+const postMemory = async (memory: PostMemoryPayload) => {
+    console.log("postMemory", memory);
     const response = await apiClient
         .post("memory", memory, {
             withAuth: true,

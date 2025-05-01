@@ -22,6 +22,8 @@ export default function ChatScreen() {
     const [step, setStep] = useState(0);
     const sessionId = useGlobalSearchParams().sessionId as string;
     const length = useGlobalSearchParams().length;
+    const startDate = useGlobalSearchParams().startDate as string;
+    const endDate = useGlobalSearchParams().endDate as string;
     const totalSteps = length ? parseInt(length as string) : 0;
     const isEnd = step === totalSteps;
     const [messages, setMessages] = useState<Message[]>([]);
@@ -44,7 +46,7 @@ export default function ChatScreen() {
                     {
                         isMine: false,
                         text: res.message,
-                        imageUrl: res.imageUrl,
+                        imageUrl: res.presignedUrl,
                         memoryItemTempId: res.memoryItemTempId,
                     },
                 ]);
@@ -160,19 +162,44 @@ export default function ChatScreen() {
 
                             console.log("res", res);
 
-                            setMessages((prev) => [
-                                ...prev.filter((m) => m.text !== "__TYPING__"),
-                                {
-                                    isMine: false,
-                                    text: res.message,
-                                    imageUrl: res.imageUrl || undefined,
-                                    memoryItemTempId: res.memoryItemTempId,
-                                },
-                            ]);
-                            if (currentItemTempId !== res.memoryItemTempId) {
+                            if (res.type === "done") {
+                                router.replace({
+                                    pathname: "/save",
+                                    params: {
+                                        sessionId: sessionId,
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                    },
+                                });
+                            }
+
+                            if (res.type === "reply") {
+                                setMessages((prev) => [
+                                    ...prev.filter(
+                                        (m) => m.text !== "__TYPING__"
+                                    ),
+                                    {
+                                        isMine: false,
+                                        text: res.message,
+                                        imageUrl: undefined,
+                                        memoryItemTempId: res.memoryItemId,
+                                    },
+                                ]);
+                            } else if (res.type === "question") {
+                                setMessages((prev) => [
+                                    ...prev.filter(
+                                        (m) => m.text !== "__TYPING__"
+                                    ),
+                                    {
+                                        isMine: false,
+                                        text: res.message,
+                                        imageUrl: res.presignedUrl,
+                                        memoryItemTempId: res.memoryItemTempId,
+                                    },
+                                ]);
+                                setCurrentItemTempId(res.memoryItemTempId);
                                 setStep((prev) => prev + 1);
                             }
-                            setCurrentItemTempId(res.memoryItemId);
                         } catch (e) {
                             showModal({
                                 title: "오류",

@@ -1,16 +1,31 @@
-import { DownChevronIcon } from "@/assets/images/icons";
+import { Memory, postMemory } from "@/api/memory";
 import Button from "@/components/common/Button";
 import PageLayout from "@/components/common/PageLayout";
-import { ThemedText } from "@/components/common/ThemedText";
 import Titled from "@/components/common/Titled";
 import FriendList from "@/components/friend/FriendList";
+import CategorySelector from "@/components/save/CategorySelector";
 import { DateRangePicker } from "@/components/save/DateRangePicker";
 import { Colors } from "@/constants/Colors";
-import { router } from "expo-router";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useUI } from "@/hooks/useUI";
+import { formatDateYMD } from "@/utils/formatDate";
+import { router, useGlobalSearchParams } from "expo-router";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
 export default function SaveScreen() {
+    const glob = useGlobalSearchParams();
+    const { startDate, endDate, sessionId } = glob;
+    const [title, setTitle] = useState("");
+    const [category, setCategory] = useState<Memory["category"] | null>(null);
+    const [selectedDates, setSelectedDates] = useState<{
+        startDate: Date;
+        endDate: Date;
+    }>({
+        startDate: startDate ? new Date(startDate as string) : new Date(),
+        endDate: endDate ? new Date(endDate as string) : new Date(),
+    });
+    const { showSnackbar } = useUI();
     return (
         <PageLayout
             headerTitle="저장"
@@ -31,24 +46,23 @@ export default function SaveScreen() {
                             autoCorrect={false}
                             autoComplete="off"
                             maxLength={20}
+                            value={title}
+                            onChangeText={(text) => {
+                                setTitle(text);
+                            }}
                         />
                     </View>
                 </Titled>
-                <DateRangePicker />
+                <DateRangePicker
+                    startDate={selectedDates.startDate.toString()}
+                    endDate={selectedDates.endDate.toString()}
+                    onChange={(range) => {
+                        setSelectedDates(range);
+                    }}
+                />
 
                 <Titled title="카테고리">
-                    <TouchableOpacity>
-                        <View style={styles.category}>
-                            <ThemedText
-                                lightColor={Colors.gray4}
-                                darkColor={Colors.gray4}
-                                type="body2b"
-                            >
-                                없음
-                            </ThemedText>
-                            <DownChevronIcon />
-                        </View>
-                    </TouchableOpacity>
+                    <CategorySelector value={category} onChange={setCategory} />
                 </Titled>
 
                 <Titled title="함께하는 친구">
@@ -62,8 +76,33 @@ export default function SaveScreen() {
             </View>
             <Button
                 title="저장하기"
-                onPress={() => {
-                    router.replace("/(tabs)");
+                onPress={async () => {
+                    if (!category || !title) {
+                        showSnackbar({
+                            message: "입력되지 않은 정보가 있습니다.",
+                            color: Colors.red,
+                        });
+                        return;
+                    }
+                    await postMemory({
+                        title: title,
+                        category: category!,
+                        startDate: formatDateYMD(selectedDates.startDate),
+                        endDate: formatDateYMD(selectedDates.endDate),
+                        sessionId: sessionId as string,
+                        sharedUserId: [],
+                    })
+                        .then(() => {
+                            router.replace("/(tabs)");
+                        })
+                        .catch((error) => {
+                            console.error("저장 오류:", error);
+                            showSnackbar({
+                                message:
+                                    "저장에 실패했습니다. 다시 시도해주세요.",
+                                color: Colors.red,
+                            });
+                        });
                 }}
             />
         </PageLayout>

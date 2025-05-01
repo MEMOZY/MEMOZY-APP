@@ -215,12 +215,20 @@ export default function SelectScreen() {
                                 })
                             );
                             const sessionId = await postMemoryTemp(memoryItems);
+                            const startDate = new Date(
+                                metadata[0].creationTime
+                            ).toISOString();
+                            const endDate = new Date(
+                                metadata[metadata.length - 1].creationTime
+                            ).toISOString();
                             setIsSubmitting(false);
                             router.replace({
                                 pathname: "/(chat-flow)/chat",
                                 params: {
                                     sessionId: sessionId,
                                     length: selected.length,
+                                    startDate: startDate,
+                                    endDate: endDate,
                                 },
                             });
                         } catch (error) {
