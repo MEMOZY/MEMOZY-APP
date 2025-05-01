@@ -40,7 +40,7 @@ function LogItem({
                 <TouchableOpacity onPress={onOptionPress}>
                     <DotsIcon />
                 </TouchableOpacity>
-                {isOptionOpen && <LogOptions onOptionPress={onOptionPress} />}
+                {isOptionOpen && <LogOptions memoryId={id} />}
             </View>
             <ThemedText
                 type="caption"

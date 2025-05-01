@@ -90,7 +90,7 @@ export default function SaveScreen() {
                         startDate: formatDateYMD(selectedDates.startDate),
                         endDate: formatDateYMD(selectedDates.endDate),
                         sessionId: sessionId as string,
-                        sharedUserId: [],
+                        sharedUsersId: [],
                     })
                         .then(() => {
                             router.replace("/(tabs)");

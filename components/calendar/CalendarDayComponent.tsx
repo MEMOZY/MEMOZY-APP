@@ -8,10 +8,18 @@ import { DayState } from "react-native-calendars/src/types";
 interface CalendarDayProps {
     date?: DateData;
     state?: DayState;
+    count?: number;
+    imageUrl?: string;
     onDayPress?: (date: DateData) => void;
 }
 
-function CalendarDayComponent({ date, state, onDayPress }: CalendarDayProps) {
+function CalendarDayComponent({
+    date,
+    state,
+    count = 0,
+    imageUrl,
+    onDayPress,
+}: CalendarDayProps) {
     if (!date) return null;
     const dayOfWeek = new Date(date.dateString).getDay();
 
@@ -48,20 +56,24 @@ function CalendarDayComponent({ date, state, onDayPress }: CalendarDayProps) {
                 </ThemedText>
 
                 <View style={styles.dayImageContainer}>
-                    <Image
-                        style={styles.dayImage}
-                        source={{
-                            uri: "https://example.com/image.png",
-                        }}
-                    />
-                    <View style={styles.dayImageOverlay}>
-                        <ThemedText
-                            type="body1b"
-                            style={{ color: Colors.white }}
-                        >
-                            +2
-                        </ThemedText>
-                    </View>
+                    {count > 0 && (
+                        <>
+                            <Image
+                                style={styles.dayImage}
+                                source={{
+                                    uri: imageUrl,
+                                }}
+                            />
+                            <View style={styles.dayImageOverlay}>
+                                <ThemedText
+                                    type="body1b"
+                                    style={{ color: Colors.white }}
+                                >
+                                    +{count}
+                                </ThemedText>
+                            </View>
+                        </>
+                    )}
                 </View>
             </View>
         </TouchableOpacity>

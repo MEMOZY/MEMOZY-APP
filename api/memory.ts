@@ -15,7 +15,6 @@ export interface Memory {
         | "COUSTOM";
     memoryItems: MemoryItem[];
     sharedUserIds: number[];
-    sessionId: string;
 }
 
 export interface PostMemoryPayload {
@@ -24,7 +23,7 @@ export interface PostMemoryPayload {
     startDate: string;
     endDate: string;
     sessionId: string;
-    sharedUserId: number[];
+    sharedUsersId: number[];
 }
 
 export interface MemoryItem {

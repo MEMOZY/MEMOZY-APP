@@ -1,15 +1,17 @@
 import { Colors } from "@/constants/Colors";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
+import { deleteMemory } from "@/api/memory";
+import { router } from "expo-router";
 
 interface LogOptionsProps {
-    onOptionPress?: () => void;
+    memoryId: number;
 }
 
-export default function LogOptions({ onOptionPress }: LogOptionsProps) {
+export default function LogOptions({ memoryId }: LogOptionsProps) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => {
                     console.log("Edit pressed");
                     onOptionPress?.();
@@ -23,11 +25,12 @@ export default function LogOptions({ onOptionPress }: LogOptionsProps) {
                     수정
                 </ThemedText>
             </TouchableOpacity>
-            <View style={styles.line} />
+            <View style={styles.line} /> */}
             <TouchableOpacity
                 onPress={() => {
                     console.log("Delete pressed");
-                    onOptionPress?.();
+                    deleteMemory(memoryId);
+                    router.reload();
                 }}
             >
                 <ThemedText

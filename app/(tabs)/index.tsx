@@ -1,3 +1,4 @@
+import { getMemories, Memory } from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import Titled from "@/components/common/Titled";
 import FriendList from "@/components/friend/FriendList";
@@ -5,30 +6,25 @@ import AddLogItem from "@/components/logs/AddLogItem";
 import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
     const [opendOptionId, setOpendOptionId] = useState<number | null>(null);
     const [selectedLog, setSelectedLog] = useState<number | null>(null);
-    const logs = [
-        {
-            id: 1,
-            imageUrl: "https://placehold.co/400",
-            title: "서울 여행",
-            startDate: new Date(),
-            endDate: new Date(),
-            description: "서울 여행을 다녀왔습니다.",
-        },
-        {
-            id: 2,
-            imageUrl: "https://placehold.co/400",
-            title: "부산 여행",
-            startDate: new Date(),
-            endDate: new Date(),
-            description: "부산 여행을 다녀왔습니다.",
-        },
-    ];
+    const [memories, setMemories] = useState<Memory[]>([]);
+
+    useEffect(() => {
+        const fetchMemories = async () => {
+            try {
+                const data = await getMemories();
+                setMemories(data.memories);
+            } catch (error) {
+                console.error("Error fetching memories:", error);
+            }
+        };
+        fetchMemories();
+    }, []);
 
     const handleOptionPress = (id: number) => {
         setOpendOptionId((prev) => (prev === id ? null : id));
@@ -39,7 +35,7 @@ export default function HomeScreen() {
             onBackPress={() => {
                 setSelectedLog(null);
             }}
-            memoryId={selectedLog}
+            memory={memories.find((log) => log.id === selectedLog)!}
         />
     ) : (
         <PageLayout
@@ -48,40 +44,42 @@ export default function HomeScreen() {
             style={{ gap: 20 }}
             scrollView
             onRefresh={async () => {
-                // 여기에 새로고침 로직을 추가하세요.
-                console.log("새로고침");
+                try {
+                    const data = await getMemories();
+                    setMemories(data.memories);
+                } catch (error) {
+                    console.error("Error fetching memories:", error);
+                }
             }}
         >
             <Titled title="Friends">
                 <FriendList
-                    friends={[
-                        "https://example.com/image1.jpg",
-                        "https://example.com/image2.jpg",
-                        "https://example.com/image3.jpg",
-                    ]}
+                    friends={[]}
                     onAddFriend={() => {
                         router.push("/(screens)/friends");
                     }}
                 />
             </Titled>
+
             <Titled title="Recents" gap={20}>
                 <AddLogItem />
-                {logs.map((log) => (
-                    <LogItem
-                        key={log.id}
-                        id={log.id}
-                        imageUrl={log.imageUrl}
-                        title={log.title}
-                        startDate={log.startDate}
-                        endDate={log.endDate}
-                        description={log.description}
-                        onOptionPress={() => handleOptionPress(log.id)}
-                        isOptionOpen={opendOptionId === log.id}
-                        onPress={() => {
-                            setSelectedLog(log.id);
-                        }}
-                    />
-                ))}
+                {memories.length > 0 &&
+                    memories.map((log) => (
+                        <LogItem
+                            key={log.id}
+                            id={log.id}
+                            imageUrl={log.memoryItems[0].imageUrl}
+                            title={log.title}
+                            startDate={new Date(log.startDate)}
+                            endDate={new Date(log.endDate)}
+                            description={log.memoryItems[0].content}
+                            onOptionPress={() => handleOptionPress(log.id)}
+                            isOptionOpen={opendOptionId === log.id}
+                            onPress={() => {
+                                setSelectedLog(log.id);
+                            }}
+                        />
+                    ))}
             </Titled>
         </PageLayout>
     );

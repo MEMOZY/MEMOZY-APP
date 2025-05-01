@@ -3,13 +3,15 @@ import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { DotsIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
+import { Memory } from "@/api/memory";
+import { formatDateRange } from "@/utils/formatDate";
 
 interface DetailLogProps {
     onBackPress: () => void;
-    memoryId: number;
+    memory: Memory;
 }
 
-export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
+export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
     return (
         <PageLayout
             padding={10}
@@ -29,12 +31,15 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                     borderRadius: 12,
                     paddingVertical: 0,
                     marginBottom: 30,
+                    paddingTop: 20,
                     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.1)",
                 }}
+                safeArea={false}
                 hasBack
                 onBack={onBackPress}
                 backText="이전"
-                headerTitle="기록 상세"
+                headerTitle={memory.title}
+                titleAlign="left"
                 headerRight={<DotsIcon />}
                 style={{
                     gap: 20,
@@ -46,48 +51,40 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                         lightColor={Colors.gray4}
                         darkColor={Colors.gray4}
                     >
-                        3월 21일 (금) - 3월 26일 (수)
+                        {formatDateRange(
+                            new Date(memory.startDate),
+                            new Date(memory.endDate)
+                        )}
                     </ThemedText>
-                    <View
-                        style={{
-                            gap: 10,
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                        }}
-                    >
+                    {memory.sharedUserIds.length > 0 && (
                         <View
                             style={{
-                                backgroundColor: Colors.gray3,
-                                borderRadius: 8,
-                                paddingHorizontal: 6,
-                                alignSelf: "flex-start",
+                                gap: 10,
+                                flexDirection: "row",
+                                flexWrap: "wrap",
                             }}
                         >
-                            <ThemedText
-                                type="caption"
-                                lightColor={Colors.gray6}
-                                darkColor={Colors.gray6}
-                            >
-                                seokkkk
-                            </ThemedText>
+                            {memory.sharedUserIds.map((userId) => (
+                                <View
+                                    key={userId}
+                                    style={{
+                                        backgroundColor: Colors.gray3,
+                                        borderRadius: 8,
+                                        paddingHorizontal: 6,
+                                        alignSelf: "flex-start",
+                                    }}
+                                >
+                                    <ThemedText
+                                        type="caption"
+                                        lightColor={Colors.gray6}
+                                        darkColor={Colors.gray6}
+                                    >
+                                        {userId}
+                                    </ThemedText>
+                                </View>
+                            ))}
                         </View>
-                        <View
-                            style={{
-                                backgroundColor: Colors.gray3,
-                                borderRadius: 8,
-                                paddingHorizontal: 6,
-                                alignSelf: "flex-start",
-                            }}
-                        >
-                            <ThemedText
-                                type="caption"
-                                lightColor={Colors.gray6}
-                                darkColor={Colors.gray6}
-                            >
-                                gaguriee
-                            </ThemedText>
-                        </View>
-                    </View>
+                    )}
                 </View>
                 <ScrollView
                     style={{
@@ -98,72 +95,31 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                         padding: 20,
                     }}
                 >
-                    <View style={{ gap: 12, alignItems: "center" }}>
-                        <Image
-                            source={{
-                                uri: "https://example.com/image.jpg",
-                            }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                                backgroundColor: Colors.gray3,
-                                borderRadius: 12,
-                            }}
-                        />
-                        <ThemedText
-                            type="body1"
-                            lightColor={Colors.gray6}
-                            darkColor={Colors.gray6}
+                    {memory.memoryItems.map((item) => (
+                        <View
+                            style={{ gap: 12, alignItems: "center" }}
+                            key={item.sequence}
                         >
-                            나는 21일 서울에 올라갔다. 처음 간 곳은 한강! 날씨도
-                            따뜻하고 너무 좋았다~나는 21일 서울에 올라갔다. 처음
-                            간 곳은 한강! 날씨도 따뜻하고 너무 좋았다~
-                        </ThemedText>
-                    </View>
-                    <View style={{ gap: 12, alignItems: "center" }}>
-                        <Image
-                            source={{
-                                uri: "https://example.com/image.jpg",
-                            }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                                backgroundColor: Colors.gray3,
-                                borderRadius: 12,
-                            }}
-                        />
-                        <ThemedText
-                            type="body1"
-                            lightColor={Colors.gray6}
-                            darkColor={Colors.gray6}
-                        >
-                            나는 21일 서울에 올라갔다. 처음 간 곳은 한강! 날씨도
-                            따뜻하고 너무 좋았다~나는 21일 서울에 올라갔다. 처음
-                            간 곳은 한강! 날씨도 따뜻하고 너무 좋았다~
-                        </ThemedText>
-                    </View>
-                    <View style={{ gap: 12, alignItems: "center" }}>
-                        <Image
-                            source={{
-                                uri: "https://example.com/image.jpg",
-                            }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                                backgroundColor: Colors.gray3,
-                                borderRadius: 12,
-                            }}
-                        />
-                        <ThemedText
-                            type="body1"
-                            lightColor={Colors.gray6}
-                            darkColor={Colors.gray6}
-                        >
-                            나는 21일 서울에 올라갔다. 처음 간 곳은 한강! 날씨도
-                            따뜻하고 너무 좋았다~나는 21일 서울에 올라갔다. 처음
-                            간 곳은 한강! 날씨도 따뜻하고 너무 좋았다~
-                        </ThemedText>
-                    </View>
+                            <Image
+                                source={{
+                                    uri: item.imageUrl,
+                                }}
+                                style={{
+                                    width: 200,
+                                    height: 200,
+                                    backgroundColor: Colors.gray3,
+                                    borderRadius: 12,
+                                }}
+                            />
+                            <ThemedText
+                                type="body1"
+                                lightColor={Colors.gray6}
+                                darkColor={Colors.gray6}
+                            >
+                                {item.content}
+                            </ThemedText>
+                        </View>
+                    ))}
                 </ScrollView>
             </PageLayout>
         </PageLayout>
