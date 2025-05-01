@@ -1,17 +1,19 @@
+import { getMemories, Memory } from "@/api/memory";
 import CalendarDayComponent from "@/components/calendar/CalendarDayComponent";
 import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import AddLogButton from "@/components/logs/AddLogButton";
+import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
+import { formatDate } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import {
     Dimensions,
     Modal,
     Pressable,
     StyleSheet,
-    Text,
     TouchableWithoutFeedback,
     View,
 } from "react-native";
@@ -21,6 +23,20 @@ export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [selectedLog, setSelectedLog] = useState<number | null>(null);
+    const [memories, setMemories] = useState<Memory[]>([]);
+
+    useEffect(() => {
+        const fetchMemories = async () => {
+            try {
+                const data = await getMemories();
+                setMemories(data.memories);
+            } catch (error) {
+                console.error("Error fetching memories:", error);
+            }
+        };
+        fetchMemories();
+    }, []);
 
     useEffect(() => {
         setTimeout(() => setIsReady(true), 300); // 300ms 후 렌더링
@@ -29,38 +45,60 @@ export default function CalendarScreen() {
     const handleDayPress = (day: string) => {
         setSelectedDate(new Date(day));
         setModalVisible(true);
-        console.log("Selected day:", new Date(day));
     };
 
     return (
         <>
-            <PageLayout>
-                {!isReady && <View style={styles.loadingScreen} />}
-                <CalendarList
-                    style={styles.calendarContainer}
-                    theme={{
-                        backgroundColor: Colors.white,
+            {selectedLog ? (
+                <DetailLog
+                    memory={memories.find((log) => log.id === selectedLog)!}
+                    onBackPress={() => {
+                        setSelectedLog(null);
+                        console.log("Back button pressed");
                     }}
-                    futureScrollRange={0}
-                    initialNumToRender={1}
-                    horizontal={true}
-                    pagingEnabled={true}
-                    hideExtraDays={false}
-                    calendarWidth={Dimensions.get("window").width - 20}
-                    customHeader={CalendarHeader}
-                    dayComponent={({ date, state }) => (
-                        <CalendarDayComponent
-                            date={date}
-                            state={state}
-                            onDayPress={() => {
-                                if (!date) return;
-                                handleDayPress(date.dateString);
-                            }}
-                        />
-                    )}
                 />
-            </PageLayout>
-            {modalVisible && (
+            ) : (
+                <PageLayout>
+                    {!isReady && <View style={styles.loadingScreen} />}
+                    <CalendarList
+                        style={styles.calendarContainer}
+                        theme={{
+                            backgroundColor: Colors.white,
+                        }}
+                        futureScrollRange={0}
+                        initialNumToRender={1}
+                        horizontal={true}
+                        pagingEnabled={true}
+                        hideExtraDays={false}
+                        calendarWidth={Dimensions.get("window").width - 20}
+                        customHeader={CalendarHeader}
+                        dayComponent={({ date, state }) => (
+                            <CalendarDayComponent
+                                date={date}
+                                state={state}
+                                count={
+                                    memories.filter(
+                                        (log) =>
+                                            log.startDate === date!.dateString
+                                    ).length
+                                }
+                                imageUrl={
+                                    memories.filter(
+                                        (log) =>
+                                            log.startDate === date!.dateString
+                                    )[0]?.memoryItems[0].imageUrl
+                                }
+                                onDayPress={() => {
+                                    if (!date) return;
+                                    handleDayPress(date.dateString);
+                                }}
+                            />
+                        )}
+                    />
+                </PageLayout>
+            )}
+
+            {modalVisible && !selectedLog && (
                 <Modal
                     visible={modalVisible}
                     animationType="fade"
@@ -74,27 +112,44 @@ export default function CalendarScreen() {
                         <View style={styles.modalOverlay}>
                             <Pressable style={styles.modalContentContainer}>
                                 <ThemedText type="title">
-                                    2025년 3월 11일 (금)
+                                    {formatDate(selectedDate!)}
                                 </ThemedText>
-                                <LogItem
-                                    id={1}
-                                    title="운동"
-                                    imageUrl="https://example.com/image.jpg"
-                                    startDate={new Date("2025-03-11T12:00:00Z")}
-                                    endDate={new Date("2025-03-11T13:00:00Z")}
-                                    description="운동을 했습니다."
-                                />
-                                <LogItem
-                                    id={1}
-                                    title="운동"
-                                    imageUrl="https://example.com/image.jpg"
-                                    startDate={new Date("2025-03-11T12:00:00Z")}
-                                    endDate={new Date("2025-03-11T13:00:00Z")}
-                                    description="운동을 했습니다."
-                                />
+                                {memories.length > 0 &&
+                                    memories.map(
+                                        (log) =>
+                                            selectedDate!.toISOString() ===
+                                                new Date(
+                                                    log.startDate
+                                                ).toISOString() && (
+                                                <LogItem
+                                                    key={log.id}
+                                                    id={log.id}
+                                                    imageUrl={
+                                                        log.memoryItems[0]
+                                                            .imageUrl
+                                                    }
+                                                    title={log.title}
+                                                    startDate={
+                                                        new Date(log.startDate)
+                                                    }
+                                                    endDate={
+                                                        new Date(log.endDate)
+                                                    }
+                                                    description={
+                                                        log.memoryItems[0]
+                                                            .content
+                                                    }
+                                                    onPress={() => {
+                                                        setSelectedLog(log.id);
+                                                        setModalVisible(false);
+                                                    }}
+                                                />
+                                            )
+                                    )}
                                 <AddLogButton
                                     onPress={() => {
                                         setModalVisible(false);
+                                        setSelectedLog(null);
                                     }}
                                 />
                             </Pressable>

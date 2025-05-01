@@ -3,8 +3,18 @@ import ChatIconSwitch from "./ChatIconSwitch";
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
 
-export default function ChatInputBar() {
+interface ChatInputBarProps {
+    onSend: (message: string) => void;
+}
+
+export default function ChatInputBar({ onSend }: ChatInputBarProps) {
     const [message, setMessage] = useState("");
+
+    const handleSend = () => {
+        onSend(message.trim());
+        setMessage("");
+    };
+
     return (
         <View style={styles.chatInputContainer}>
             <TextInput
@@ -16,8 +26,10 @@ export default function ChatInputBar() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 autoComplete="off"
+                onSubmitEditing={handleSend}
+                returnKeyType="send"
             />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSend}>
                 <ChatIconSwitch showSend={message.length > 0} />
             </TouchableOpacity>
         </View>

@@ -1,6 +1,7 @@
-import { Colors } from "@/constants/Colors";
+import { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
+import { Colors } from "@/constants/Colors";
 
 interface ChatMessageProps {
     isMine?: boolean;
@@ -13,15 +14,32 @@ export default function ChatMessage({
     imageUrl,
     text,
 }: ChatMessageProps) {
+    const [dots, setDots] = useState("대화를 작성하는 중");
+    const isTyping = text === "__TYPING__";
+
+    useEffect(() => {
+        if (!isTyping) return;
+
+        const interval = setInterval(() => {
+            setDots((prev) =>
+                prev === "대화를 작성하는 중..."
+                    ? "대화를 작성하는 중"
+                    : prev + "."
+            );
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, [isTyping]);
+
     return (
         <View
             style={{ gap: 10, alignSelf: isMine ? "flex-end" : "flex-start" }}
         >
             {imageUrl && (
                 <Image
-                    source={{ uri: "https://example.com/image.jpg" }}
+                    source={{ uri: imageUrl }}
                     style={styles.image}
-                    resizeMode="contain"
+                    resizeMode="cover"
                 />
             )}
             <View
@@ -32,7 +50,7 @@ export default function ChatMessage({
                     },
                 ]}
             >
-                <ThemedText type="body2">{text}</ThemedText>
+                <ThemedText type="body2">{isTyping ? dots : text}</ThemedText>
             </View>
         </View>
     );
@@ -47,7 +65,6 @@ const styles = StyleSheet.create({
     },
     messageContainer: {
         padding: 10,
-        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         borderRadius: 12,
         alignSelf: "flex-start",
     },

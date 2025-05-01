@@ -49,3 +49,7 @@ export function formatTime(date: Date): string {
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
 }
+
+export const formatDateYMD = (date: Date): string => {
+    return date.toISOString().split("T")[0];
+};

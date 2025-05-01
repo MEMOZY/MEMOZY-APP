@@ -15,7 +15,6 @@ export default function AddLogButton({ onPress }: AddLogButtonProps) {
     async function handlePress() {
         if (onPress) {
             onPress();
-            return;
         }
 
         const mediaPermission = await MediaLibrary.getPermissionsAsync();
