@@ -45,12 +45,30 @@ const getToken = async (
     return response.data;
 };
 
-const getNewToken = async (refreshToken: string) => {
-    try {
-        return "123";
-    } catch (error) {
-        return "";
+const reissueToken = async (refreshToken: string) => {
+    const response = await apiClient
+        .post(
+            "auth/reissue",
+            {
+                refreshToken,
+            },
+            {
+                withAuth: true,
+            }
+        )
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("토큰 재발급에 실패했습니다.");
     }
+
+    if (response.status !== 200) {
+        throw new Error("토큰 재발급에 실패했습니다.");
+    }
+
+    return response.data;
 };
 
-export { getSocialAccessToken, getNewToken, getToken };
+export { getSocialAccessToken, getToken, reissueToken };
