@@ -16,6 +16,8 @@ import {
 import { CheckIcon } from "@/assets/images/icons";
 import Button from "@/components/common/Button";
 import { useUI } from "@/hooks/useUI";
+import { getPresignedUrls, uploadToPresignedUrl } from "@/api/file";
+import { MemoryItem, postMemoryTemp } from "@/api/memory";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -191,8 +193,29 @@ export default function SelectScreen() {
                         );
                         console.log("선택된 사진의 메타데이터:", metadata);
 
-                        // 예시: 이후 화면에 넘기거나 전송
-                        // router.replace({ pathname: "/chat", params: { data: JSON.stringify(metadata) } });
+                        try {
+                            const presignedUrls = await getPresignedUrls(
+                                metadata
+                            );
+                            await uploadToPresignedUrl(metadata, presignedUrls);
+                            const memoryItems: MemoryItem[] = presignedUrls.map(
+                                (
+                                    item: { preSignedUrl: string },
+                                    index: string
+                                ) => ({
+                                    imageUrl: item.preSignedUrl,
+                                    content: "",
+                                    sequence: index,
+                                })
+                            );
+                            const sessionId = await postMemoryTemp(memoryItems);
+                        } catch (error) {
+                            console.error("파일 업로드 오류:", error);
+                            showSnackbar({
+                                message: "파일 업로드에 실패했습니다.",
+                                color: Colors.red,
+                            });
+                        }
                     }}
                     style={{ flex: 4 }}
                 />

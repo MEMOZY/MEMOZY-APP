@@ -1,4 +1,4 @@
-import { getSocialAccessToken, getToken } from "@/api/auth";
+import { getSocialAccessToken, getTestToken, getToken } from "@/api/auth";
 import { AppleIcon, GoogleIcon, KakaoIcon, Logo } from "@/assets/images/icons";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
@@ -21,6 +21,19 @@ export default function LoginScreen() {
                 platform,
                 socialAccessToken
             );
+            if (!accessToken || !refreshToken) {
+                throw new Error("로그인에 실패했습니다.");
+            }
+            console.log(accessToken, refreshToken);
+            await login(accessToken, refreshToken);
+        } catch (error) {
+            console.error("Login failed", error);
+        }
+    };
+
+    const handleTestLogin = async () => {
+        try {
+            const { accessToken, refreshToken } = await getTestToken();
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");
             }
@@ -60,12 +73,7 @@ export default function LoginScreen() {
                     label="애플 계정으로 로그인"
                     backgroundColor={Colors.gray6}
                     textColor="white"
-                    onPress={() => {
-                        login(
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-                        );
-                    }}
+                    onPress={() => handleTestLogin()}
                 />
             </View>
         </PageLayout>

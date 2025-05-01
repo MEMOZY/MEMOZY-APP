@@ -18,7 +18,7 @@ export interface Memory {
 }
 
 export interface MemoryItem {
-    fileKey: string;
+    imageUrl: string;
     content: string;
     sequence: number;
 }
@@ -105,9 +105,13 @@ const postMemory = async (memory: Memory) => {
 
 const postMemoryTemp = async (memoryItems: MemoryItem[]) => {
     const response = await apiClient
-        .post("memory/temp", memoryItems, {
-            withAuth: true,
-        })
+        .post(
+            "memory/temp",
+            { memoryItems: memoryItems },
+            {
+                withAuth: true,
+            }
+        )
         .catch((error) => {
             console.log(error);
         });
@@ -120,7 +124,7 @@ const postMemoryTemp = async (memoryItems: MemoryItem[]) => {
         throw new Error("메모리 임시저장에 실패했습니다.");
     }
 
-    return response.data;
+    return response.data.sessionId;
 };
 
 const getMemoryTempItems = async (sessionId: string) => {

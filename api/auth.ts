@@ -45,6 +45,26 @@ const getToken = async (
     return response.data;
 };
 
+const getTestToken = async () => {
+    const response = await apiClient
+        .post("auth/test-token", {
+            userId: 1,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("로그인에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("로그인에 실패했습니다.");
+    }
+
+    return response.data;
+};
+
 const reissueToken = async (refreshToken: string) => {
     const response = await apiClient
         .post(
@@ -71,4 +91,4 @@ const reissueToken = async (refreshToken: string) => {
     return response.data;
 };
 
-export { getSocialAccessToken, getToken, reissueToken };
+export { getSocialAccessToken, getToken, reissueToken, getTestToken };
