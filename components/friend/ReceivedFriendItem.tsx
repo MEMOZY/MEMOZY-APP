@@ -6,11 +6,13 @@ import { TrashIcon } from "@/assets/images/icons";
 interface ReceivedFriendItemProps {
     name: string;
     imageUrl: string;
+    userId: string;
 }
 
 export function ReceivedFriendItem({
     name,
     imageUrl,
+    userId,
 }: ReceivedFriendItemProps) {
     return (
         <View style={styles.friendContainer}>

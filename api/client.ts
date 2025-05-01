@@ -58,7 +58,7 @@ async function refreshToken() {
     const { login } = useAuth();
     try {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
-        const res = await apiClient.post("/auth/refresh", {
+        const res = await apiClient.post("/auth/reissue", {
             headers: { Authorization: `Bearer ${refreshToken}` },
             withAuth: false,
         });

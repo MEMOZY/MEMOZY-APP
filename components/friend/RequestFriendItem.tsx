@@ -6,9 +6,14 @@ import { CheckIcon, XIcon } from "@/assets/images/icons";
 interface RequestFriendItemProps {
     name: string;
     imageUrl: string;
+    userId: string;
 }
 
-export function RequestFriendItem({ name, imageUrl }: RequestFriendItemProps) {
+export function RequestFriendItem({
+    name,
+    imageUrl,
+    userId,
+}: RequestFriendItemProps) {
     return (
         <View style={styles.friendContainer}>
             <Image
