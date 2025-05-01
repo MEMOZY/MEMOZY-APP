@@ -15,6 +15,7 @@ interface LogItemProps {
     description: string;
     isOptionOpen?: boolean;
     onOptionPress?: () => void;
+    onPress?: () => void;
 }
 
 function LogItem({
@@ -26,6 +27,7 @@ function LogItem({
     description,
     isOptionOpen = false,
     onOptionPress = () => {},
+    onPress = () => {},
 }: LogItemProps) {
     const range =
         startDate === endDate
@@ -47,12 +49,14 @@ function LogItem({
             >
                 {range}
             </ThemedText>
-            <View style={styles.logBody}>
-                <Image source={{ uri: imageUrl }} style={styles.logImage} />
-                <ThemedText type="body2" style={styles.flex}>
-                    {description}
-                </ThemedText>
-            </View>
+            <TouchableOpacity onPress={onPress}>
+                <View style={styles.logBody}>
+                    <Image source={{ uri: imageUrl }} style={styles.logImage} />
+                    <ThemedText type="body2" style={styles.flex}>
+                        {description}
+                    </ThemedText>
+                </View>
+            </TouchableOpacity>
         </View>
     );
 }

@@ -4,7 +4,12 @@ import { ThemedText } from "../common/ThemedText";
 import { DotsIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
 
-export default function DetailLog() {
+interface DetailLogProps {
+    onBackPress: () => void;
+    memoryId: number;
+}
+
+export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
     return (
         <PageLayout
             padding={10}
@@ -27,6 +32,7 @@ export default function DetailLog() {
                     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.1)",
                 }}
                 hasBack
+                onBack={onBackPress}
                 backText="이전"
                 headerTitle="기록 상세"
                 headerRight={<DotsIcon />}

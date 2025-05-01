@@ -2,6 +2,7 @@ import PageLayout from "@/components/common/PageLayout";
 import Titled from "@/components/common/Titled";
 import FriendList from "@/components/friend/FriendList";
 import AddLogItem from "@/components/logs/AddLogItem";
+import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -9,6 +10,7 @@ import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
     const [opendOptionId, setOpendOptionId] = useState<number | null>(null);
+    const [selectedLog, setSelectedLog] = useState<number | null>(null);
     const logs = [
         {
             id: 1,
@@ -32,7 +34,14 @@ export default function HomeScreen() {
         setOpendOptionId((prev) => (prev === id ? null : id));
     };
 
-    return (
+    return selectedLog ? (
+        <DetailLog
+            onBackPress={() => {
+                setSelectedLog(null);
+            }}
+            memoryId={selectedLog}
+        />
+    ) : (
         <PageLayout
             headerTitle="Memozy"
             titleAlign="left"
@@ -68,6 +77,9 @@ export default function HomeScreen() {
                         description={log.description}
                         onOptionPress={() => handleOptionPress(log.id)}
                         isOptionOpen={opendOptionId === log.id}
+                        onPress={() => {
+                            setSelectedLog(log.id);
+                        }}
                     />
                 ))}
             </Titled>

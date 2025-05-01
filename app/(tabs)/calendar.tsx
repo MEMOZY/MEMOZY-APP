@@ -21,6 +21,7 @@ export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [selectedLog, setSelectedLog] = useState<number | null>(null);
 
     useEffect(() => {
         setTimeout(() => setIsReady(true), 300); // 300ms 후 렌더링
@@ -34,35 +35,43 @@ export default function CalendarScreen() {
 
     return (
         <>
-            <DetailLog />
-            {/* <PageLayout>
-                {!isReady && <View style={styles.loadingScreen} />}
-                <CalendarList
-                    style={styles.calendarContainer}
-                    theme={{
-                        backgroundColor: Colors.white,
+            {selectedLog ? (
+                <DetailLog
+                    memoryId={selectedLog}
+                    onBackPress={() => {
+                        setSelectedLog(null);
                     }}
-                    futureScrollRange={0}
-                    initialNumToRender={1}
-                    horizontal={true}
-                    pagingEnabled={true}
-                    hideExtraDays={false}
-                    calendarWidth={Dimensions.get("window").width - 20}
-                    customHeader={CalendarHeader}
-                    dayComponent={({ date, state }) => (
-                        <CalendarDayComponent
-                            date={date}
-                            state={state}
-                            onDayPress={() => {
-                                if (!date) return;
-                                handleDayPress(date.dateString);
-                            }}
-                        />
-                    )}
                 />
-            </PageLayout>
+            ) : (
+                <PageLayout>
+                    {!isReady && <View style={styles.loadingScreen} />}
+                    <CalendarList
+                        style={styles.calendarContainer}
+                        theme={{
+                            backgroundColor: Colors.white,
+                        }}
+                        futureScrollRange={0}
+                        initialNumToRender={1}
+                        horizontal={true}
+                        pagingEnabled={true}
+                        hideExtraDays={false}
+                        calendarWidth={Dimensions.get("window").width - 20}
+                        customHeader={CalendarHeader}
+                        dayComponent={({ date, state }) => (
+                            <CalendarDayComponent
+                                date={date}
+                                state={state}
+                                onDayPress={() => {
+                                    if (!date) return;
+                                    handleDayPress(date.dateString);
+                                }}
+                            />
+                        )}
+                    />
+                </PageLayout>
+            )}
 
-            {modalVisible && (
+            {modalVisible && !selectedLog && (
                 <Modal
                     visible={modalVisible}
                     animationType="fade"
@@ -85,6 +94,9 @@ export default function CalendarScreen() {
                                     startDate={new Date("2025-03-11T12:00:00Z")}
                                     endDate={new Date("2025-03-11T13:00:00Z")}
                                     description="운동을 했습니다."
+                                    onPress={() => {
+                                        setSelectedLog(1);
+                                    }}
                                 />
                                 <LogItem
                                     id={1}
@@ -96,14 +108,14 @@ export default function CalendarScreen() {
                                 />
                                 <AddLogButton
                                     onPress={() => {
-                                        setModalVisible(false);
+                                        setSelectedLog(2);
                                     }}
                                 />
                             </Pressable>
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
-            )} */}
+            )}
         </>
     );
 }
