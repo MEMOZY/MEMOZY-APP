@@ -18,6 +18,7 @@ import Button from "@/components/common/Button";
 import { useUI } from "@/hooks/useUI";
 import { getPresignedUrls, uploadToPresignedUrl } from "@/api/file";
 import { MemoryItem, postMemoryTemp } from "@/api/memory";
+import { router } from "expo-router";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -37,6 +38,7 @@ export default function SelectScreen() {
         Location.useForegroundPermissions();
 
     const { showSnackbar } = useUI();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         loadInitialAssets();
@@ -140,6 +142,10 @@ export default function SelectScreen() {
             });
         }
 
+        metadataList.sort((a, b) => {
+            return a.creationTime.getTime() - b.creationTime.getTime();
+        });
+
         return metadataList;
     };
 
@@ -188,11 +194,11 @@ export default function SelectScreen() {
                     title="선택 완료"
                     disabled={selected.length === 0}
                     onPress={async () => {
+                        if (isSubmitting) return;
+                        setIsSubmitting(true);
                         const metadata = await extractSelectedMetadata(
                             selected
                         );
-                        console.log("선택된 사진의 메타데이터:", metadata);
-
                         try {
                             const presignedUrls = await getPresignedUrls(
                                 metadata
@@ -209,7 +215,16 @@ export default function SelectScreen() {
                                 })
                             );
                             const sessionId = await postMemoryTemp(memoryItems);
+                            setIsSubmitting(false);
+                            router.replace({
+                                pathname: "/(chat-flow)/chat",
+                                params: {
+                                    sessionId: sessionId,
+                                    length: selected.length,
+                                },
+                            });
                         } catch (error) {
+                            setIsSubmitting(false);
                             console.error("파일 업로드 오류:", error);
                             showSnackbar({
                                 message: "파일 업로드에 실패했습니다.",

@@ -11,7 +11,6 @@ import {
     Modal,
     Pressable,
     StyleSheet,
-    Text,
     TouchableWithoutFeedback,
     View,
 } from "react-native";
