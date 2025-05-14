@@ -7,7 +7,7 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { router, useGlobalSearchParams } from "expo-router";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Message = {
@@ -30,6 +30,12 @@ export default function ChatScreen() {
     const [currentItemTempId, setCurrentItemTempId] = useState<number | null>(
         null
     );
+
+    const scrollViewRef = useRef<ScrollView>(null);
+
+    useEffect(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, [messages.length]);
 
     useEffect(() => {
         const initChat = async () => {
@@ -105,6 +111,7 @@ export default function ChatScreen() {
             <StepProgressBar totalSteps={totalSteps} currentStep={step} />
             <View style={styles.bodyContainer}>
                 <ScrollView
+                    ref={scrollViewRef}
                     style={{
                         flex: 1,
                         marginHorizontal: -30,
