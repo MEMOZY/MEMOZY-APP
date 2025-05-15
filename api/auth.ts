@@ -1,14 +1,61 @@
 import { login } from "@react-native-kakao/user";
 import { apiClient } from "./client";
+import {
+    GoogleSignin,
+    isErrorWithCode,
+    isSuccessResponse,
+    statusCodes,
+} from "@react-native-google-signin/google-signin";
+import * as AppleAuthentication from "expo-apple-authentication";
 
 const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
     let result = null;
     switch (platform) {
         case "GOOGLE":
-            // Implement Google login logic here
+            try {
+                await GoogleSignin.hasPlayServices();
+                const response = await GoogleSignin.signIn();
+                console.log("Google login response:", response);
+                if (isSuccessResponse(response)) {
+                    console.log("Google login response:", response);
+                } else {
+                    throw new Error("구글 로그인에 실패했습니다.");
+                }
+                return false;
+            } catch (error) {
+                console.log("Google login error:", error);
+                if (isErrorWithCode(error)) {
+                    switch (error.code) {
+                        case statusCodes.SIGN_IN_CANCELLED:
+                            console.log("User cancelled the login flow");
+                            break;
+                        case statusCodes.IN_PROGRESS:
+                            console.log("Sign in is in progress already");
+                            break;
+                        case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                            console.log(
+                                "Play services not available or outdated"
+                            );
+                            break;
+                        default:
+                            console.log("Some other error happened", error);
+                    }
+                }
+                throw new Error("구글 로그인에 실패했습니다.");
+            }
             break;
         case "APPLE":
-            // Implement Apple login logic here
+            try {
+                const credential = await AppleAuthentication.signInAsync({
+                    requestedScopes: [
+                        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                    ],
+                });
+                console.log("Apple login response:", credential);
+            } catch (error) {
+                throw new Error("애플 로그인에 실패했습니다.");
+            }
             break;
         case "KAKAO":
             try {

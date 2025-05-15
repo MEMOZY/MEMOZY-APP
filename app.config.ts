@@ -13,6 +13,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ios: {
         supportsTablet: true,
         bundleIdentifier: "com.tym.memozy",
+        usesAppleSignIn: true,
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
             NSAppTransportSecurity: {
@@ -88,6 +89,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME,
             },
         ],
+        ["expo-apple-authentication"],
     ],
     experiments: {
         typedRoutes: true,
