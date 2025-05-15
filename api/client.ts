@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -55,7 +54,6 @@ apiClient.interceptors.response.use(
 );
 
 async function refreshToken() {
-    const { login } = useAuth();
     try {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
         const res = await apiClient.post("/auth/reissue", {
@@ -65,8 +63,6 @@ async function refreshToken() {
         if (res.status === 200) {
             const { accessToken, refreshToken: newRefreshToken } =
                 res.data.data;
-
-            await login(accessToken, newRefreshToken);
             return accessToken;
         }
     } catch (error) {

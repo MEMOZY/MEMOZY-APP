@@ -9,9 +9,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     scheme: "memozy",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+    backgroundColor: "#F9FAFB",
     ios: {
         supportsTablet: true,
         bundleIdentifier: "com.tym.memozy",
+        usesAppleSignIn: true,
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
             NSAppTransportSecurity: {
@@ -81,6 +83,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                     "당신의 위치에 접근할 수 있도록 권한을 허용해주세요.",
             },
         ],
+        [
+            "@react-native-google-signin/google-signin",
+            {
+                iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME,
+            },
+        ],
+        ["expo-apple-authentication"],
     ],
     experiments: {
         typedRoutes: true,

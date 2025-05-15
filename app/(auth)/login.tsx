@@ -66,14 +66,18 @@ export default function LoginScreen() {
                     label="구글 계정으로 로그인"
                     backgroundColor={Colors.white}
                     textColor="black"
-                    onPress={() => {}}
+                    onPress={() => {
+                        handleLogin("GOOGLE");
+                    }}
                 />
                 <SocialLoginButton
                     icon={<AppleIcon />}
                     label="애플 계정으로 로그인"
                     backgroundColor={Colors.gray6}
                     textColor="white"
-                    onPress={() => handleTestLogin()}
+                    onPress={() => {
+                        handleLogin("APPLE");
+                    }}
                 />
             </View>
         </PageLayout>
