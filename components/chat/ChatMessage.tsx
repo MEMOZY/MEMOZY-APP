@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, Image, StyleSheet, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 
@@ -14,21 +14,47 @@ export default function ChatMessage({
     imageUrl,
     text,
 }: ChatMessageProps) {
-    const [dots, setDots] = useState("대화를 작성하는 중");
     const isTyping = text === "__TYPING__";
+
+    // 점 3개의 애니메이션 값
+    const dot1 = useRef(new Animated.Value(1)).current;
+    const dot2 = useRef(new Animated.Value(1)).current;
+    const dot3 = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         if (!isTyping) return;
 
-        const interval = setInterval(() => {
-            setDots((prev) =>
-                prev === "대화를 작성하는 중..."
-                    ? "대화를 작성하는 중"
-                    : prev + "."
+        const createPulse = (animatedValue: Animated.Value, delay: number) => {
+            return Animated.loop(
+                Animated.sequence([
+                    Animated.delay(delay),
+                    Animated.timing(animatedValue, {
+                        toValue: 1.5,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(animatedValue, {
+                        toValue: 1,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                ])
             );
-        }, 500);
+        };
 
-        return () => clearInterval(interval);
+        const anim1 = createPulse(dot1, 0);
+        const anim2 = createPulse(dot2, 150);
+        const anim3 = createPulse(dot3, 300);
+
+        anim1.start();
+        anim2.start();
+        anim3.start();
+
+        return () => {
+            anim1.stop();
+            anim2.stop();
+            anim3.stop();
+        };
     }, [isTyping]);
 
     return (
@@ -50,7 +76,30 @@ export default function ChatMessage({
                     },
                 ]}
             >
-                <ThemedText type="body2">{isTyping ? dots : text}</ThemedText>
+                {isTyping ? (
+                    <View style={styles.dotContainer}>
+                        <Animated.View
+                            style={[
+                                styles.dot,
+                                { transform: [{ scale: dot1 }] },
+                            ]}
+                        />
+                        <Animated.View
+                            style={[
+                                styles.dot,
+                                { transform: [{ scale: dot2 }] },
+                            ]}
+                        />
+                        <Animated.View
+                            style={[
+                                styles.dot,
+                                { transform: [{ scale: dot3 }] },
+                            ]}
+                        />
+                    </View>
+                ) : (
+                    <ThemedText type="body2">{text}</ThemedText>
+                )}
             </View>
         </View>
     );
@@ -67,5 +116,19 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 12,
         alignSelf: "flex-start",
+    },
+    dotContainer: {
+        flexDirection: "row",
+        gap: 6,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 18,
+        paddingHorizontal: 2,
+    },
+    dot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: "#555", // 원한다면 Colors.gray1 등으로 변경 가능
     },
 });
