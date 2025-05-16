@@ -21,12 +21,12 @@ export default function HomeScreen() {
         queryFn: getMemories,
     });
 
-    return selectedLog ? (
+    return selectedLog && memories ? (
         <DetailLog
             onBackPress={() => {
                 setSelectedLog(null);
             }}
-            memory={memories.find((log: Memory) => log.id === selectedLog)!}
+            memory={memories.find((log) => log.id === selectedLog)!}
         />
     ) : (
         <PageLayout
@@ -50,8 +50,9 @@ export default function HomeScreen() {
             <Titled title="Recents" gap={20}>
                 <AddLogItem />
                 {!isLoading &&
+                    memories &&
                     memories.length > 0 &&
-                    memories.map((log: Memory) => (
+                    memories.map((log) => (
                         <LogItem
                             key={log.id}
                             id={log.id}

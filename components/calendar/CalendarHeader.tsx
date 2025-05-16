@@ -2,23 +2,54 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { DownChevronIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
+import { useState } from "react";
+import CalendarCategories from "./CalendarCategories";
+import { Memory } from "@/api/memory";
+import { CATEGORY_LABELS } from "@/app/(tabs)/calendar";
 
-export function CalendarHeader({ month }: { month: Date }) {
+interface CalendarHeaderProps {
+    month: Date;
+    selectedCategory: Memory["category"] | null;
+    setSelectedCategory: (category: Memory["category"] | null) => void;
+}
+
+export function CalendarHeader({
+    month,
+    selectedCategory,
+    setSelectedCategory,
+}: CalendarHeaderProps) {
     const year = month.getFullYear();
     const monthNumber = month.getMonth() + 1;
     const paddedMonth = monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
     const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+    const [categoryVisible, setCategoryVisible] = useState(false);
 
     return (
         <View style={styles.header}>
+            {categoryVisible && (
+                <CalendarCategories
+                    closeCategories={() => setCategoryVisible(false)}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                />
+            )}
             <View style={styles.headerTitle}>
                 <ThemedText type="title">{`${year}년 ${paddedMonth}월`}</ThemedText>
-                {/* <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => setCategoryVisible(!categoryVisible)}
+                >
                     <View style={styles.dropdownContainer}>
-                        <ThemedText type="body2b">전체</ThemedText>
+                        <ThemedText type="body2b">
+                            {selectedCategory
+                                ? CATEGORY_LABELS.find(
+                                      (category) =>
+                                          category.value === selectedCategory
+                                  )?.label
+                                : "전체"}
+                        </ThemedText>
                         <DownChevronIcon color={Colors.gray6} />
                     </View>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
 
             {/* 요일 헤더 */}
