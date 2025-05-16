@@ -9,6 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -29,6 +30,7 @@ export default function RootLayout() {
         "Pretendard-SemiBold": require("@/assets/fonts/Pretendard-SemiBold.otf"),
         "Pretendard-Regular": require("@/assets/fonts/Pretendard-Regular.otf"),
     });
+    const queryClient = new QueryClient();
 
     useEffect(() => {
         initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY || "");
@@ -45,58 +47,62 @@ export default function RootLayout() {
     }
 
     return (
-        <AuthProvider>
-            <UIProvider>
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                    <ThemeProvider
-                        value={
-                            colorScheme === "dark" ? DarkTheme : DefaultTheme
-                        }
-                    >
-                        <Stack>
-                            <Stack.Screen
-                                name="(tabs)"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(chat-flow)"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(screens)/friends"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(screens)/editProfile"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(screens)/docs"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(screens)/inquiry"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="(auth)/login"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="index"
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="+not-found"
-                                options={{ headerShown: false }}
-                            />
-                        </Stack>
-                        <StatusBar style="dark" />
-                        <GlobalModal />
-                        <GlobalSnackbar />
-                    </ThemeProvider>
-                </GestureHandlerRootView>
-            </UIProvider>
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <UIProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                        <ThemeProvider
+                            value={
+                                colorScheme === "dark"
+                                    ? DarkTheme
+                                    : DefaultTheme
+                            }
+                        >
+                            <Stack>
+                                <Stack.Screen
+                                    name="(tabs)"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(chat-flow)"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(screens)/friends"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(screens)/editProfile"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(screens)/docs"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(screens)/inquiry"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="(auth)/login"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="index"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="+not-found"
+                                    options={{ headerShown: false }}
+                                />
+                            </Stack>
+                            <StatusBar style="dark" />
+                            <GlobalModal />
+                            <GlobalSnackbar />
+                        </ThemeProvider>
+                    </GestureHandlerRootView>
+                </UIProvider>
+            </AuthProvider>
+        </QueryClientProvider>
     );
 }

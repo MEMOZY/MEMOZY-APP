@@ -89,7 +89,7 @@ const getMemories = async () => {
         throw new Error("메모리 조회에 실패했습니다.");
     }
 
-    return response.data;
+    return response.data.memories;
 };
 
 const postMemory = async (memory: PostMemoryPayload) => {

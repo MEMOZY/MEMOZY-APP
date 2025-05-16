@@ -1,20 +1,28 @@
 import { Colors } from "@/constants/Colors";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
-import { deleteMemory } from "@/api/memory";
+import { deleteMemory, getMemories } from "@/api/memory";
 import { router } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 
 interface LogOptionsProps {
     memoryId: number;
+    setSelectedLog: (logId: number | null) => void;
 }
 
-export default function LogOptions({ memoryId }: LogOptionsProps) {
+export default function LogOptions({
+    memoryId,
+    setSelectedLog,
+}: LogOptionsProps) {
+    const { refetch } = useQuery({
+        queryKey: ["memories"],
+        queryFn: getMemories,
+    });
     return (
         <View style={styles.container}>
-            {/* <TouchableOpacity
+            <TouchableOpacity
                 onPress={() => {
                     console.log("Edit pressed");
-                    onOptionPress?.();
                 }}
             >
                 <ThemedText
@@ -25,12 +33,12 @@ export default function LogOptions({ memoryId }: LogOptionsProps) {
                     수정
                 </ThemedText>
             </TouchableOpacity>
-            <View style={styles.line} /> */}
+            <View style={styles.line} />
             <TouchableOpacity
                 onPress={() => {
-                    console.log("Delete pressed");
+                    setSelectedLog(null);
                     deleteMemory(memoryId);
-                    router.reload();
+                    refetch();
                 }}
             >
                 <ThemedText
