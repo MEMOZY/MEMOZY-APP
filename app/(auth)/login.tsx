@@ -12,14 +12,15 @@ export default function LoginScreen() {
 
     const handleLogin = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
         try {
-            const socialAccessToken = await getSocialAccessToken(platform);
-            if (!socialAccessToken) {
+            const { socialToken, name } = await getSocialAccessToken(platform);
+            if (!socialToken) {
                 throw new Error("소셜 로그인에 실패했습니다.");
             }
-            console.log(socialAccessToken);
+            console.log(socialToken);
             const { accessToken, refreshToken } = await getToken(
                 platform,
-                socialAccessToken
+                socialToken,
+                name
             );
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");

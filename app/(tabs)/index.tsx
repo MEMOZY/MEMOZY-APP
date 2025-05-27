@@ -40,7 +40,6 @@ export default function HomeScreen() {
         >
             <Titled title="Friends">
                 <FriendList
-                    friends={[]}
                     onAddFriend={() => {
                         router.push("/(screens)/friends");
                     }}

@@ -6,6 +6,7 @@ const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 declare module "axios" {
     export interface AxiosRequestConfig {
         withAuth?: boolean;
+        isRetry?: boolean;
     }
 }
 
@@ -15,6 +16,7 @@ export const apiClient = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+    isRetry: false,
 });
 
 apiClient.interceptors.request.use(
@@ -37,11 +39,16 @@ apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+        if (error.response?.status === 401 && !originalRequest.isRetry) {
+            originalRequest.isRetry = true;
             try {
-                const newAccessToken = await refreshToken();
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                const { accessToken, newRefreshToken } = await refreshToken();
+                if (!accessToken || !newRefreshToken) {
+                    throw new Error("토큰 갱신 실패");
+                }
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                await AsyncStorage.setItem("refreshToken", newRefreshToken);
+                await AsyncStorage.setItem("accessToken", accessToken);
                 originalRequest.withAuth = false;
                 return apiClient(originalRequest);
             } catch (refreshError) {
@@ -53,18 +60,29 @@ apiClient.interceptors.response.use(
     }
 );
 
-async function refreshToken() {
+async function refreshToken(): Promise<{
+    accessToken: string;
+    newRefreshToken: string;
+}> {
+    console.log("🔄 토큰 갱신 시도");
     try {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
-        const res = await apiClient.post("/auth/reissue", {
-            headers: { Authorization: `Bearer ${refreshToken}` },
-            withAuth: false,
-        });
+        const res = await apiClient.post(
+            "/auth/reissue",
+            {
+                refreshToken,
+            },
+            {
+                headers: { Authorization: `Bearer ${refreshToken}` },
+                withAuth: false,
+            }
+        );
         if (res.status === 200) {
             const { accessToken, refreshToken: newRefreshToken } =
                 res.data.data;
-            return accessToken;
+            return { accessToken, newRefreshToken };
         }
+        throw new Error("토큰 갱신 실패");
     } catch (error) {
         throw error;
     }

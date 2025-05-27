@@ -6,10 +6,10 @@ export interface User {
     profileImageUrl: string;
     email: string;
     phoneNumber: string;
+    friendCode: string;
 }
 
 export interface UserUpdate {
-    username: string;
     nickname: string;
     email: string;
     profileImageUrl: string;
@@ -33,7 +33,7 @@ const getUser = async () => {
         throw new Error("유저 조회에 실패했습니다.");
     }
 
-    return response.data;
+    return response.data as User;
 };
 
 const deleteUser = async () => {
@@ -96,4 +96,24 @@ const getUserById = async (userId: number) => {
     return response.data;
 };
 
-export { getUser, deleteUser, patchUser, getUserById };
+const getUserIdByFriendCode = async (friendCode: string) => {
+    const response = await apiClient
+        .get(`user/${friendCode}`, {
+            withAuth: true,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("유저 조회에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("유저 조회에 실패했습니다.");
+    }
+
+    return response.data.userId;
+};
+
+export { getUser, deleteUser, patchUser, getUserById, getUserIdByFriendCode };

@@ -1,10 +1,11 @@
-import { getUser, User } from "@/api/user";
+import { getUser, patchUser } from "@/api/user";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
+import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Image,
     StyleSheet,
@@ -14,114 +15,124 @@ import {
 } from "react-native";
 
 export default function EditProfileScreen() {
-    const [user, setUser] = useState<User | null>(null);
     const [newNickname, setNewNickname] = useState<string>("");
+    const [newProfileImage, setNewProfileImage] = useState<string>("");
     const { showSnackbar } = useUI();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getUser();
-                setUser(userData);
-                setNewNickname(userData.nickname);
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
+    const { data: user, isLoading } = useQuery({
+        queryKey: ["user"],
+        queryFn: getUser,
+    });
 
-        fetchUser();
-    }, []);
-
-    const isNicknameChanged = user?.nickname !== newNickname;
+    const isNicknameChanged = newNickname && user?.nickname !== newNickname;
+    const isProfileImageChanged =
+        newProfileImage && user?.profileImageUrl !== newProfileImage;
 
     return (
-        <PageLayout
-            headerTitle="프로필 수정"
-            titleAlign="left"
-            hasBack
-            style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-            }}
-            headerRight={
-                <TouchableOpacity
-                    onPress={() => {
-                        setNewNickname(user?.nickname || "");
-                    }}
-                    disabled={!isNicknameChanged}
-                >
-                    <ThemedText
-                        type="body2b"
-                        lightColor={
-                            isNicknameChanged ? Colors.red : Colors.gray3
-                        }
-                        darkColor={
-                            isNicknameChanged ? Colors.red : Colors.gray3
-                        }
-                    >
-                        되돌리기
-                    </ThemedText>
-                </TouchableOpacity>
-            }
-        >
-            <View />
-            <View style={{ alignItems: "center", gap: 20 }}>
-                <Image
-                    source={{
-                        uri: "https://cdn.discordapp.com/attachments/1094232715097129522/1158700451736825916/image.png",
-                    }}
-                    style={styles.profileimage}
-                />
-                <View style={styles.nicknameContainer}>
-                    <TextInput
-                        placeholder={user?.nickname}
-                        placeholderTextColor={Colors.gray4}
-                        value={newNickname}
-                        onChangeText={(text) => setNewNickname(text)}
-                        style={styles.nicknameInput}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        autoComplete="off"
-                        autoFocus={false}
-                        returnKeyType="done"
-                        inputMode="text"
-                        maxLength={8}
-                    />
-                </View>
-            </View>
-            <TouchableOpacity
-                style={{ width: "100%" }}
-                disabled={!isNicknameChanged}
-                onPress={() => {
-                    if (isNicknameChanged) {
-                        showSnackbar({
-                            message: "닉네임이 변경되었습니다",
-                            color: Colors.green,
-                        });
-                        router.back();
-                    }
+        !isLoading &&
+        user && (
+            <PageLayout
+                headerTitle="프로필 수정"
+                titleAlign="left"
+                hasBack
+                style={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
                 }}
-            >
-                <View
-                    style={[
-                        styles.saveButton,
-                        {
-                            backgroundColor: isNicknameChanged
-                                ? Colors.gray5
-                                : Colors.gray4,
-                        },
-                    ]}
-                >
-                    <ThemedText
-                        type="body1b"
-                        lightColor={Colors.gray1}
-                        darkColor={Colors.gray1}
+                headerRight={
+                    <TouchableOpacity
+                        onPress={() => {
+                            setNewNickname("");
+                        }}
+                        disabled={!isNicknameChanged}
                     >
-                        저장
-                    </ThemedText>
+                        <ThemedText
+                            type="body2b"
+                            lightColor={
+                                isNicknameChanged || isProfileImageChanged
+                                    ? Colors.red
+                                    : Colors.gray3
+                            }
+                            darkColor={
+                                isNicknameChanged || isProfileImageChanged
+                                    ? Colors.red
+                                    : Colors.gray3
+                            }
+                        >
+                            되돌리기
+                        </ThemedText>
+                    </TouchableOpacity>
+                }
+            >
+                <View />
+                <View style={{ alignItems: "center", gap: 20 }}>
+                    <Image
+                        source={{
+                            uri: user.profileImageUrl,
+                        }}
+                        style={styles.profileimage}
+                    />
+                    <View style={styles.nicknameContainer}>
+                        <TextInput
+                            placeholder={user.nickname}
+                            placeholderTextColor={Colors.gray4}
+                            value={newNickname}
+                            onChangeText={(text) => setNewNickname(text)}
+                            style={styles.nicknameInput}
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            autoComplete="off"
+                            autoFocus={false}
+                            returnKeyType="done"
+                            inputMode="text"
+                            maxLength={8}
+                        />
+                    </View>
                 </View>
-            </TouchableOpacity>
-        </PageLayout>
+                <TouchableOpacity
+                    style={{ width: "100%" }}
+                    disabled={!isNicknameChanged && !isProfileImageChanged}
+                    onPress={async () => {
+                        if (isNicknameChanged || isProfileImageChanged) {
+                            await patchUser({
+                                email: user.email,
+                                phoneNumber: user!.phoneNumber,
+                                nickname: isNicknameChanged
+                                    ? newNickname
+                                    : user.nickname,
+                                profileImageUrl: isProfileImageChanged
+                                    ? newProfileImage
+                                    : user.profileImageUrl,
+                            });
+                            showSnackbar({
+                                message: "변경사항이 저장되었습니다",
+                                color: Colors.green,
+                            });
+                            router.back();
+                        }
+                    }}
+                >
+                    <View
+                        style={[
+                            styles.saveButton,
+                            {
+                                backgroundColor: isNicknameChanged
+                                    ? Colors.gray5
+                                    : Colors.gray4,
+                            },
+                        ]}
+                    >
+                        <ThemedText
+                            type="body1b"
+                            lightColor={Colors.gray1}
+                            darkColor={Colors.gray1}
+                        >
+                            저장
+                        </ThemedText>
+                    </View>
+                </TouchableOpacity>
+            </PageLayout>
+        )
     );
 }
 

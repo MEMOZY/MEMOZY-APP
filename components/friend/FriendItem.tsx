@@ -3,19 +3,30 @@ import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { TrashIcon } from "@/assets/images/icons";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteFriend } from "@/api/friend";
 
 interface FriendItemProps {
     name: string;
     imageUrl: string;
     userId: string; // 추가된 userId prop
-    onSwipeLeft?: () => void; // 왼쪽으로 밀었을 때 실행할 함수 추가
 }
 
-export function FriendItem({ name, imageUrl, onSwipeLeft }: FriendItemProps) {
+export function FriendItem({ name, imageUrl, userId }: FriendItemProps) {
+    const queryClient = useQueryClient();
+    const onDeleteFriend = async () => {
+        await deleteFriend(userId);
+        queryClient.invalidateQueries({
+            queryKey: ["friends"],
+        });
+    };
     // 왼쪽 스와이프 시 나타나는 액션 정의
     const renderRightActions = () => {
         return (
-            <TouchableOpacity style={styles.rightAction} onPress={onSwipeLeft}>
+            <TouchableOpacity
+                style={styles.rightAction}
+                onPress={onDeleteFriend}
+            >
                 <TrashIcon />
             </TouchableOpacity>
         );
