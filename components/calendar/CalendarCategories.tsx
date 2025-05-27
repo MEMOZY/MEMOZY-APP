@@ -1,8 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
-import { Memory } from "@/api/memory";
-import { CATEGORY_LABELS } from "@/app/(tabs)/calendar";
+import { CATEGORY_LABELS, Memory } from "@/api/memory";
 
 interface CalendarCategoriesProps {
     closeCategories: () => void;

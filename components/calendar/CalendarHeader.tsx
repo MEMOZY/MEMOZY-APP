@@ -4,8 +4,7 @@ import { DownChevronIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
 import CalendarCategories from "./CalendarCategories";
-import { Memory } from "@/api/memory";
-import { CATEGORY_LABELS } from "@/app/(tabs)/calendar";
+import { CATEGORY_LABELS, Memory } from "@/api/memory";
 
 interface CalendarHeaderProps {
     month: Date;

@@ -20,20 +20,6 @@ import {
 } from "react-native";
 import { CalendarList } from "react-native-calendars";
 
-export const CATEGORY_LABELS: {
-    label: string;
-    value: Memory["category"] | null;
-}[] = [
-    { label: "전체", value: null },
-    { label: "여행", value: "TRAVEL" },
-    { label: "일상", value: "DAILY" },
-    { label: "반려동물", value: "PET" },
-    { label: "다이어트", value: "DIET" },
-    { label: "가족", value: "FAMILY" },
-    { label: "커플", value: "COUPLE" },
-    { label: "기타", value: "COUSTOM" },
-];
-
 export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [modalVisible, setModalVisible] = useState(false);

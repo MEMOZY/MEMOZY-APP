@@ -17,6 +17,20 @@ export interface Memory {
     sharedUserIds: number[];
 }
 
+export const CATEGORY_LABELS: {
+    label: string;
+    value: Memory["category"] | null;
+}[] = [
+    { label: "전체", value: null },
+    { label: "여행", value: "TRAVEL" },
+    { label: "일상", value: "DAILY" },
+    { label: "반려동물", value: "PET" },
+    { label: "다이어트", value: "DIET" },
+    { label: "가족", value: "FAMILY" },
+    { label: "커플", value: "COUPLE" },
+    { label: "기타", value: "COUSTOM" },
+];
+
 export interface PostMemoryPayload {
     title: string;
     category: Memory["category"];
