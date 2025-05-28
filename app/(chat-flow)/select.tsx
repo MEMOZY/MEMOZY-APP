@@ -135,7 +135,7 @@ export default function SelectScreen() {
 
             metadataList.push({
                 id: assetInfo.id,
-                uri: assetInfo.uri,
+                uri: assetInfo.localUri,
                 filename: assetInfo.filename,
                 creationTime: new Date(assetInfo.creationTime),
                 location: address,
@@ -200,10 +200,19 @@ export default function SelectScreen() {
                             selected
                         );
                         try {
+                            const validMetadata = metadata
+                                .filter((item) => item.uri !== undefined)
+                                .map((item) => ({
+                                    uri: item.uri!,
+                                    filename: item.filename,
+                                }));
                             const presignedUrls = await getPresignedUrls(
-                                metadata
+                                validMetadata
                             );
-                            await uploadToPresignedUrl(metadata, presignedUrls);
+                            await uploadToPresignedUrl(
+                                validMetadata,
+                                presignedUrls
+                            );
                             const memoryItems: MemoryItem[] = presignedUrls.map(
                                 (
                                     item: { preSignedUrl: string },

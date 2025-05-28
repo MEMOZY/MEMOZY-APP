@@ -1,40 +1,65 @@
 // FriendList.tsx
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { PlusIcon } from "@/assets/images/icons";
-import { useQuery } from "@tanstack/react-query";
-import { Friend, getFriends } from "@/api/friend";
+import { Friend } from "@/api/friend";
 
 interface FriendListProps {
+    friends: Friend[];
     onAddFriend?: () => void;
+    selectable?: boolean;
+    onChangeSelected?: (selected: Friend[]) => void;
 }
 
-export default function FriendList({ onAddFriend }: FriendListProps) {
-    const { data: friends, isLoading } = useQuery<Friend[]>({
-        queryKey: ["friends"],
-        queryFn: getFriends,
-    });
+export default function FriendList({
+    friends,
+    onAddFriend,
+    selectable = false,
+    onChangeSelected,
+}: FriendListProps) {
+    const [selected, setSelected] = useState<Friend[]>([]);
+
+    const toggleSelect = (friend: Friend) => {
+        const isSelected = selected.some((f) => f.userId === friend.userId);
+        const newSelected = isSelected
+            ? selected.filter((f) => f.userId !== friend.userId)
+            : [...selected, friend];
+        setSelected(newSelected);
+        onChangeSelected?.(newSelected);
+    };
 
     return (
-        !isLoading &&
-        friends && (
-            <View style={styles.friendList}>
-                {friends.map((user, index) => (
-                    <Image
+        <View style={styles.friendList}>
+            {friends.map((user, index) => {
+                const isSelected = selected.some(
+                    (f) => f.userId === user.userId
+                );
+                return (
+                    <TouchableOpacity
                         key={index}
-                        source={{ uri: user.profileImageUrl }}
-                        style={styles.profileImage}
-                    />
-                ))}
-                {onAddFriend && (
-                    <TouchableOpacity onPress={onAddFriend}>
-                        <View style={[styles.profileImage, styles.addFriend]}>
-                            <PlusIcon />
-                        </View>
+                        onPress={() => {
+                            if (selectable) toggleSelect(user);
+                        }}
+                        activeOpacity={0.8}
+                    >
+                        <Image
+                            source={{ uri: user.profileImageUrl }}
+                            style={[
+                                styles.profileImage,
+                                isSelected && styles.selectedBorder,
+                            ]}
+                        />
                     </TouchableOpacity>
-                )}
-            </View>
-        )
+                );
+            })}
+            {onAddFriend && (
+                <TouchableOpacity onPress={onAddFriend}>
+                    <View style={[styles.profileImage, styles.addFriend]}>
+                        <PlusIcon />
+                    </View>
+                </TouchableOpacity>
+            )}
+        </View>
     );
 }
 
@@ -49,6 +74,10 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         backgroundColor: "#fff",
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+    },
+    selectedBorder: {
+        borderColor: "#000", // or your theme color
+        borderWidth: 2,
     },
     addFriend: {
         justifyContent: "center",

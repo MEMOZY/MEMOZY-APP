@@ -1,3 +1,4 @@
+import { getFriends } from "@/api/friend";
 import { getMemories, Memory } from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import Titled from "@/components/common/Titled";
@@ -21,6 +22,11 @@ export default function HomeScreen() {
         queryFn: getMemories,
     });
 
+    const { data: friends } = useQuery({
+        queryKey: ["friends"],
+        queryFn: getFriends,
+    });
+
     return selectedLog && memories ? (
         <DetailLog
             onBackPress={() => {
@@ -40,6 +46,7 @@ export default function HomeScreen() {
         >
             <Titled title="Friends">
                 <FriendList
+                    friends={friends ?? []}
                     onAddFriend={() => {
                         router.push("/(screens)/friends");
                     }}

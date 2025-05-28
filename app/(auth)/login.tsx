@@ -5,7 +5,7 @@ import { ThemedText } from "@/components/common/ThemedText";
 import SocialLoginButton from "@/components/login/SocialLoginButton";
 import { Colors } from "@/constants/Colors";
 import { useAuth } from "@/contexts/AuthContext";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
     const { login } = useAuth();

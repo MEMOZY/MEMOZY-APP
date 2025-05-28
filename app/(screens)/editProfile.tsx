@@ -1,4 +1,5 @@
 import { getUser, patchUser } from "@/api/user";
+import { ImageIcon } from "@/assets/images/icons";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
@@ -66,12 +67,23 @@ export default function EditProfileScreen() {
             >
                 <View />
                 <View style={{ alignItems: "center", gap: 20 }}>
-                    <Image
-                        source={{
-                            uri: user.profileImageUrl,
-                        }}
-                        style={styles.profileimage}
-                    />
+                    <View style={{ position: "relative" }}>
+                        <TouchableOpacity onPress={() => {}}>
+                            <Image
+                                source={{
+                                    uri:
+                                        newProfileImage || user.profileImageUrl,
+                                }}
+                                style={styles.profileimage}
+                            />
+
+                            {/* 카메라 아이콘 오버레이 */}
+                            <View style={styles.cameraIconContainer}>
+                                <ImageIcon style={styles.cameraIcon} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
                     <View style={styles.nicknameContainer}>
                         <TextInput
                             placeholder={user.nickname}
@@ -165,5 +177,21 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
+    },
+    cameraIconContainer: {
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.1)", // 반투명 배경
+        borderRadius: 120,
+        width: 120,
+        height: 120,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    cameraIcon: {
+        opacity: 0.8,
+        tintColor: Colors.gray1, // 연하게 보이게
     },
 });

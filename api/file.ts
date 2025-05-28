@@ -3,11 +3,12 @@ import { apiClient } from "./client";
 const getPresignedUrls = async (
     metadataList: {
         filename: string;
-    }[]
+    }[],
+    fileDomain: "MEMORY_TEMP_PHOTOS" | "PROFILE_IMAGE" = "MEMORY_TEMP_PHOTOS"
 ) => {
     const fileInfos = metadataList.map((data) => ({
         fileName: data.filename,
-        fileDomain: "MEMORY_TEMP_PHOTOS",
+        fileDomain: fileDomain,
     }));
 
     const response = await apiClient.post(

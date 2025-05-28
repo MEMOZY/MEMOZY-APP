@@ -16,8 +16,9 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
                 await GoogleSignin.hasPlayServices();
                 const response = await GoogleSignin.signIn();
                 if (isSuccessResponse(response)) {
+                    const tokens = await GoogleSignin.getTokens();
                     return {
-                        socialAccessToken: response.data?.idToken,
+                        socialToken: tokens.accessToken,
                         name: response.data.user?.name || "memozy_user",
                     };
                 } else {
