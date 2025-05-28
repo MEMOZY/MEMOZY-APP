@@ -4,7 +4,7 @@ import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -14,20 +14,55 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { getPresignedUrls, uploadToPresignedUrl } from "@/api/file";
 
 export default function EditProfileScreen() {
     const [newNickname, setNewNickname] = useState<string>("");
-    const [newProfileImage, setNewProfileImage] = useState<string>("");
+    const [newProfileImage, setNewProfileImage] =
+        useState<ImagePicker.ImagePickerAsset | null>(null);
     const { showSnackbar } = useUI();
+    const queryClient = useQueryClient();
 
     const { data: user, isLoading } = useQuery({
         queryKey: ["user"],
         queryFn: getUser,
     });
 
+    const handleSelectProfileImage = async () => {
+        const permission =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            showSnackbar({
+                message: "사진 접근 권한이 필요합니다",
+                color: Colors.red,
+            });
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets.length > 0) {
+            const asset = result.assets[0];
+            console.log("선택한 사진 metadata:", {
+                uri: asset.uri,
+                filename: asset.fileName,
+                width: asset.width,
+                height: asset.height,
+                type: asset.type,
+            });
+
+            setNewProfileImage(asset); // 실제 적용도 가능
+        }
+    };
+
     const isNicknameChanged = newNickname && user?.nickname !== newNickname;
     const isProfileImageChanged =
-        newProfileImage && user?.profileImageUrl !== newProfileImage;
+        newProfileImage && user?.profileImageUrl !== newProfileImage.uri;
 
     return (
         !isLoading &&
@@ -44,8 +79,9 @@ export default function EditProfileScreen() {
                     <TouchableOpacity
                         onPress={() => {
                             setNewNickname("");
+                            setNewProfileImage(null);
                         }}
-                        disabled={!isNicknameChanged}
+                        disabled={!isNicknameChanged && !isProfileImageChanged}
                     >
                         <ThemedText
                             type="body2b"
@@ -68,11 +104,12 @@ export default function EditProfileScreen() {
                 <View />
                 <View style={{ alignItems: "center", gap: 20 }}>
                     <View style={{ position: "relative" }}>
-                        <TouchableOpacity onPress={() => {}}>
+                        <TouchableOpacity onPress={handleSelectProfileImage}>
                             <Image
                                 source={{
                                     uri:
-                                        newProfileImage || user.profileImageUrl,
+                                        newProfileImage?.uri ||
+                                        user.profileImageUrl,
                                 }}
                                 style={styles.profileimage}
                             />
@@ -106,20 +143,58 @@ export default function EditProfileScreen() {
                     disabled={!isNicknameChanged && !isProfileImageChanged}
                     onPress={async () => {
                         if (isNicknameChanged || isProfileImageChanged) {
+                            let newProfileImageUrl = user.profileImageUrl;
+
+                            if (isProfileImageChanged && newProfileImage) {
+                                const presigned = await getPresignedUrls(
+                                    [{ filename: newProfileImage.fileName! }],
+                                    "PROFILE_IMAGE"
+                                );
+                                const { preSignedUrl, fileKey } = presigned[0];
+
+                                await uploadToPresignedUrl(
+                                    [
+                                        {
+                                            uri: newProfileImage.uri!,
+                                            filename: newProfileImage.fileName!,
+                                        },
+                                    ],
+                                    [{ preSignedUrl, fileKey }]
+                                );
+
+                                console.log("📸 선택된 사진 metadata:");
+                                console.log({
+                                    uri: newProfileImage.uri,
+                                    filename: newProfileImage.fileName,
+                                    width: newProfileImage.width,
+                                    height: newProfileImage.height,
+                                    type: newProfileImage.type,
+                                    fileKey,
+                                });
+
+                                newProfileImageUrl = fileKey;
+                            }
+
                             await patchUser({
                                 email: user.email,
-                                phoneNumber: user!.phoneNumber,
+                                phoneNumber: user.phoneNumber,
                                 nickname: isNicknameChanged
                                     ? newNickname
                                     : user.nickname,
                                 profileImageUrl: isProfileImageChanged
-                                    ? newProfileImage
+                                    ? newProfileImageUrl
                                     : user.profileImageUrl,
                             });
+
+                            queryClient.invalidateQueries({
+                                queryKey: ["user"],
+                            });
+
                             showSnackbar({
                                 message: "변경사항이 저장되었습니다",
                                 color: Colors.green,
                             });
+
                             router.back();
                         }
                     }}
