@@ -11,8 +11,8 @@ export const extractSelectedMetadata = async (selectedIds: string[]) => {
         if (assetInfo.location) {
             const { latitude, longitude } = assetInfo.location;
             const location = await Location.reverseGeocodeAsync({
-                latitude,
-                longitude,
+                latitude: Number(latitude),
+                longitude: Number(longitude),
             });
             address = location[0]?.formattedAddress;
         }
