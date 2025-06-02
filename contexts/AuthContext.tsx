@@ -1,3 +1,4 @@
+import { setLogoutHandler } from "@/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -34,6 +35,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await AsyncStorage.removeItem("refreshToken");
         setIsLoggedIn(false);
     };
+
+    useEffect(() => {
+        setLogoutHandler(logout);
+    }, [logout]);
 
     useEffect(() => {
         async function loadAuth() {

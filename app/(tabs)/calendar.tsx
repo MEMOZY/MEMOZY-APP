@@ -42,7 +42,7 @@ export default function CalendarScreen() {
         if (selectedCategory === null) {
             return true;
         }
-        item.category === selectedCategory;
+        return item.category === selectedCategory;
     });
 
     return (

@@ -10,6 +10,12 @@ declare module "axios" {
     }
 }
 
+let logoutFn: () => Promise<void> = async () => {};
+
+export const setLogoutHandler = (fn: () => Promise<void>) => {
+    logoutFn = fn;
+};
+
 export const apiClient = axios.create({
     baseURL: API_URL,
     timeout: 10000,
@@ -44,7 +50,8 @@ apiClient.interceptors.response.use(
             try {
                 const { accessToken, newRefreshToken } = await refreshToken();
                 if (!accessToken || !newRefreshToken) {
-                    throw new Error("토큰 갱신 실패");
+                    await logoutFn();
+                    throw new Error("토큰 없음: 자동 로그아웃");
                 }
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 await AsyncStorage.setItem("refreshToken", newRefreshToken);
@@ -53,6 +60,7 @@ apiClient.interceptors.response.use(
                 return apiClient(originalRequest);
             } catch (refreshError) {
                 console.log("토큰 갱신 실패", refreshError);
+                await logoutFn();
                 return Promise.reject(refreshError);
             }
         }
@@ -66,16 +74,18 @@ async function refreshToken(): Promise<{
 }> {
     console.log("🔄 토큰 갱신 시도");
     try {
+        const accessToken = await AsyncStorage.getItem("accessToken");
         const refreshToken = await AsyncStorage.getItem("refreshToken");
-        const res = await apiClient.post(
-            "/auth/reissue",
+        if (!accessToken || !refreshToken) {
+            await logoutFn();
+        }
+        const res = await axios.post(
+            `${API_URL}auth/reissue`,
             {
                 refreshToken,
             },
             {
-                headers: { Authorization: `Bearer ${refreshToken}` },
-                withAuth: false,
-                isRetry: true,
+                headers: { Authorization: `Bearer ${accessToken}` },
             }
         );
         if (res.status === 200) {
@@ -83,6 +93,7 @@ async function refreshToken(): Promise<{
                 res.data.data;
             return { accessToken, newRefreshToken };
         }
+        await logoutFn();
         throw new Error("토큰 갱신 실패");
     } catch (error) {
         throw error;
