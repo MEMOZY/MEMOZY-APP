@@ -51,5 +51,12 @@ export function formatTime(date: Date): string {
 }
 
 export const formatDateYMD = (date: Date): string => {
-    return date.toISOString().split("T")[0];
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const kstDate = new Date(date.getTime() + kstOffset);
+
+    const year = kstDate.getFullYear();
+    const month = String(kstDate.getMonth() + 1).padStart(2, "0");
+    const day = String(kstDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
 };

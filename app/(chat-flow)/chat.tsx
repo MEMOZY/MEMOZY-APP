@@ -165,10 +165,6 @@ export default function ChatScreen() {
                                 input.length > 0 ? input : "end"
                             );
 
-                            console.log(input);
-
-                            console.log("res", res);
-
                             if (res.type === "done") {
                                 router.replace({
                                     pathname: "/save",

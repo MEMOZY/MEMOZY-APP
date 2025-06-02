@@ -45,10 +45,22 @@ export default function SelectScreen() {
         loadInitialAssets();
     }, [libraryPermissionResponse, locationPermissionResponse]);
 
-    const loadInitialAssets = async () => {
-        if (!libraryPermissionResponse || !locationPermissionResponse) {
-            return;
+    const filterOnlyLocalAssets = async (assets: MediaLibrary.Asset[]) => {
+        const filtered: MediaLibrary.Asset[] = [];
+
+        for (const asset of assets) {
+            const info = await MediaLibrary.getAssetInfoAsync(asset.id);
+            if (info.localUri) {
+                filtered.push(asset);
+            }
         }
+
+        return filtered;
+    };
+
+    const loadInitialAssets = async () => {
+        if (!libraryPermissionResponse || !locationPermissionResponse) return;
+
         if (libraryPermissionResponse.status !== "granted") {
             const { status } = await requestLibraryPermission();
             if (status !== "granted") return;
@@ -64,7 +76,9 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        setAssets(result.assets);
+        const localAssets = await filterOnlyLocalAssets(result.assets);
+
+        setAssets(localAssets);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
     };
@@ -80,7 +94,9 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        setAssets((prev) => [...prev, ...result.assets]);
+        const localAssets = await filterOnlyLocalAssets(result.assets);
+
+        setAssets((prev) => [...prev, ...localAssets]);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
         setIsLoading(false);

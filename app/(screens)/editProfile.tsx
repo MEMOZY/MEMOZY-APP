@@ -48,13 +48,6 @@ export default function EditProfileScreen() {
 
         if (!result.canceled && result.assets.length > 0) {
             const asset = result.assets[0];
-            console.log("선택한 사진 metadata:", {
-                uri: asset.uri,
-                filename: asset.fileName,
-                width: asset.width,
-                height: asset.height,
-                type: asset.type,
-            });
 
             setNewProfileImage(asset); // 실제 적용도 가능
         }
@@ -162,17 +155,7 @@ export default function EditProfileScreen() {
                                     [{ preSignedUrl, fileKey }]
                                 );
 
-                                console.log("📸 선택된 사진 metadata:");
-                                console.log({
-                                    uri: newProfileImage.uri,
-                                    filename: newProfileImage.fileName,
-                                    width: newProfileImage.width,
-                                    height: newProfileImage.height,
-                                    type: newProfileImage.type,
-                                    fileKey,
-                                });
-
-                                newProfileImageUrl = fileKey;
+                                newProfileImageUrl = preSignedUrl;
                             }
 
                             await patchUser({

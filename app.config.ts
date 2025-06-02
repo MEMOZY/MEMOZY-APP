@@ -14,7 +14,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         supportsTablet: true,
         bundleIdentifier: "com.tym.memozy",
         usesAppleSignIn: true,
-        buildNumber: "2025052801",
+        buildNumber: "2025052901",
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
             NSAppTransportSecurity: {

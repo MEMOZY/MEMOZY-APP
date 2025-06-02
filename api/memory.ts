@@ -107,7 +107,6 @@ const getMemories = async () => {
 };
 
 const postMemory = async (memory: PostMemoryPayload) => {
-    console.log("postMemory", memory);
     const response = await apiClient
         .post("memory", memory, {
             withAuth: true,

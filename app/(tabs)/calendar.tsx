@@ -58,7 +58,6 @@ export default function CalendarScreen() {
                         }
                         onBackPress={() => {
                             setSelectedLog(null);
-                            console.log("Back button pressed");
                         }}
                     />
                 ) : (

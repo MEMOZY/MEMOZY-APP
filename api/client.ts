@@ -75,6 +75,7 @@ async function refreshToken(): Promise<{
             {
                 headers: { Authorization: `Bearer ${refreshToken}` },
                 withAuth: false,
+                isRetry: true,
             }
         );
         if (res.status === 200) {

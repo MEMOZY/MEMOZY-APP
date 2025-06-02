@@ -20,7 +20,7 @@ export default function LogOptions({
     });
     return (
         <View style={styles.container}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => {
                     console.log("Edit pressed");
                 }}
@@ -33,7 +33,7 @@ export default function LogOptions({
                     수정
                 </ThemedText>
             </TouchableOpacity>
-            <View style={styles.line} />
+            <View style={styles.line} /> */}
             <TouchableOpacity
                 onPress={() => {
                     setSelectedLog(null);

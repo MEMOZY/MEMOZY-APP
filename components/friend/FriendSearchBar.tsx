@@ -31,7 +31,6 @@ export function FriendSearchBar() {
                 cancelText: "취소",
                 onConfirm: async () => {
                     try {
-                        console.log("✅ onConfirm 호출됨");
                         await requestFriend(userId);
                         showSnackbar({
                             message: "친구 추가에 성공했습니다.",
@@ -45,7 +44,6 @@ export function FriendSearchBar() {
                         queryClient.invalidateQueries({
                             queryKey: ["sentRequests"],
                         });
-                        console.log("✅ 친구 추가 성공");
                     } catch (error) {
                         showSnackbar({
                             message: "친구 추가에 실패했습니다.",

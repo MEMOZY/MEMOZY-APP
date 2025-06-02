@@ -16,7 +16,6 @@ export default function LoginScreen() {
             if (!socialToken) {
                 throw new Error("소셜 로그인에 실패했습니다.");
             }
-            console.log(socialToken);
             const { accessToken, refreshToken } = await getToken(
                 platform,
                 socialToken,
@@ -25,7 +24,6 @@ export default function LoginScreen() {
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");
             }
-            console.log(accessToken, refreshToken);
             await login(accessToken, refreshToken);
         } catch (error) {
             console.error("Login failed", error);
@@ -38,7 +36,6 @@ export default function LoginScreen() {
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");
             }
-            console.log(accessToken, refreshToken);
             await login(accessToken, refreshToken);
         } catch (error) {
             console.error("Login failed", error);

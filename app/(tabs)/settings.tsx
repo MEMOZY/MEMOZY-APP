@@ -21,8 +21,6 @@ export default function SettingsScreen() {
         queryFn: getUser,
     });
 
-    console.log(user);
-
     return (
         <PageLayout
             headerTitle="설정"
@@ -42,7 +40,7 @@ export default function SettingsScreen() {
                         value={user?.friendCode}
                         onPress={async () => {
                             await Clipboard.setStringAsync(
-                                user?.friendCode
+                                user?.friendCode ?? ""
                             ).then(() => {
                                 showSnackbar({
                                     message: "코드가 복사되었습니다",
@@ -55,7 +53,7 @@ export default function SettingsScreen() {
                 </SettingsSection>
             </Titled>
 
-            <Titled title="앱 정보">
+            {/* <Titled title="앱 정보">
                 <SettingsSection>
                     <SettingsItem
                         label="개인정보 처리방침"
@@ -87,13 +85,16 @@ export default function SettingsScreen() {
                         }}
                     />
                 </SettingsSection>
-            </Titled>
+            </Titled> */}
 
             <SettingsSection>
                 <SettingsItem
                     label="문의 하기"
                     onPress={() => {
-                        router.push("/inquiry");
+                        showSnackbar({
+                            message: "문의 하기는 현재 준비중입니다.",
+                        });
+                        // router.push("/inquiry");
                     }}
                 />
                 <Divider />
