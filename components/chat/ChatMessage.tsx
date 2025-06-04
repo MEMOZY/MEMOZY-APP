@@ -59,7 +59,10 @@ export default function ChatMessage({
 
     return (
         <View
-            style={{ gap: 10, alignSelf: isMine ? "flex-end" : "flex-start" }}
+            style={{
+                gap: 10,
+                alignSelf: isMine ? "flex-end" : "flex-start",
+            }}
         >
             {imageUrl && (
                 <Image
@@ -107,7 +110,7 @@ export default function ChatMessage({
 
 const styles = StyleSheet.create({
     image: {
-        maxWidth: 120,
+        width: 120,
         minHeight: 120,
         backgroundColor: Colors.gray3,
         borderRadius: 10,
