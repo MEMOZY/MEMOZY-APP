@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiClient } from "./client";
 import EventSource from "react-native-sse";
 import { Message } from "@/app/(chat-flow)/chat";
+import { router } from "expo-router";
 
 const chatStart = async (
     sessionId: string,
@@ -82,7 +83,8 @@ const chatAnswer = async (
     addMessage: (message: Message) => void,
     updateMessage: (message: Message) => void,
     doneReceiving: (memoryItemTempId: string) => void,
-    incrementStep: () => void
+    incrementStep: () => void,
+    onFinalDone: () => void
 ) => {
     const token = await AsyncStorage.getItem("accessToken");
     const url = new URL(
@@ -168,6 +170,19 @@ const chatAnswer = async (
         doneReceiving(currentMemoryItemTempId!);
         es.removeAllEventListeners();
         es.close();
+    });
+
+    es.addEventListener("final-done", () => {
+        incrementStep();
+        addMessage({
+            isMine: false,
+            text: "대화가 종료되었습니다.",
+            imageUrl: undefined,
+            memoryItemTempId: undefined,
+        });
+        es.removeAllEventListeners();
+        es.close();
+        onFinalDone();
     });
 
     return () => {

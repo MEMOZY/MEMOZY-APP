@@ -58,18 +58,21 @@ export default function HomeScreen() {
                 {!isLoading &&
                     memories &&
                     memories.length > 0 &&
-                    memories.map((log) => (
-                        <LogItem
-                            key={log.id}
-                            id={log.id}
-                            imageUrl={log.memoryItems[0].imageUrl}
-                            title={log.title}
-                            startDate={new Date(log.startDate)}
-                            endDate={new Date(log.endDate)}
-                            description={log.memoryItems[0].content}
-                            setSelectedLog={setSelectedLog}
-                        />
-                    ))}
+                    memories
+                        .reverse()
+                        .slice(0, 3)
+                        .map((log) => (
+                            <LogItem
+                                key={log.id}
+                                id={log.id}
+                                imageUrl={log.memoryItems[0].imageUrl}
+                                title={log.title}
+                                startDate={new Date(log.startDate)}
+                                endDate={new Date(log.endDate)}
+                                description={log.memoryItems[0].content}
+                                setSelectedLog={setSelectedLog}
+                            />
+                        ))}
             </Titled>
         </PageLayout>
     );

@@ -134,13 +134,23 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                                     borderRadius: 12,
                                 }}
                             />
-                            <ThemedText
-                                type="body1"
-                                lightColor={Colors.gray6}
-                                darkColor={Colors.gray6}
-                            >
-                                {item.content}
-                            </ThemedText>
+                            {item.content.split(". ").map((line, index) => (
+                                <ThemedText
+                                    type="body1"
+                                    lightColor={Colors.gray6}
+                                    darkColor={Colors.gray6}
+                                    style={{
+                                        alignSelf: "flex-start",
+                                    }}
+                                    key={index}
+                                >
+                                    {line +
+                                        (index <
+                                        item.content.split(". ").length - 1
+                                            ? ". "
+                                            : "")}
+                                </ThemedText>
+                            ))}
                         </View>
                     ))}
                 </ScrollView>

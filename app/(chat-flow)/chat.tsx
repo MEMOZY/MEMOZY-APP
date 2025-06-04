@@ -55,6 +55,17 @@ export default function ChatScreen() {
         setStep((prev) => prev + 1);
     };
 
+    const onFinalDone = () => {
+        router.replace({
+            pathname: "/(chat-flow)/save",
+            params: {
+                sessionId,
+                startDate,
+                endDate,
+            },
+        });
+    };
+
     useEffect(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
     }, [messages.length]);
@@ -101,22 +112,22 @@ export default function ChatScreen() {
                     },
                 });
             }}
-            headerRight={
-                <TouchableOpacity
-                    disabled={!isEnd}
-                    onPress={() => {
-                        router.replace("/edit");
-                    }}
-                >
-                    <ThemedText
-                        type="body1"
-                        lightColor={isEnd ? Colors.gray6 : Colors.gray4}
-                        darkColor={isEnd ? Colors.gray6 : Colors.gray4}
-                    >
-                        다음
-                    </ThemedText>
-                </TouchableOpacity>
-            }
+            // headerRight={
+            //     <TouchableOpacity
+            //         disabled={!isEnd}
+            //         onPress={() => {
+            //             router.replace("/edit");
+            //         }}
+            //     >
+            //         <ThemedText
+            //             type="body1"
+            //             lightColor={isEnd ? Colors.gray6 : Colors.gray4}
+            //             darkColor={isEnd ? Colors.gray6 : Colors.gray4}
+            //         >
+            //             다음
+            //         </ThemedText>
+            //     </TouchableOpacity>
+            // }
         >
             <StepProgressBar totalSteps={totalSteps} currentStep={step} />
             <View style={styles.bodyContainer}>
@@ -177,7 +188,8 @@ export default function ChatScreen() {
                                 addMessage,
                                 updateMessage,
                                 doneReceiving,
-                                incrementStep
+                                incrementStep,
+                                onFinalDone
                             );
                         } catch (e) {
                             showModal({
