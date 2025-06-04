@@ -23,7 +23,7 @@ export default function SettingsScreen() {
 
     return (
         <PageLayout
-            headerTitle="설정"
+            headerTitle="Settings"
             titleAlign="left"
             style={{ gap: 20 }}
             scrollView

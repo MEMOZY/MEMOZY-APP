@@ -9,7 +9,7 @@ import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
 import { formatDate } from "@/utils/formatDate";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Dimensions,
     Modal,
@@ -61,7 +61,7 @@ export default function CalendarScreen() {
                         }}
                     />
                 ) : (
-                    <PageLayout>
+                    <PageLayout headerTitle="Calendar" titleAlign="left">
                         <CalendarList
                             style={styles.calendarContainer}
                             theme={{
@@ -72,7 +72,7 @@ export default function CalendarScreen() {
                             horizontal={true}
                             pagingEnabled={true}
                             hideExtraDays={false}
-                            calendarWidth={Dimensions.get("window").width - 20}
+                            calendarWidth={Dimensions.get("window").width - 60}
                             customHeader={(props: any) => (
                                 <CalendarHeader
                                     {...props}
@@ -197,8 +197,7 @@ const styles = StyleSheet.create({
     calendarContainer: {
         borderRadius: 12,
         boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
-        height: "90%",
-        width: Dimensions.get("window").width - 20,
+        width: Dimensions.get("window").width - 60,
         alignSelf: "center",
     },
     modalOverlay: {
@@ -209,7 +208,7 @@ const styles = StyleSheet.create({
     },
     modalContentContainer: {
         backgroundColor: Colors.gray1,
-        width: Dimensions.get("window").width - 40,
+        width: Dimensions.get("window").width - 80,
         maxHeight: "80%",
         padding: 20,
         borderRadius: 12,

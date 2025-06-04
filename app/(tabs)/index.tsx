@@ -38,7 +38,7 @@ export default function HomeScreen() {
         <PageLayout
             headerTitle="Memozy"
             titleAlign="left"
-            style={{ gap: 20 }}
+            style={{ gap: 20, paddingBottom: 60 }}
             scrollView
             onRefresh={async () => {
                 refetchMemory();
