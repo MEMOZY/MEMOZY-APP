@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { deleteMemory, getMemories } from "@/api/memory";
 import { router } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface LogOptionsProps {
     memoryId: number;
@@ -14,10 +14,7 @@ export default function LogOptions({
     memoryId,
     setSelectedLog,
 }: LogOptionsProps) {
-    const { refetch } = useQuery({
-        queryKey: ["memories"],
-        queryFn: getMemories,
-    });
+    const queryClient = useQueryClient();
     return (
         <View style={styles.container}>
             {/* <TouchableOpacity
@@ -35,10 +32,12 @@ export default function LogOptions({
             </TouchableOpacity>
             <View style={styles.line} /> */}
             <TouchableOpacity
-                onPress={() => {
+                onPress={async () => {
+                    await deleteMemory(memoryId);
+                    await queryClient.invalidateQueries({
+                        queryKey: ["memories"],
+                    });
                     setSelectedLog(null);
-                    deleteMemory(memoryId);
-                    refetch();
                 }}
             >
                 <ThemedText

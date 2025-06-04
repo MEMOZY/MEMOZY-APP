@@ -35,14 +35,14 @@ function LogItem({
         <View style={styles.logContainer}>
             <View style={styles.logHeader}>
                 <ThemedText type="body2b">{title}</ThemedText>
+                {isOptionOpen && (
+                    <LogOptions memoryId={id} setSelectedLog={setSelectedLog} />
+                )}
                 <TouchableOpacity
                     onPress={() => setIsOptionOpen(!isOptionOpen)}
                 >
                     <DotsIcon />
                 </TouchableOpacity>
-                {isOptionOpen && (
-                    <LogOptions memoryId={id} setSelectedLog={setSelectedLog} />
-                )}
             </View>
             <ThemedText
                 type="caption"

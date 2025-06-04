@@ -11,7 +11,7 @@ import { DotsIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
 import { Memory } from "@/api/memory";
 import { formatDateRange } from "@/utils/formatDate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LogOptions from "./LogOptions";
 
 interface DetailLogProps {
@@ -21,6 +21,15 @@ interface DetailLogProps {
 
 export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
     const [isOptionOpen, setIsOptionOpen] = useState(false);
+
+    useEffect(() => {
+        if (!memory) {
+            onBackPress();
+        }
+    }, [memory]);
+
+    if (!memory) return null;
+
     return (
         <PageLayout
             padding={10}

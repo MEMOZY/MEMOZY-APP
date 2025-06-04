@@ -8,7 +8,14 @@ import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 export type Message = {
     isMine: boolean;
@@ -130,78 +137,85 @@ export default function ChatScreen() {
             // }
         >
             <StepProgressBar totalSteps={totalSteps} currentStep={step} />
-            <View style={styles.bodyContainer}>
-                <ScrollView
-                    ref={scrollViewRef}
-                    style={{
-                        flex: 1,
-                        marginHorizontal: -30,
-                        paddingHorizontal: 30,
-                    }}
-                    contentContainerStyle={{ gap: 20 }}
-                >
-                    {messages.map((msg, idx) => (
-                        <ChatMessage
-                            key={idx}
-                            isMine={msg.isMine}
-                            text={msg.text}
-                            imageUrl={msg.imageUrl}
-                        />
-                    ))}
-                </ScrollView>
-                <ChatInputBar
-                    onSend={async (input) => {
-                        //메세지에 TYPING이 있을 경우 아직 대답이 오지 않은 상태이므로
-                        // 아직 보내지 못한다는 안내
-                        if (isReceiving) {
-                            showModal({
-                                title: "대답을 기다려주세요.",
-                                subtitle: "상대방이 대답하는 중입니다.",
-                                confirmText: "확인",
-                            });
-                            return;
-                        }
-                        // 1. 내 메시지 추가
-                        setMessages((prev) => [
-                            ...prev,
-                            {
-                                isMine: true,
-                                text: input.length > 0 ? input : "건너뛰기",
-                            },
-                        ]);
 
-                        setMessages((prev) => [
-                            ...prev,
-                            {
-                                isMine: false,
-                                text: "__TYPING__",
-                            },
-                        ]);
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                keyboardVerticalOffset={120}
+            >
+                <View style={styles.bodyContainer}>
+                    <ScrollView
+                        ref={scrollViewRef}
+                        style={{
+                            flex: 1,
+                            marginHorizontal: -30,
+                            paddingHorizontal: 30,
+                        }}
+                        contentContainerStyle={{ gap: 20 }}
+                    >
+                        {messages.map((msg, idx) => (
+                            <ChatMessage
+                                key={idx}
+                                isMine={msg.isMine}
+                                text={msg.text}
+                                imageUrl={msg.imageUrl}
+                            />
+                        ))}
+                    </ScrollView>
+                    <ChatInputBar
+                        onSend={async (input) => {
+                            //메세지에 TYPING이 있을 경우 아직 대답이 오지 않은 상태이므로
+                            // 아직 보내지 못한다는 안내
+                            if (isReceiving) {
+                                showModal({
+                                    title: "대답을 기다려주세요.",
+                                    subtitle: "상대방이 대답하는 중입니다.",
+                                    confirmText: "확인",
+                                });
+                                return;
+                            }
+                            // 1. 내 메시지 추가
+                            setMessages((prev) => [
+                                ...prev,
+                                {
+                                    isMine: true,
+                                    text: input.length > 0 ? input : "건너뛰기",
+                                },
+                            ]);
 
-                        try {
-                            // 3. 다음 질문 받아오기
-                            setIsReceiving(true);
-                            await chatAnswer(
-                                sessionId,
-                                memoryItemTempId!,
-                                input.length > 0 ? input : "end",
-                                addMessage,
-                                updateMessage,
-                                doneReceiving,
-                                incrementStep,
-                                onFinalDone
-                            );
-                        } catch (e) {
-                            showModal({
-                                title: "오류",
-                                subtitle: "대화 중 문제가 발생했습니다.",
-                                confirmText: "확인",
-                                onConfirm: () => router.replace("/(tabs)"),
-                            });
-                        }
-                    }}
-                />
-            </View>
+                            setMessages((prev) => [
+                                ...prev,
+                                {
+                                    isMine: false,
+                                    text: "__TYPING__",
+                                },
+                            ]);
+
+                            try {
+                                // 3. 다음 질문 받아오기
+                                setIsReceiving(true);
+                                await chatAnswer(
+                                    sessionId,
+                                    memoryItemTempId!,
+                                    input.length > 0 ? input : "end",
+                                    addMessage,
+                                    updateMessage,
+                                    doneReceiving,
+                                    incrementStep,
+                                    onFinalDone
+                                );
+                            } catch (e) {
+                                showModal({
+                                    title: "오류",
+                                    subtitle: "대화 중 문제가 발생했습니다.",
+                                    confirmText: "확인",
+                                    onConfirm: () => router.replace("/(tabs)"),
+                                });
+                            }
+                        }}
+                    />
+                </View>
+            </KeyboardAvoidingView>
         </PageLayout>
     );
 }

@@ -79,11 +79,11 @@ const deleteMemory = async (memoryId: number) => {
         throw new Error("메모리 삭제에 실패했습니다.");
     }
 
-    if (response.status !== 200) {
+    if (response.status !== 204) {
         throw new Error("메모리 삭제에 실패했습니다.");
     }
 
-    return response.data;
+    return true;
 };
 
 const getMemories = async () => {
