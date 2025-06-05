@@ -1,3 +1,4 @@
+import { getFriends } from "@/api/friend";
 import { getMemories, Memory } from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import Titled from "@/components/common/Titled";
@@ -21,6 +22,11 @@ export default function HomeScreen() {
         queryFn: getMemories,
     });
 
+    const { data: friends } = useQuery({
+        queryKey: ["friends"],
+        queryFn: getFriends,
+    });
+
     return selectedLog && memories ? (
         <DetailLog
             onBackPress={() => {
@@ -32,7 +38,7 @@ export default function HomeScreen() {
         <PageLayout
             headerTitle="Memozy"
             titleAlign="left"
-            style={{ gap: 20 }}
+            style={{ gap: 20, paddingBottom: 60 }}
             scrollView
             onRefresh={async () => {
                 refetchMemory();
@@ -40,7 +46,7 @@ export default function HomeScreen() {
         >
             <Titled title="Friends">
                 <FriendList
-                    friends={[]}
+                    friends={friends ?? []}
                     onAddFriend={() => {
                         router.push("/(screens)/friends");
                     }}
@@ -52,18 +58,21 @@ export default function HomeScreen() {
                 {!isLoading &&
                     memories &&
                     memories.length > 0 &&
-                    memories.map((log) => (
-                        <LogItem
-                            key={log.id}
-                            id={log.id}
-                            imageUrl={log.memoryItems[0].imageUrl}
-                            title={log.title}
-                            startDate={new Date(log.startDate)}
-                            endDate={new Date(log.endDate)}
-                            description={log.memoryItems[0].content}
-                            setSelectedLog={setSelectedLog}
-                        />
-                    ))}
+                    memories
+                        .reverse()
+                        .slice(0, 3)
+                        .map((log) => (
+                            <LogItem
+                                key={log.id}
+                                id={log.id}
+                                imageUrl={log.memoryItems[0].imageUrl}
+                                title={log.title}
+                                startDate={new Date(log.startDate)}
+                                endDate={new Date(log.endDate)}
+                                description={log.memoryItems[0].content}
+                                setSelectedLog={setSelectedLog}
+                            />
+                        ))}
             </Titled>
         </PageLayout>
     );

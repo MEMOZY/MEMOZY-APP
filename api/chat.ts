@@ -1,90 +1,194 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiClient } from "./client";
+import EventSource from "react-native-sse";
+import { Message } from "@/app/(chat-flow)/chat";
+import { router } from "expo-router";
 
-const chatStart = async (sessionId: string) => {
-    const response = await apiClient
-        .get(`gpt/chats/start`, {
-            params: {
-                sessionId,
-            },
-            withAuth: true,
-            timeout: 1000 * 60 * 5, // 5분
-        })
-        .catch((error) => {
-            console.log(error.response);
-            console.log(error.message);
-            console.log(error.request);
-        });
-    if (!response) {
-        throw new Error("챗봇 시작에 실패했습니다.");
-    }
-    if (response.status !== 200) {
-        throw new Error("챗봇 시작에 실패했습니다.");
-    }
-    console.log("response", response.data);
-    const raw = response.data as string;
+const chatStart = async (
+    sessionId: string,
+    addMessage: (message: Message) => void,
+    updateMessage: (message: Message) => void,
+    doneReceiving: (memoryItemTempId: string) => void
+) => {
+    const token = await AsyncStorage.getItem("accessToken");
+    const url = new URL(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}gpt/chats/start`
+    );
 
-    // "data:"로 시작하는 줄 찾기
-    const dataLine = raw.split("\n").find((line) => line.startsWith("data:"));
+    url.searchParams.set("sessionId", sessionId);
 
-    if (!dataLine) {
-        throw new Error("응답 데이터가 올바르지 않습니다.");
-    }
+    let message: string | null = "";
+    let currentMemoryItemTempId: string | null = null;
 
-    const jsonString = dataLine.replace("data:", "").trim();
-    const parsed = JSON.parse(jsonString);
+    const es = new EventSource(url, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        method: "GET",
+    });
 
-    console.log("parsed", parsed);
+    es.addEventListener("first-question", (event) => {
+        try {
+            const parsed = JSON.parse(event.data);
+            message = "";
 
-    return parsed;
+            addMessage({
+                isMine: false,
+                text: "__TYPING__",
+                imageUrl: parsed.presignedUrl,
+                memoryItemTempId: parsed.memoryItemTempId,
+            });
+
+            currentMemoryItemTempId = parsed.memoryItemTempId;
+        } catch (e) {
+            console.error("first-question 파싱 실패", event.data, e);
+        }
+    });
+
+    es.addEventListener("reply", (event) => {
+        try {
+            const parsed = JSON.parse(event.data);
+
+            message = message + parsed.message;
+
+            updateMessage({
+                isMine: false,
+                text: message ?? "",
+                imageUrl: parsed.presignedUrl,
+                memoryItemTempId: parsed.memoryItemTempId,
+            });
+
+            currentMemoryItemTempId = parsed.memoryItemTempId;
+        } catch (e) {
+            console.error("reply 파싱 실패", event.data, e);
+        }
+    });
+
+    es.addEventListener("done", () => {
+        es.removeAllEventListeners();
+        es.close();
+        doneReceiving(currentMemoryItemTempId!);
+    });
+
+    return () => {
+        es.removeAllEventListeners();
+        es.close();
+    };
 };
 
 const chatAnswer = async (
     sessionId: string,
-    memoryItemTempId: number,
-    userAnswer: string
+    memoryItemTempId: string,
+    userAnswer: string,
+    addMessage: (message: Message) => void,
+    updateMessage: (message: Message) => void,
+    doneReceiving: (memoryItemTempId: string) => void,
+    incrementStep: () => void,
+    onFinalDone: () => void
 ) => {
-    const response = await apiClient
-        .post(
-            `gpt/chats/answer`,
-            {
-                memoryItemTempId,
-                userAnswer,
-            },
-            {
-                withAuth: true,
-                params: {
-                    sessionId,
-                },
-                timeout: 1000 * 60 * 5, // 5분
-            }
-        )
-        .catch((error) => {
-            console.log(error);
+    const token = await AsyncStorage.getItem("accessToken");
+    const url = new URL(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}gpt/chats/answer`
+    );
+
+    url.searchParams.set("sessionId", sessionId);
+
+    let message: string | null = "";
+    let currentMemoryItemTempId: string | null = null;
+    let imageUrl: string | null = "";
+
+    const es = new EventSource(url, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "text/event-stream",
+        },
+        body: JSON.stringify({
+            memoryItemTempId,
+            userAnswer,
+        }),
+        method: "POST",
+    });
+
+    es.addEventListener("open-question", (event) => {
+        incrementStep();
+        try {
+            const parsed = JSON.parse(event.data);
+            message = "";
+            imageUrl = parsed.presignedUrl;
+
+            addMessage({
+                isMine: false,
+                text: "__TYPING__",
+                imageUrl: imageUrl ?? undefined,
+                memoryItemTempId: parsed.memoryItemTempId,
+            });
+
+            currentMemoryItemTempId = parsed.memoryItemTempId;
+        } catch (e) {
+            console.error("open-reply 파싱 실패", event.data, e);
+        }
+    });
+
+    es.addEventListener("open-reply", (event) => {
+        try {
+            const parsed = JSON.parse(event.data);
+            message = "";
+
+            addMessage({
+                isMine: false,
+                text: "__TYPING__",
+                imageUrl: undefined,
+                memoryItemTempId: parsed.memoryItemTempId,
+            });
+
+            currentMemoryItemTempId = parsed.memoryItemTempId;
+        } catch (e) {
+            console.error("open-reply 파싱 실패", event.data, e);
+        }
+    });
+
+    es.addEventListener("reply", (event) => {
+        try {
+            const parsed = JSON.parse(event.data);
+            message = message + parsed.message;
+
+            updateMessage({
+                isMine: false,
+                text: message ?? "",
+                imageUrl: imageUrl ?? undefined,
+                memoryItemTempId: parsed.memoryItemTempId,
+            });
+
+            currentMemoryItemTempId = parsed.memoryItemTempId;
+        } catch (e) {
+            console.error("reply 파싱 실패", event.data, e);
+        }
+    });
+
+    es.addEventListener("done", () => {
+        doneReceiving(currentMemoryItemTempId!);
+        es.removeAllEventListeners();
+        es.close();
+    });
+
+    es.addEventListener("final-done", () => {
+        incrementStep();
+        addMessage({
+            isMine: false,
+            text: "대화가 종료되었습니다.",
+            imageUrl: undefined,
+            memoryItemTempId: undefined,
         });
+        es.removeAllEventListeners();
+        es.close();
+        onFinalDone();
+    });
 
-    if (!response) {
-        throw new Error("챗봇 답변에 실패했습니다.");
-    }
-
-    if (response.status !== 200) {
-        throw new Error("챗봇 답변에 실패했습니다.");
-    }
-
-    const raw = response.data as string;
-
-    // "data:"로 시작하는 줄 찾기
-    const dataLine = raw.split("\n").find((line) => line.startsWith("data:"));
-
-    if (!dataLine) {
-        throw new Error("응답 데이터가 올바르지 않습니다.");
-    }
-
-    const jsonString = dataLine.replace("data:", "").trim();
-    const parsed = JSON.parse(jsonString);
-
-    console.log("parsed", parsed);
-
-    return parsed;
+    return () => {
+        es.removeAllEventListeners();
+        es.close();
+    };
 };
 
 export { chatStart, chatAnswer };

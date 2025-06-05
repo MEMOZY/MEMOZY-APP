@@ -19,6 +19,7 @@ import { useUI } from "@/hooks/useUI";
 import { getPresignedUrls, uploadToPresignedUrl } from "@/api/file";
 import { MemoryItem, postMemoryTemp } from "@/api/memory";
 import { router } from "expo-router";
+import { extractSelectedMetadata } from "@/utils/metadata";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -44,10 +45,22 @@ export default function SelectScreen() {
         loadInitialAssets();
     }, [libraryPermissionResponse, locationPermissionResponse]);
 
-    const loadInitialAssets = async () => {
-        if (!libraryPermissionResponse || !locationPermissionResponse) {
-            return;
+    const filterOnlyLocalAssets = async (assets: MediaLibrary.Asset[]) => {
+        const filtered: MediaLibrary.Asset[] = [];
+
+        for (const asset of assets) {
+            const info = await MediaLibrary.getAssetInfoAsync(asset.id);
+            if (info.localUri) {
+                filtered.push(asset);
+            }
         }
+
+        return filtered;
+    };
+
+    const loadInitialAssets = async () => {
+        if (!libraryPermissionResponse || !locationPermissionResponse) return;
+
         if (libraryPermissionResponse.status !== "granted") {
             const { status } = await requestLibraryPermission();
             if (status !== "granted") return;
@@ -63,7 +76,9 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        setAssets(result.assets);
+        const localAssets = await filterOnlyLocalAssets(result.assets);
+
+        setAssets(localAssets);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
     };
@@ -79,7 +94,9 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        setAssets((prev) => [...prev, ...result.assets]);
+        const localAssets = await filterOnlyLocalAssets(result.assets);
+
+        setAssets((prev) => [...prev, ...localAssets]);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
         setIsLoading(false);
@@ -116,37 +133,6 @@ export default function SelectScreen() {
                 )}
             </Pressable>
         );
-    };
-
-    const extractSelectedMetadata = async (selectedIds: string[]) => {
-        const metadataList = [];
-
-        for (const id of selectedIds) {
-            const assetInfo = await MediaLibrary.getAssetInfoAsync(id);
-            let address = null;
-            if (assetInfo.location) {
-                const { latitude, longitude } = assetInfo.location;
-                const location = await Location.reverseGeocodeAsync({
-                    latitude,
-                    longitude,
-                });
-                address = location[0]?.formattedAddress;
-            }
-
-            metadataList.push({
-                id: assetInfo.id,
-                uri: assetInfo.uri,
-                filename: assetInfo.filename,
-                creationTime: new Date(assetInfo.creationTime),
-                location: address,
-            });
-        }
-
-        metadataList.sort((a, b) => {
-            return a.creationTime.getTime() - b.creationTime.getTime();
-        });
-
-        return metadataList;
     };
 
     return (
@@ -200,10 +186,19 @@ export default function SelectScreen() {
                             selected
                         );
                         try {
+                            const validMetadata = metadata
+                                .filter((item) => item.uri !== undefined)
+                                .map((item) => ({
+                                    uri: item.uri!,
+                                    filename: item.filename,
+                                }));
                             const presignedUrls = await getPresignedUrls(
-                                metadata
+                                validMetadata
                             );
-                            await uploadToPresignedUrl(metadata, presignedUrls);
+                            await uploadToPresignedUrl(
+                                validMetadata,
+                                presignedUrls
+                            );
                             const memoryItems: MemoryItem[] = presignedUrls.map(
                                 (
                                     item: { preSignedUrl: string },

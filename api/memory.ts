@@ -17,6 +17,20 @@ export interface Memory {
     sharedUserIds: number[];
 }
 
+export const CATEGORY_LABELS: {
+    label: string;
+    value: Memory["category"] | null;
+}[] = [
+    { label: "전체", value: null },
+    { label: "여행", value: "TRAVEL" },
+    { label: "일상", value: "DAILY" },
+    { label: "반려동물", value: "PET" },
+    { label: "다이어트", value: "DIET" },
+    { label: "가족", value: "FAMILY" },
+    { label: "커플", value: "COUPLE" },
+    { label: "기타", value: "COUSTOM" },
+];
+
 export interface PostMemoryPayload {
     title: string;
     category: Memory["category"];
@@ -65,11 +79,11 @@ const deleteMemory = async (memoryId: number) => {
         throw new Error("메모리 삭제에 실패했습니다.");
     }
 
-    if (response.status !== 200) {
+    if (response.status !== 204) {
         throw new Error("메모리 삭제에 실패했습니다.");
     }
 
-    return response.data;
+    return true;
 };
 
 const getMemories = async () => {
@@ -93,7 +107,6 @@ const getMemories = async () => {
 };
 
 const postMemory = async (memory: PostMemoryPayload) => {
-    console.log("postMemory", memory);
     const response = await apiClient
         .post("memory", memory, {
             withAuth: true,

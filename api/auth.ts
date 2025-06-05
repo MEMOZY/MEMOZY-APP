@@ -15,13 +15,15 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
             try {
                 await GoogleSignin.hasPlayServices();
                 const response = await GoogleSignin.signIn();
-                console.log("Google login response:", response);
                 if (isSuccessResponse(response)) {
-                    console.log("Google login response:", response);
+                    const tokens = await GoogleSignin.getTokens();
+                    return {
+                        socialToken: tokens.accessToken,
+                        name: response.data.user?.name || "memozy_user",
+                    };
                 } else {
                     throw new Error("구글 로그인에 실패했습니다.");
                 }
-                return false;
             } catch (error) {
                 console.log("Google login error:", error);
                 if (isErrorWithCode(error)) {
@@ -52,7 +54,10 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
                         AppleAuthentication.AppleAuthenticationScope.EMAIL,
                     ],
                 });
-                console.log("Apple login response:", credential);
+                return {
+                    socialToken: credential.identityToken,
+                    name: credential.fullName?.givenName || "memozy_user",
+                };
             } catch (error) {
                 throw new Error("애플 로그인에 실패했습니다.");
             }
@@ -60,7 +65,10 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
         case "KAKAO":
             try {
                 result = await login();
-                return result.accessToken;
+                return {
+                    socialToken: result.accessToken,
+                    name: "memozy_user",
+                };
             } catch (error) {
                 throw new Error("카카오 로그인에 실패했습니다.");
             }
@@ -71,11 +79,13 @@ const getSocialAccessToken = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
 
 const getToken = async (
     platform: "GOOGLE" | "APPLE" | "KAKAO",
-    socialAccessToken: string
+    socialAccessToken: string,
+    name: string
 ) => {
     const response = await apiClient
         .post(`auth/social/${platform}/login`, {
-            socialAccessToken,
+            token: socialAccessToken,
+            name,
         })
         .catch((error) => {
             console.log(error);

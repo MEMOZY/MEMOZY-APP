@@ -1,11 +1,10 @@
+import { setLogoutHandler } from "@/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    accessToken?: string;
-    refreshToken?: string;
     login: (accessToken: string, refreshToken: string) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -21,8 +20,6 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [accessToken, setAccessToken] = useState<string>();
-    const [refreshToken, setRefreshToken] = useState<string>();
     const [isAuthLoaded, setIsAuthLoaded] = useState<boolean>(false);
 
     const segments = useSegments();
@@ -30,18 +27,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const login = async (accessToken: string, refreshToken: string) => {
         await AsyncStorage.setItem("accessToken", accessToken);
         await AsyncStorage.setItem("refreshToken", refreshToken);
-        setAccessToken(accessToken);
-        setRefreshToken(refreshToken);
         setIsLoggedIn(true);
     };
 
     const logout = async () => {
         await AsyncStorage.removeItem("accessToken");
         await AsyncStorage.removeItem("refreshToken");
-        setAccessToken(undefined);
-        setRefreshToken(undefined);
         setIsLoggedIn(false);
     };
+
+    useEffect(() => {
+        setLogoutHandler(logout);
+    }, [logout]);
 
     useEffect(() => {
         async function loadAuth() {
@@ -50,12 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 "refreshToken"
             );
 
-            console.log("Stored Access Token:", storedAccessToken);
-            console.log("Stored Refresh Token:", storedRefreshToken);
-
             if (storedAccessToken && storedRefreshToken) {
-                setAccessToken(storedAccessToken);
-                setRefreshToken(storedRefreshToken);
                 setIsLoggedIn(true);
             }
 
@@ -78,8 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         <AuthContext.Provider
             value={{
                 isLoggedIn,
-                accessToken,
-                refreshToken,
                 login,
                 logout,
             }}

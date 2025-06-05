@@ -1,5 +1,5 @@
 import * as React from "react";
-import Svg, { SvgProps, Path, Rect } from "react-native-svg";
+import Svg, { SvgProps, Path, Rect, G } from "react-native-svg";
 const HomeIcon = (props: SvgProps) => (
     <Svg width={24} height={24} fill="none" {...props}>
         <Path
@@ -261,7 +261,12 @@ const CopyIcon = (props: SvgProps) => (
     </Svg>
 );
 const ImageIcon = (props: SvgProps) => (
-    <Svg width={22} height={22} fill="none" {...props}>
+    <Svg
+        width={props.width ?? 22}
+        height={props.height ?? 22}
+        fill="none"
+        {...props}
+    >
         <Path
             stroke="#4E5968"
             strokeWidth={1.5}

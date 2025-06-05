@@ -1,10 +1,18 @@
 import PageLayout from "@/components/common/PageLayout";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+    Image,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { DotsIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
 import { Memory } from "@/api/memory";
 import { formatDateRange } from "@/utils/formatDate";
+import { useEffect, useState } from "react";
+import LogOptions from "./LogOptions";
 
 interface DetailLogProps {
     onBackPress: () => void;
@@ -12,6 +20,16 @@ interface DetailLogProps {
 }
 
 export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
+    const [isOptionOpen, setIsOptionOpen] = useState(false);
+
+    useEffect(() => {
+        if (!memory) {
+            onBackPress();
+        }
+    }, [memory]);
+
+    if (!memory) return null;
+
     return (
         <PageLayout
             padding={10}
@@ -40,7 +58,21 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                 backText="이전"
                 headerTitle={memory.title}
                 titleAlign="left"
-                headerRight={<DotsIcon />}
+                headerRight={
+                    <>
+                        {isOptionOpen && (
+                            <LogOptions
+                                memoryId={memory.id}
+                                setSelectedLog={() => {}}
+                            />
+                        )}
+                        <TouchableOpacity
+                            onPress={() => setIsOptionOpen(!isOptionOpen)}
+                        >
+                            <DotsIcon />
+                        </TouchableOpacity>
+                    </>
+                }
                 style={{
                     gap: 20,
                 }}
@@ -111,13 +143,23 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                                     borderRadius: 12,
                                 }}
                             />
-                            <ThemedText
-                                type="body1"
-                                lightColor={Colors.gray6}
-                                darkColor={Colors.gray6}
-                            >
-                                {item.content}
-                            </ThemedText>
+                            {item.content.split(". ").map((line, index) => (
+                                <ThemedText
+                                    type="body1"
+                                    lightColor={Colors.gray6}
+                                    darkColor={Colors.gray6}
+                                    style={{
+                                        alignSelf: "flex-start",
+                                    }}
+                                    key={index}
+                                >
+                                    {line +
+                                        (index <
+                                        item.content.split(". ").length - 1
+                                            ? ". "
+                                            : "")}
+                                </ThemedText>
+                            ))}
                         </View>
                     ))}
                 </ScrollView>

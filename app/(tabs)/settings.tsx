@@ -9,13 +9,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUI } from "@/hooks/useUI";
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/api/user";
 
 export default function SettingsScreen() {
     const { logout } = useAuth();
     const { showModal, showSnackbar } = useUI();
+
+    const { data: user } = useQuery({
+        queryKey: ["user"],
+        queryFn: getUser,
+    });
+
     return (
         <PageLayout
-            headerTitle="설정"
+            headerTitle="Settings"
             titleAlign="left"
             style={{ gap: 20 }}
             scrollView
@@ -29,23 +37,23 @@ export default function SettingsScreen() {
                     <Divider />
                     <SettingsItem
                         label="내 코드"
-                        value="ABCD1234"
+                        value={user?.friendCode}
                         onPress={async () => {
-                            await Clipboard.setStringAsync("ABCD1234").then(
-                                () => {
-                                    showSnackbar({
-                                        message: "코드가 복사되었습니다",
-                                        color: Colors.green,
-                                    });
-                                }
-                            );
+                            await Clipboard.setStringAsync(
+                                user?.friendCode ?? ""
+                            ).then(() => {
+                                showSnackbar({
+                                    message: "코드가 복사되었습니다",
+                                    color: Colors.green,
+                                });
+                            });
                         }}
                         rightIcon={<CopyIcon />}
                     />
                 </SettingsSection>
             </Titled>
 
-            <Titled title="앱 정보">
+            {/* <Titled title="앱 정보">
                 <SettingsSection>
                     <SettingsItem
                         label="개인정보 처리방침"
@@ -77,13 +85,16 @@ export default function SettingsScreen() {
                         }}
                     />
                 </SettingsSection>
-            </Titled>
+            </Titled> */}
 
             <SettingsSection>
                 <SettingsItem
                     label="문의 하기"
                     onPress={() => {
-                        router.push("/inquiry");
+                        showSnackbar({
+                            message: "문의 하기는 현재 준비중입니다.",
+                        });
+                        // router.push("/inquiry");
                     }}
                 />
                 <Divider />

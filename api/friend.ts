@@ -74,9 +74,13 @@ const getSentFriendRequests = async () => {
 
 const requestFriend = async (targetUserId: string) => {
     const response = await apiClient
-        .post(`friends/request/${targetUserId}`, {
-            withAuth: true,
-        })
+        .post(
+            `friends/request/${targetUserId}`,
+            {},
+            {
+                withAuth: true,
+            }
+        )
         .catch((error) => {
             console.log(error);
         });
@@ -94,9 +98,13 @@ const requestFriend = async (targetUserId: string) => {
 
 const acceptFriendRequest = async (targetUserId: string) => {
     const response = await apiClient
-        .post(`friends/accept/${targetUserId}`, {
-            withAuth: true,
-        })
+        .post(
+            `friends/accept/${targetUserId}`,
+            {},
+            {
+                withAuth: true,
+            }
+        )
         .catch((error) => {
             console.log(error);
         });
@@ -114,9 +122,13 @@ const acceptFriendRequest = async (targetUserId: string) => {
 
 const rejectFriendRequest = async (targetUserId: string) => {
     const response = await apiClient
-        .post(`friends/reject/${targetUserId}`, {
-            withAuth: true,
-        })
+        .post(
+            `friends/reject/${targetUserId}`,
+            {},
+            {
+                withAuth: true,
+            }
+        )
         .catch((error) => {
             console.log(error);
         });
@@ -134,7 +146,7 @@ const rejectFriendRequest = async (targetUserId: string) => {
 
 const deleteFriend = async (targetUserId: string) => {
     const response = await apiClient
-        .post(`friends/remove/${targetUserId}`, {
+        .delete(`friends/remove/${targetUserId}`, {
             withAuth: true,
         })
         .catch((error) => {

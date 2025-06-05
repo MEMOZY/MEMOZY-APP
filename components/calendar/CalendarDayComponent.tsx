@@ -90,13 +90,10 @@ export default memo(CalendarDayComponent, (prevProps, nextProps) => {
 
 const styles = StyleSheet.create({
     dayContainer: {
-        backgroundColor: Colors.gray1,
         width: "80%",
         minHeight: 50,
         alignItems: "center",
         padding: 4,
-        borderRadius: 8,
-        boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
         gap: 2,
     },
     dayDisabled: {
@@ -111,7 +108,6 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         borderRadius: 4,
-        backgroundColor: Colors.gray2,
     },
     dayImageOverlay: {
         position: "absolute",
@@ -121,7 +117,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
         borderRadius: 4,
     },
 });

@@ -35,14 +35,14 @@ function LogItem({
         <View style={styles.logContainer}>
             <View style={styles.logHeader}>
                 <ThemedText type="body2b">{title}</ThemedText>
+                {isOptionOpen && (
+                    <LogOptions memoryId={id} setSelectedLog={setSelectedLog} />
+                )}
                 <TouchableOpacity
                     onPress={() => setIsOptionOpen(!isOptionOpen)}
                 >
                     <DotsIcon />
                 </TouchableOpacity>
-                {isOptionOpen && (
-                    <LogOptions memoryId={id} setSelectedLog={setSelectedLog} />
-                )}
             </View>
             <ThemedText
                 type="caption"
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
     },
     flex: {
+        maxHeight: 70,
         flex: 1,
     },
 });

@@ -9,7 +9,7 @@ import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
 import { formatDate } from "@/utils/formatDate";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Dimensions,
     Modal,
@@ -19,20 +19,6 @@ import {
     View,
 } from "react-native";
 import { CalendarList } from "react-native-calendars";
-
-export const CATEGORY_LABELS: {
-    label: string;
-    value: Memory["category"] | null;
-}[] = [
-    { label: "전체", value: null },
-    { label: "여행", value: "TRAVEL" },
-    { label: "일상", value: "DAILY" },
-    { label: "반려동물", value: "PET" },
-    { label: "다이어트", value: "DIET" },
-    { label: "가족", value: "FAMILY" },
-    { label: "커플", value: "COUPLE" },
-    { label: "기타", value: "COUSTOM" },
-];
 
 export default function CalendarScreen() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -56,7 +42,7 @@ export default function CalendarScreen() {
         if (selectedCategory === null) {
             return true;
         }
-        item.category === selectedCategory;
+        return item.category === selectedCategory;
     });
 
     return (
@@ -72,11 +58,10 @@ export default function CalendarScreen() {
                         }
                         onBackPress={() => {
                             setSelectedLog(null);
-                            console.log("Back button pressed");
                         }}
                     />
                 ) : (
-                    <PageLayout>
+                    <PageLayout headerTitle="Calendar" titleAlign="left">
                         <CalendarList
                             style={styles.calendarContainer}
                             theme={{
@@ -87,7 +72,7 @@ export default function CalendarScreen() {
                             horizontal={true}
                             pagingEnabled={true}
                             hideExtraDays={false}
-                            calendarWidth={Dimensions.get("window").width - 20}
+                            calendarWidth={Dimensions.get("window").width - 60}
                             customHeader={(props: any) => (
                                 <CalendarHeader
                                     {...props}
@@ -212,8 +197,7 @@ const styles = StyleSheet.create({
     calendarContainer: {
         borderRadius: 12,
         boxShadow: "0 0 4px rgba(0, 0, 0, 0.1)",
-        height: "90%",
-        width: Dimensions.get("window").width - 20,
+        width: Dimensions.get("window").width - 60,
         alignSelf: "center",
     },
     modalOverlay: {
@@ -224,7 +208,7 @@ const styles = StyleSheet.create({
     },
     modalContentContainer: {
         backgroundColor: Colors.gray1,
-        width: Dimensions.get("window").width - 40,
+        width: Dimensions.get("window").width - 80,
         maxHeight: "80%",
         padding: 20,
         borderRadius: 12,

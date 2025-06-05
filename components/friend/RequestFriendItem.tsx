@@ -2,6 +2,8 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { CheckIcon, XIcon } from "@/assets/images/icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { acceptFriendRequest, rejectFriendRequest } from "@/api/friend";
 
 interface RequestFriendItemProps {
     name: string;
@@ -14,6 +16,22 @@ export function RequestFriendItem({
     imageUrl,
     userId,
 }: RequestFriendItemProps) {
+    const queryClient = useQueryClient();
+
+    const handleRejectFriend = async () => {
+        await rejectFriendRequest(userId);
+        queryClient.invalidateQueries({
+            queryKey: ["receivedRequests"],
+        });
+    };
+
+    const handleAcceptFriend = async () => {
+        await acceptFriendRequest(userId);
+        queryClient.invalidateQueries({
+            queryKey: ["receivedRequests"],
+        });
+    };
+
     return (
         <View style={styles.friendContainer}>
             <Image
@@ -30,12 +48,12 @@ export function RequestFriendItem({
                 {name}
             </ThemedText>
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleRejectFriend}>
                     <View style={styles.button}>
                         <XIcon />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleAcceptFriend}>
                     <View style={styles.button}>
                         <CheckIcon />
                     </View>

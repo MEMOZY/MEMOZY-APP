@@ -5,26 +5,25 @@ import { ThemedText } from "@/components/common/ThemedText";
 import SocialLoginButton from "@/components/login/SocialLoginButton";
 import { Colors } from "@/constants/Colors";
 import { useAuth } from "@/contexts/AuthContext";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
     const { login } = useAuth();
 
     const handleLogin = async (platform: "GOOGLE" | "APPLE" | "KAKAO") => {
         try {
-            const socialAccessToken = await getSocialAccessToken(platform);
-            if (!socialAccessToken) {
+            const { socialToken, name } = await getSocialAccessToken(platform);
+            if (!socialToken) {
                 throw new Error("소셜 로그인에 실패했습니다.");
             }
-            console.log(socialAccessToken);
             const { accessToken, refreshToken } = await getToken(
                 platform,
-                socialAccessToken
+                socialToken,
+                name
             );
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");
             }
-            console.log(accessToken, refreshToken);
             await login(accessToken, refreshToken);
         } catch (error) {
             console.error("Login failed", error);
@@ -37,7 +36,6 @@ export default function LoginScreen() {
             if (!accessToken || !refreshToken) {
                 throw new Error("로그인에 실패했습니다.");
             }
-            console.log(accessToken, refreshToken);
             await login(accessToken, refreshToken);
         } catch (error) {
             console.error("Login failed", error);
