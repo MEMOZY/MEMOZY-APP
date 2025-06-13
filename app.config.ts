@@ -14,7 +14,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         supportsTablet: true,
         bundleIdentifier: "com.tym.memozy",
         usesAppleSignIn: true,
-        buildNumber: "2025060501",
+        buildNumber: "2025060506",
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
             NSAppTransportSecurity: {
@@ -49,8 +49,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             "expo-media-library",
             {
                 photosPermission:
-                    "당신의 사진에 접근할 수 있도록 권한을 허용해주세요.",
-                savePhotosPermission: "Allow $(PRODUCT_NAME) to save photos.",
+                    "Memozy는 선택한 사진을 기반으로 AI가 자동으로 감정과 내용을 분석하여 일기 형식으로 정리해드립니다.",
                 isAccessMediaLocationEnabled: true,
             },
         ],
@@ -81,7 +80,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             "expo-location",
             {
                 locationAlwaysAndWhenInUsePermission:
-                    "당신의 위치에 접근할 수 있도록 권한을 허용해주세요.",
+                    "Memozy는 선택한 사진의 위치 정보를 분석해서 일기에 장소와 관련된 내용을 자동으로 추가합니다.",
+                locationAlwaysPermission:
+                    "Memozy는 선택한 사진의 위치 정보를 분석해서 일기에 장소와 관련된 내용을 자동으로 추가합니다.",
+                locationWhenInUsePermission:
+                    "Memozy는 선택한 사진의 위치 정보를 분석해서 일기에 장소와 관련된 내용을 자동으로 추가합니다.",
             },
         ],
         [
