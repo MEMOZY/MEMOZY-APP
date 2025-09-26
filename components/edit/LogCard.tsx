@@ -1,16 +1,23 @@
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, TextInput, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { TrashIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
-import { formatTime } from "@/utils/formatDate";
 
 interface LogCardProps {
     imageUrl?: string;
     text?: string;
-    time: Date;
+    onChangeText?: (text: string) => void;
+    onDelete: () => void;
+    editable?: boolean;
 }
 
-export default function LogCard({ imageUrl, text, time }: LogCardProps) {
+export default function LogCard({
+    imageUrl,
+    text,
+    onChangeText,
+    onDelete,
+    editable = false,
+}: LogCardProps) {
     return (
         <View style={styles.container}>
             <Image
@@ -18,16 +25,23 @@ export default function LogCard({ imageUrl, text, time }: LogCardProps) {
                 style={styles.image}
                 resizeMode="contain"
             />
-            <ThemedText type="body1">{text}</ThemedText>
+            {editable ? (
+                <TextInput
+                    style={styles.body1}
+                    value={text}
+                    onChangeText={onChangeText}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="off"
+                    autoFocus={false}
+                    returnKeyType="done"
+                    inputMode="text"
+                />
+            ) : (
+                <ThemedText type="body1">{text}</ThemedText>
+            )}
             <View style={styles.footer}>
-                <ThemedText
-                    type="body2"
-                    lightColor={Colors.gray4}
-                    darkColor={Colors.gray4}
-                >
-                    {formatTime(time)}
-                </ThemedText>
-                <TrashIcon />
+                <TrashIcon onPress={onDelete} />
             </View>
         </View>
     );
@@ -50,7 +64,11 @@ const styles = StyleSheet.create({
     },
     footer: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         alignItems: "center",
+    },
+    body1: {
+        fontSize: 16,
+        fontFamily: "Pretendard-Regular",
     },
 });

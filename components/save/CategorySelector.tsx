@@ -72,10 +72,20 @@ export default function CategorySelector({
                             {CATEGORY_OPTIONS.map(([key, label]) => (
                                 <Pressable
                                     key={key}
-                                    style={categoryStyles.option}
+                                    style={[
+                                        categoryStyles.option,
+                                        value === key &&
+                                            categoryStyles.optionSelected,
+                                    ]}
                                     onPress={() => handleSelect(key)}
                                 >
-                                    <Text style={categoryStyles.optionText}>
+                                    <Text
+                                        style={[
+                                            categoryStyles.optionText,
+                                            value === key &&
+                                                categoryStyles.optionTextSelected,
+                                        ]}
+                                    >
                                         {label}
                                     </Text>
                                 </Pressable>
@@ -90,33 +100,48 @@ export default function CategorySelector({
 
 const categoryStyles = StyleSheet.create({
     category: {
-        backgroundColor: Colors.white,
         flexDirection: "row",
-        gap: 4,
+        gap: 6,
         alignItems: "center",
         borderRadius: 20,
-        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-        paddingHorizontal: 16,
-        height: 34,
+        paddingHorizontal: 14,
+        height: 36,
         alignSelf: "flex-start",
+        borderWidth: 1,
+        borderColor: Colors.gray3,
+        backgroundColor: Colors.white,
     },
     overlay: {
         flex: 1,
         justifyContent: "flex-end",
     },
     modal: {
-        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.2)",
         backgroundColor: Colors.white,
-        padding: 20,
+        paddingVertical: 16,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        maxHeight: "50%",
+        maxHeight: "60%",
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
     },
     option: {
-        paddingVertical: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: Colors.gray2,
+    },
+    optionSelected: {
+        backgroundColor: "#F0F5FF",
     },
     optionText: {
         fontSize: 16,
         color: Colors.gray6,
+    },
+    optionTextSelected: {
+        fontWeight: "700",
     },
 });
