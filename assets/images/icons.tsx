@@ -194,7 +194,7 @@ const DotsIcon = (props: SvgProps) => (
 
 const SearchIcon = (props: SvgProps) => (
     <Svg width={28} height={28} fill="none" {...props}>
-        <Rect width={28} height={28} fill="#3D4248" rx={14} />
+        <Rect width={28} height={28} fill={props.color ?? "#3D4248"} rx={14} />
         <Path
             stroke="#F9FAFB"
             strokeWidth={1.5}
