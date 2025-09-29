@@ -3,10 +3,8 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import * as MediaLibrary from "expo-media-library";
-import * as Location from "expo-location";
 import {
     FlatList,
-    Image,
     Pressable,
     StyleSheet,
     View,
@@ -20,6 +18,7 @@ import { getPresignedUrls, uploadToPresignedUrl } from "@/api/file";
 import { MemoryItem, postMemoryTemp } from "@/api/memory";
 import { router } from "expo-router";
 import { extractSelectedMetadata } from "@/utils/metadata";
+import { Image } from "expo-image";
 
 const MAX_SELECT_COUNT = 30;
 const GAP = 20;
@@ -35,15 +34,13 @@ export default function SelectScreen() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [libraryPermissionResponse, requestLibraryPermission] =
         MediaLibrary.usePermissions();
-    const [locationPermissionResponse, requestLocationPermission] =
-        Location.useForegroundPermissions();
 
     const { showSnackbar } = useUI();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         loadInitialAssets();
-    }, [libraryPermissionResponse, locationPermissionResponse]);
+    }, [libraryPermissionResponse]);
 
     const filterOnlyLocalAssets = async (assets: MediaLibrary.Asset[]) => {
         const filtered: MediaLibrary.Asset[] = [];
@@ -59,14 +56,10 @@ export default function SelectScreen() {
     };
 
     const loadInitialAssets = async () => {
-        if (!libraryPermissionResponse || !locationPermissionResponse) return;
+        if (!libraryPermissionResponse) return;
 
         if (libraryPermissionResponse.status !== "granted") {
             const { status } = await requestLibraryPermission();
-            if (status !== "granted") return;
-        }
-        if (locationPermissionResponse.status !== "granted") {
-            const { status } = await requestLocationPermission();
             if (status !== "granted") return;
         }
 
@@ -76,9 +69,7 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        const localAssets = await filterOnlyLocalAssets(result.assets);
-
-        setAssets(localAssets);
+        setAssets(result.assets);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
     };
@@ -94,9 +85,7 @@ export default function SelectScreen() {
             sortBy: ["creationTime"],
         });
 
-        const localAssets = await filterOnlyLocalAssets(result.assets);
-
-        setAssets((prev) => [...prev, ...localAssets]);
+        setAssets((prev) => [...prev, ...result.assets]);
         setEndCursor(result.endCursor || null);
         setHasNextPage(result.hasNextPage);
         setIsLoading(false);
@@ -253,6 +242,7 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: "100%",
+        backgroundColor: Colors.gray3,
     },
     overlay: {
         position: "absolute",

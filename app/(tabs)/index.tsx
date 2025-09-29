@@ -1,11 +1,12 @@
 import { getFriends } from "@/api/friend";
-import { getMemories, Memory } from "@/api/memory";
+import { getMemories } from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import Titled from "@/components/common/Titled";
 import FriendList from "@/components/friend/FriendList";
 import AddLogItem from "@/components/logs/AddLogItem";
 import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
+import { SearchBar } from "@/components/search/SearchBar";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -44,6 +45,8 @@ export default function HomeScreen() {
                 refetchMemory();
             }}
         >
+            <SearchBar />
+
             <Titled title="Friends">
                 <FriendList
                     friends={friends ?? []}

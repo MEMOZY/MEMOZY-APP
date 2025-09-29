@@ -8,29 +8,32 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 interface LogOptionsProps {
     memoryId: number;
     setSelectedLog: (logId: number | null) => void;
+    onEdit?: () => void;
 }
 
 export default function LogOptions({
     memoryId,
     setSelectedLog,
+    onEdit,
 }: LogOptionsProps) {
     const queryClient = useQueryClient();
     return (
         <View style={styles.container}>
-            {/* <TouchableOpacity
-                onPress={() => {
-                    console.log("Edit pressed");
-                }}
-            >
-                <ThemedText
-                    type="body2"
-                    lightColor={Colors.light.tabIconSelected}
-                    darkColor={Colors.dark.tabIconSelected}
-                >
-                    수정
-                </ThemedText>
-            </TouchableOpacity>
-            <View style={styles.line} /> */}
+            {onEdit && (
+                <>
+                    <TouchableOpacity onPress={onEdit}>
+                        <ThemedText
+                            type="body2"
+                            lightColor={Colors.light.tabIconSelected}
+                            darkColor={Colors.dark.tabIconSelected}
+                        >
+                            수정
+                        </ThemedText>
+                    </TouchableOpacity>
+                    <View style={styles.line} />
+                </>
+            )}
+
             <TouchableOpacity
                 onPress={async () => {
                     await deleteMemory(memoryId);

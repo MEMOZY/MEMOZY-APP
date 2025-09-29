@@ -10,6 +10,7 @@ import CategorySelector from "@/components/save/CategorySelector";
 import { DateRangePicker } from "@/components/save/DateRangePicker";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
+import { SelectedShare } from "@/types/share";
 import { formatDateYMD } from "@/utils/formatDate";
 import { useQuery } from "@tanstack/react-query";
 import { router, useGlobalSearchParams } from "expo-router";
@@ -30,12 +31,47 @@ export default function SaveScreen() {
         endDate: endDate ? new Date(endDate as string) : new Date(),
     });
 
-    const { data: friends, isLoading } = useQuery<Friend[]>({
-        queryKey: ["friends"],
-        queryFn: getFriends,
-    });
+    // const { data: friends, isLoading } = useQuery<Friend[]>({
+    //     queryKey: ["friends"],
+    //     queryFn: getFriends,
+    // });
 
-    const [selectedFriends, setSelectedFriends] = useState<Friend[]>([]);
+    const friends = [
+        {
+            userId: "1",
+            nickname: "친구1",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+        {
+            userId: "2",
+            nickname: "친구2",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+        {
+            userId: "3",
+            nickname: "친구3",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+        {
+            userId: "4",
+            nickname: "친구4",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+        {
+            userId: "5",
+            nickname: "친구5",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+        {
+            userId: "6",
+            nickname: "친구6",
+            profileImageUrl: "https://via.placeholder.com/150",
+        },
+    ];
+
+    const isLoading = false;
+
+    const [selectedFriends, setSelectedFriends] = useState<SelectedShare[]>([]);
 
     const { showSnackbar } = useUI();
     return (
@@ -86,9 +122,11 @@ export default function SaveScreen() {
                             <FriendList
                                 friends={friends}
                                 selectable
-                                onChangeSelected={(selected) => {
-                                    setSelectedFriends(selected);
-                                }}
+                                permissionMode
+                                defaultPermission="read"
+                                onChangeSelected={(selected) =>
+                                    setSelectedFriends(selected)
+                                }
                             />
                         </Titled>
                     )}
@@ -110,7 +148,7 @@ export default function SaveScreen() {
                             endDate: formatDateYMD(selectedDates.endDate),
                             sessionId: sessionId as string,
                             sharedUsersId: selectedFriends.map((friend) =>
-                                Number(friend.userId)
+                                Number(friend.friend.userId)
                             ),
                         })
                             .then(() => {

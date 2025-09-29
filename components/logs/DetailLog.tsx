@@ -13,6 +13,7 @@ import { Memory } from "@/api/memory";
 import { formatDateRange } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import LogOptions from "./LogOptions";
+import LogEdit from "./LogEdit";
 
 interface DetailLogProps {
     onBackPress: () => void;
@@ -21,6 +22,7 @@ interface DetailLogProps {
 
 export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
     const [isOptionOpen, setIsOptionOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
 
     useEffect(() => {
         if (!memory) {
@@ -29,6 +31,15 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
     }, [memory]);
 
     if (!memory) return null;
+
+    if (isEditOpen) {
+        return (
+            <LogEdit
+                initialMemory={memory}
+                onBack={() => setIsEditOpen(false)}
+            />
+        );
+    }
 
     return (
         <PageLayout
@@ -63,6 +74,10 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                         {isOptionOpen && (
                             <LogOptions
                                 memoryId={memory.id}
+                                onEdit={() => {
+                                    setIsOptionOpen(false);
+                                    setIsEditOpen(true);
+                                }}
                                 setSelectedLog={() => {}}
                             />
                         )}
