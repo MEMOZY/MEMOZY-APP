@@ -28,7 +28,7 @@ export function RequestFriendItem({
     const handleAcceptFriend = async () => {
         await acceptFriendRequest(userId);
         queryClient.invalidateQueries({
-            queryKey: ["receivedRequests"],
+            queryKey: ["receivedRequests", "friends"],
         });
     };
 

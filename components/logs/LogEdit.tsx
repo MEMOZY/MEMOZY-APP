@@ -1,4 +1,4 @@
-import { Memory } from "@/api/memory";
+import { Memory, putMemory } from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import LogCard from "@/components/edit/LogCard";
@@ -24,7 +24,6 @@ export default function LogEdit({
     initialMemory: Memory;
     onBack: () => void;
 }) {
-    const [savedMemory, setSavedMemory] = useState<Memory>(initialMemory);
     const [memory, setMemory] = useState<Memory>(initialMemory);
     const { showModal } = useUI();
     const navigation = useNavigation();
@@ -32,18 +31,24 @@ export default function LogEdit({
     const markDirty = useCallback(() => setDirty(true), []);
 
     const handleSave = useCallback(() => {
-        console.log("저장");
-        setDirty(false);
-        setSavedMemory(memory);
-        onBack();
-    }, []);
+        putMemory(memory.id, {
+            title: memory.title,
+            category: memory.category,
+            startDate: memory.startDate,
+            endDate: memory.endDate,
+            memoryItems: memory.memoryItems,
+            accesses: memory.accessInfos,
+        }).finally(() => {
+            onBack();
+        });
+    }, [memory]);
 
     // memory 변경 시 dirty 체크
     useEffect(() => {
-        if (savedMemory !== memory) {
+        if (initialMemory !== memory) {
             markDirty();
         }
-    }, [memory, savedMemory]);
+    }, [memory, initialMemory]);
 
     // 모든 '뒤로가기' 시도를 가로채는 공용 가드
     useEffect(() => {
@@ -137,13 +142,13 @@ export default function LogEdit({
                 </View>
             </Titled>
             <DateRangePicker
-                startDate={memory.startDate.toString()}
-                endDate={memory.endDate.toString()}
+                startDate={memory.startDate}
+                endDate={memory.endDate}
                 onChange={(range) => {
                     setMemory({
                         ...memory,
-                        startDate: range.startDate.toString(),
-                        endDate: range.endDate.toString(),
+                        startDate: range.startDate.toISOString(),
+                        endDate: range.endDate.toISOString(),
                     });
                 }}
             />

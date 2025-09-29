@@ -9,26 +9,32 @@ import {
 import { ThemedText } from "../common/ThemedText";
 import { DotsIcon } from "@/assets/images/icons";
 import { Colors } from "@/constants/Colors";
-import { Memory } from "@/api/memory";
+import { getMemory } from "@/api/memory";
 import { formatDateRange } from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import LogOptions from "./LogOptions";
 import LogEdit from "./LogEdit";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface DetailLogProps {
     onBackPress: () => void;
-    memory: Memory;
+    memoryId: number;
 }
 
-export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
+export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
+    const queryClient = useQueryClient();
+    const { data: memory } = useQuery({
+        queryKey: ["memory", memoryId],
+        queryFn: () => getMemory(memoryId),
+    });
 
     useEffect(() => {
-        if (!memory) {
+        if (!memoryId) {
             onBackPress();
         }
-    }, [memory]);
+    }, [memoryId]);
 
     if (!memory) return null;
 
@@ -36,7 +42,12 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
         return (
             <LogEdit
                 initialMemory={memory}
-                onBack={() => setIsEditOpen(false)}
+                onBack={() => {
+                    setIsEditOpen(false);
+                    queryClient.invalidateQueries({
+                        queryKey: ["memory", memoryId],
+                    });
+                }}
             />
         );
     }
@@ -103,7 +114,7 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                             new Date(memory.endDate)
                         )}
                     </ThemedText>
-                    {memory.sharedUserIds.length > 0 && (
+                    {memory.accessInfos.length > 0 && (
                         <View
                             style={{
                                 gap: 10,
@@ -111,22 +122,25 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
                                 flexWrap: "wrap",
                             }}
                         >
-                            {memory.sharedUserIds.map((userId) => (
+                            {memory.accessInfos.map((accessInfo) => (
                                 <View
-                                    key={userId}
-                                    style={{
-                                        backgroundColor: Colors.gray3,
-                                        borderRadius: 8,
-                                        paddingHorizontal: 6,
-                                        alignSelf: "flex-start",
-                                    }}
+                                    key={accessInfo.userId}
+                                    style={[
+                                        styles.userBadge,
+                                        accessInfo.permissionLevel === "EDITOR"
+                                            ? styles.permBoth
+                                            : accessInfo.permissionLevel ===
+                                              "OWNER"
+                                            ? styles.permOwn
+                                            : styles.permRead,
+                                    ]}
                                 >
                                     <ThemedText
                                         type="caption"
                                         lightColor={Colors.gray6}
                                         darkColor={Colors.gray6}
                                     >
-                                        {userId}
+                                        {accessInfo.userId}
                                     </ThemedText>
                                 </View>
                             ))}
@@ -183,4 +197,19 @@ export default function DetailLog({ onBackPress, memory }: DetailLogProps) {
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    userBadge: {
+        paddingHorizontal: 8,
+        height: 20,
+        minWidth: 34,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 999,
+        borderWidth: 1,
+    },
+    permText: { fontSize: 10, fontWeight: "600", color: "#111" },
+    permNone: { backgroundColor: "#eee", borderColor: "#ddd" },
+    permOwn: { backgroundColor: "#5E83E9", borderColor: "#335DD6" },
+    permRead: { backgroundColor: "#E8F3FF", borderColor: "#BBD8FF" },
+    permBoth: { backgroundColor: "#E9FFE8", borderColor: "#C7F7C4" },
+});

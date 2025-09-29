@@ -23,7 +23,7 @@ export default function HomeScreen() {
         queryFn: getMemories,
     });
 
-    const { data: friends } = useQuery({
+    const { data: friends, refetch: refetchFriends } = useQuery({
         queryKey: ["friends"],
         queryFn: getFriends,
     });
@@ -33,7 +33,7 @@ export default function HomeScreen() {
             onBackPress={() => {
                 setSelectedLog(null);
             }}
-            memory={memories.find((log) => log.id === selectedLog)!}
+            memoryId={selectedLog}
         />
     ) : (
         <PageLayout
@@ -43,6 +43,7 @@ export default function HomeScreen() {
             scrollView
             onRefresh={async () => {
                 refetchMemory();
+                refetchFriends();
             }}
         >
             <SearchBar />
@@ -68,11 +69,11 @@ export default function HomeScreen() {
                             <LogItem
                                 key={log.id}
                                 id={log.id}
-                                imageUrl={log.memoryItems[0].imageUrl}
+                                imageUrl={log.thumbnailUrl}
                                 title={log.title}
                                 startDate={new Date(log.startDate)}
                                 endDate={new Date(log.endDate)}
-                                description={log.memoryItems[0].content}
+                                description={log.content}
                                 setSelectedLog={setSelectedLog}
                             />
                         ))}

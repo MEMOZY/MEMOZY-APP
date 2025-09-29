@@ -42,7 +42,7 @@ export default function CalendarScreen() {
         if (selectedCategory === null) {
             return true;
         }
-        return item.category === selectedCategory;
+        return true;
     });
 
     return (
@@ -51,11 +51,7 @@ export default function CalendarScreen() {
             <>
                 {selectedLog ? (
                     <DetailLog
-                        memory={
-                            filteredMemories.find(
-                                (log) => log.id === selectedLog
-                            )!
-                        }
+                        memoryId={selectedLog}
                         onBackPress={() => {
                             setSelectedLog(null);
                         }}
@@ -96,7 +92,7 @@ export default function CalendarScreen() {
                                             (log) =>
                                                 log.startDate ===
                                                 date!.dateString
-                                        )[0]?.memoryItems[0].imageUrl
+                                        )[0]?.thumbnailUrl
                                     }
                                     onDayPress={() => {
                                         if (!date) return;
@@ -135,8 +131,7 @@ export default function CalendarScreen() {
                                                         key={log.id}
                                                         id={log.id}
                                                         imageUrl={
-                                                            log.memoryItems[0]
-                                                                .imageUrl
+                                                            log.thumbnailUrl
                                                         }
                                                         title={log.title}
                                                         startDate={
@@ -150,8 +145,7 @@ export default function CalendarScreen() {
                                                             )
                                                         }
                                                         description={
-                                                            log.memoryItems[0]
-                                                                .content
+                                                            log.content
                                                         }
                                                         setSelectedLog={(
                                                             logId

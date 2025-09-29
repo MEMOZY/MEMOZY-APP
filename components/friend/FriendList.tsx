@@ -17,7 +17,7 @@ interface FriendListProps {
     onAddFriend?: () => void;
     selectable?: boolean;
     permissionMode?: boolean; // 권한 토글 켜기
-    defaultPermission?: SharePermission; // "read" | "both"
+    defaultPermission?: SharePermission; // "VIEWER" | "EDITOR"
     onChangeSelected?: (selected: SelectedShare[]) => void; // 권한 포함
 }
 
@@ -26,7 +26,7 @@ export default function FriendList({
     onAddFriend,
     selectable = false,
     permissionMode = false,
-    defaultPermission = "read",
+    defaultPermission = "VIEWER",
     onChangeSelected,
 }: FriendListProps) {
     const [selected, setSelected] = useState<SelectedShare[]>([]);
@@ -51,14 +51,14 @@ export default function FriendList({
                 const first: SelectedShare = {
                     friend,
                     permission: (defaultPermission ??
-                        "read") as SharePermission,
+                        "VIEWER") as SharePermission,
                 };
                 next = [...selected, first] as SelectedShare[];
-            } else if (exists.permission === "read") {
+            } else if (exists.permission === "VIEWER") {
                 // 2) 읽기 → 읽기+수정 (리터럴 고정)
                 const updated: SelectedShare = {
                     ...exists,
-                    permission: "both" as const,
+                    permission: "EDITOR" as const,
                 };
                 next = selected.map((s) =>
                     s.friend.userId === friend.userId ? updated : s
@@ -79,7 +79,7 @@ export default function FriendList({
         if (!exists) {
             const added: SelectedShare = {
                 friend,
-                permission: "read" as const,
+                permission: "VIEWER" as const,
             };
             const next = [...selected, added] as SelectedShare[];
             setSelected(next);
@@ -101,13 +101,13 @@ export default function FriendList({
 
     const badgeStyle = (p: SharePermission | null) => {
         if (!p) return [styles.permBadge, styles.permNone];
-        if (p === "read") return [styles.permBadge, styles.permRead];
+        if (p === "VIEWER") return [styles.permBadge, styles.permRead];
         return [styles.permBadge, styles.permBoth];
     };
 
     const badgeText = (p: SharePermission | null) => {
         if (!p) return "";
-        return p === "read" ? "읽기" : "수정";
+        return p === "VIEWER" ? "읽기" : "수정";
     };
 
     return (
