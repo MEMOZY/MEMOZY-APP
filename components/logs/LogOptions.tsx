@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { deleteMemory, getMemories } from "@/api/memory";
 import { router } from "expo-router";
@@ -49,9 +49,13 @@ export default function LogOptions({
                             queryKey: ["search"],
                         }),
                         deleteMemory(memoryId),
-                    ]).finally(() => {
-                        onDelete?.();
-                    });
+                    ])
+                        .catch(() => {
+                            Alert.alert("원작자만 삭제할 수 있습니다.");
+                        })
+                        .finally(() => {
+                            onDelete?.();
+                        });
                 }}
             >
                 <ThemedText
