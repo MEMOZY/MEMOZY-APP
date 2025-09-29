@@ -94,6 +94,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             },
         ],
         ["expo-apple-authentication"],
+        [
+            "expo-notifications",
+            {
+                icon: "./assets/images/favicon.png",
+                color: "#ffffff",
+                defaultChannel: "default",
+                enableBackgroundRemoteNotifications: true,
+            },
+        ],
     ],
     experiments: {
         typedRoutes: true,

@@ -19,9 +19,19 @@ import { GlobalModal } from "@/components/common/GlobalModal";
 import { GlobalSnackbar } from "@/components/common/GlobalSnackbar";
 import { initializeKakaoSDK } from "@react-native-kakao/core";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import * as Notifications from "expo-notifications";
+import { NotificationsProvider } from "@/contexts/NotificationProvider";
 
 // 사전 로딩을 위해 스플래시 스크린을 숨기지 않음
 SplashScreen.preventAutoHideAsync();
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -49,59 +59,61 @@ export default function RootLayout() {
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
-                <UIProvider>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <ThemeProvider
-                            value={
-                                colorScheme === "dark"
-                                    ? DarkTheme
-                                    : DefaultTheme
-                            }
-                        >
-                            <Stack>
-                                <Stack.Screen
-                                    name="(tabs)"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(chat-flow)"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(screens)/friends"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(screens)/editProfile"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(screens)/docs"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(screens)/inquiry"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="(auth)/login"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="index"
-                                    options={{ headerShown: false }}
-                                />
-                                <Stack.Screen
-                                    name="+not-found"
-                                    options={{ headerShown: false }}
-                                />
-                            </Stack>
-                            <StatusBar style="dark" />
-                            <GlobalModal />
-                            <GlobalSnackbar />
-                        </ThemeProvider>
-                    </GestureHandlerRootView>
-                </UIProvider>
+                <NotificationsProvider>
+                    <UIProvider>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <ThemeProvider
+                                value={
+                                    colorScheme === "dark"
+                                        ? DarkTheme
+                                        : DefaultTheme
+                                }
+                            >
+                                <Stack>
+                                    <Stack.Screen
+                                        name="(tabs)"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(chat-flow)"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(screens)/friends"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(screens)/editProfile"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(screens)/docs"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(screens)/inquiry"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="(auth)/login"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="index"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
+                                        name="+not-found"
+                                        options={{ headerShown: false }}
+                                    />
+                                </Stack>
+                                <StatusBar style="dark" />
+                                <GlobalModal />
+                                <GlobalSnackbar />
+                            </ThemeProvider>
+                        </GestureHandlerRootView>
+                    </UIProvider>
+                </NotificationsProvider>
             </AuthProvider>
         </QueryClientProvider>
     );
