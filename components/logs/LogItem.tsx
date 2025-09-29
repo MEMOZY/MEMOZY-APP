@@ -4,7 +4,6 @@ import { DotsIcon } from "@/assets/images/icons";
 import { formatDate, formatDateRange } from "@/utils/formatDate";
 import { Colors } from "@/constants/Colors";
 import { memo, useState } from "react";
-import LogOptions from "./LogOptions";
 
 interface LogItemProps {
     id: number;
@@ -30,36 +29,28 @@ function LogItem({
             ? formatDate(startDate)
             : formatDateRange(startDate, endDate);
 
-    const [isOptionOpen, setIsOptionOpen] = useState(false);
     return (
-        <View style={styles.logContainer}>
-            <View style={styles.logHeader}>
-                <ThemedText type="body2b">{title}</ThemedText>
-                {isOptionOpen && (
-                    <LogOptions memoryId={id} setSelectedLog={setSelectedLog} />
-                )}
-                <TouchableOpacity
-                    onPress={() => setIsOptionOpen(!isOptionOpen)}
+        <TouchableOpacity onPress={() => setSelectedLog(id)}>
+            <View style={styles.logContainer}>
+                <View style={styles.logHeader}>
+                    <ThemedText type="body2b">{title}</ThemedText>
+                </View>
+                <ThemedText
+                    type="caption"
+                    lightColor={Colors.light.tabIconDefault}
+                    darkColor={Colors.dark.tabIconDefault}
                 >
-                    <DotsIcon />
-                </TouchableOpacity>
-            </View>
-            <ThemedText
-                type="caption"
-                lightColor={Colors.light.tabIconDefault}
-                darkColor={Colors.dark.tabIconDefault}
-            >
-                {range}
-            </ThemedText>
-            <TouchableOpacity onPress={() => setSelectedLog(id)}>
+                    {range}
+                </ThemedText>
+
                 <View style={styles.logBody}>
                     <Image source={{ uri: imageUrl }} style={styles.logImage} />
                     <ThemedText type="body2" style={styles.flex}>
                         {description}
                     </ThemedText>
                 </View>
-            </TouchableOpacity>
-        </View>
+            </View>
+        </TouchableOpacity>
     );
 }
 

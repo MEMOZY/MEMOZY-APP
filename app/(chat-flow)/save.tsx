@@ -31,45 +31,10 @@ export default function SaveScreen() {
         endDate: endDate ? new Date(endDate as string) : new Date(),
     });
 
-    // const { data: friends, isLoading } = useQuery<Friend[]>({
-    //     queryKey: ["friends"],
-    //     queryFn: getFriends,
-    // });
-
-    const friends = [
-        {
-            userId: "1",
-            nickname: "친구1",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-        {
-            userId: "2",
-            nickname: "친구2",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-        {
-            userId: "3",
-            nickname: "친구3",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-        {
-            userId: "4",
-            nickname: "친구4",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-        {
-            userId: "5",
-            nickname: "친구5",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-        {
-            userId: "6",
-            nickname: "친구6",
-            profileImageUrl: "https://via.placeholder.com/150",
-        },
-    ];
-
-    const isLoading = false;
+    const { data: friends, isLoading } = useQuery<Friend[]>({
+        queryKey: ["friends"],
+        queryFn: getFriends,
+    });
 
     const [selectedFriends, setSelectedFriends] = useState<SelectedShare[]>([]);
 
@@ -123,7 +88,7 @@ export default function SaveScreen() {
                                 friends={friends}
                                 selectable
                                 permissionMode
-                                defaultPermission="read"
+                                defaultPermission="VIEWER"
                                 onChangeSelected={(selected) =>
                                     setSelectedFriends(selected)
                                 }
@@ -147,9 +112,10 @@ export default function SaveScreen() {
                             startDate: formatDateYMD(selectedDates.startDate),
                             endDate: formatDateYMD(selectedDates.endDate),
                             sessionId: sessionId as string,
-                            sharedUsersId: selectedFriends.map((friend) =>
-                                Number(friend.friend.userId)
-                            ),
+                            accesses: selectedFriends.map((friend) => ({
+                                userId: Number(friend.friend.userId),
+                                permissionLevel: friend.permission,
+                            })),
                         })
                             .then(() => {
                                 router.replace("/(tabs)");

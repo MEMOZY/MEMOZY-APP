@@ -36,6 +36,7 @@ export default function LogCard({
                     autoFocus={false}
                     returnKeyType="done"
                     inputMode="text"
+                    multiline
                 />
             ) : (
                 <ThemedText type="body1">{text}</ThemedText>

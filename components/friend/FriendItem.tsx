@@ -1,10 +1,11 @@
-import { Image, StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { TrashIcon } from "@/assets/images/icons";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { useQueryClient } from "@tanstack/react-query";
 import { deleteFriend } from "@/api/friend";
+import { Image } from "expo-image";
 
 interface FriendItemProps {
     name: string;

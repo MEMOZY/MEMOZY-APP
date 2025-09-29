@@ -1,7 +1,14 @@
 import { apiClient } from "./client";
 
+export type PermissionLevel = "VIEWER" | "EDITOR" | "OWNER";
+export interface AccessInfo {
+    userId: number;
+    permissionLevel: PermissionLevel;
+}
+
 export interface Memory {
     id: number;
+    ownerId: number;
     title: string;
     startDate: string;
     endDate: string;
@@ -14,7 +21,21 @@ export interface Memory {
         | "COUPLE"
         | "COUSTOM";
     memoryItems: MemoryItem[];
-    sharedUserIds: number[];
+    accessInfos: AccessInfo[];
+    permissionLevel: PermissionLevel;
+    canEdit: boolean;
+}
+
+export interface MemoryThumbnail {
+    id: number;
+    ownerId: number;
+    title: string;
+    content: string;
+    startDate: string;
+    endDate: string;
+    thumbnailUrl: string;
+    permissionLevel: PermissionLevel;
+    canEdit: boolean;
 }
 
 export const CATEGORY_LABELS: {
@@ -37,16 +58,24 @@ export interface PostMemoryPayload {
     startDate: string;
     endDate: string;
     sessionId: string;
-    sharedUsersId: number[];
+    accesses: AccessInfo[];
 }
 
+export interface PutMemoryPayload {
+    title: string;
+    category: Memory["category"];
+    startDate: string;
+    endDate: string;
+    memoryItems: MemoryItem[];
+    accesses: AccessInfo[];
+}
 export interface MemoryItem {
     imageUrl: string;
     content: string;
     sequence: number;
 }
 
-const putMemory = async (memoryId: number, memory: Memory) => {
+const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
     const response = await apiClient
         .put(`memory/${memoryId}`, memory, {
             withAuth: true,
@@ -54,6 +83,8 @@ const putMemory = async (memoryId: number, memory: Memory) => {
         .catch((error) => {
             console.log(error);
         });
+
+    console.log(response);
 
     if (!response) {
         throw new Error("메모리 수정에 실패했습니다.");
@@ -103,7 +134,23 @@ const getMemories = async () => {
         throw new Error("메모리 조회에 실패했습니다.");
     }
 
-    return response.data.memories as Memory[];
+    return response.data.memories as MemoryThumbnail[];
+};
+
+const getMemory = async (memoryId: number) => {
+    const response = await apiClient
+        .get(`memory/${memoryId}`, {
+            withAuth: true,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("메모리 조회에 실패했습니다.");
+    }
+
+    return response.data.memoryDetails as Memory;
 };
 
 const postMemory = async (memory: PostMemoryPayload) => {
@@ -177,4 +224,5 @@ export {
     postMemory,
     postMemoryTemp,
     getMemoryTempItems,
+    getMemory,
 };
