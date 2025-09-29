@@ -7,14 +7,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface LogOptionsProps {
     memoryId: number;
-    setSelectedLog: (logId: number | null) => void;
+    setSelectedLog?: (logId: number | null) => void;
     onEdit?: () => void;
+    onDelete?: () => void;
 }
 
 export default function LogOptions({
     memoryId,
     setSelectedLog,
     onEdit,
+    onDelete,
 }: LogOptionsProps) {
     const queryClient = useQueryClient();
     return (
@@ -35,12 +37,21 @@ export default function LogOptions({
             )}
 
             <TouchableOpacity
-                onPress={async () => {
-                    await deleteMemory(memoryId);
-                    await queryClient.invalidateQueries({
-                        queryKey: ["memories"],
+                onPress={() => {
+                    Promise.all([
+                        queryClient.invalidateQueries({
+                            queryKey: ["memory", memoryId],
+                        }),
+                        queryClient.invalidateQueries({
+                            queryKey: ["memories"],
+                        }),
+                        queryClient.invalidateQueries({
+                            queryKey: ["search"],
+                        }),
+                        deleteMemory(memoryId),
+                    ]).finally(() => {
+                        onDelete?.();
                     });
-                    setSelectedLog(null);
                 }}
             >
                 <ThemedText
