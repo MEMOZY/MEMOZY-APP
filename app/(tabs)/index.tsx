@@ -46,7 +46,14 @@ export default function HomeScreen() {
                 refetchFriends();
             }}
         >
-            <SearchBar />
+            <SearchBar
+                onSearch={({ keyword, mode }) => {
+                    router.push({
+                        pathname: "/(screens)/search",
+                        params: { keyword, mode },
+                    });
+                }}
+            />
 
             <Titled title="Friends">
                 <FriendList

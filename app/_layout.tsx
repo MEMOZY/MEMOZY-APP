@@ -95,6 +95,10 @@ export default function RootLayout() {
                                         options={{ headerShown: false }}
                                     />
                                     <Stack.Screen
+                                        name="(screens)/search"
+                                        options={{ headerShown: false }}
+                                    />
+                                    <Stack.Screen
                                         name="(auth)/login"
                                         options={{ headerShown: false }}
                                     />

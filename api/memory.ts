@@ -75,6 +75,22 @@ export interface MemoryItem {
     sequence: number;
 }
 
+export interface SearchMemoryPayload {
+    "search-type": "TITLE" | "CONTENT" | "ALL";
+    keyword: string;
+    page: number;
+    size: number;
+}
+
+export interface SearchMemoryResponse {
+    content: MemoryThumbnail[];
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+}
+
 const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
     const response = await apiClient
         .put(`memory/${memoryId}`, memory, {
@@ -83,8 +99,6 @@ const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
         .catch((error) => {
             console.log(error);
         });
-
-    console.log(response);
 
     if (!response) {
         throw new Error("메모리 수정에 실패했습니다.");
@@ -217,6 +231,27 @@ const getMemoryTempItems = async (sessionId: string) => {
     return response.data;
 };
 
+const searchMemories = async (payload: SearchMemoryPayload) => {
+    const response = await apiClient
+        .get("memory/search", {
+            params: payload,
+            withAuth: true,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("메모리 검색에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("메모리 검색에 실패했습니다.");
+    }
+
+    return response.data as SearchMemoryResponse;
+};
+
 export {
     putMemory,
     deleteMemory,
@@ -225,4 +260,5 @@ export {
     postMemoryTemp,
     getMemoryTempItems,
     getMemory,
+    searchMemories,
 };

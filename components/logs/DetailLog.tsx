@@ -89,7 +89,10 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                                     setIsOptionOpen(false);
                                     setIsEditOpen(true);
                                 }}
-                                setSelectedLog={() => {}}
+                                onDelete={() => {
+                                    setIsOptionOpen(false);
+                                    onBackPress();
+                                }}
                             />
                         )}
                         <TouchableOpacity

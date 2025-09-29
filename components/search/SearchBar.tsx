@@ -9,26 +9,27 @@ import {
     View,
 } from "react-native";
 
-export type SearchMode = "both" | "content" | "title";
+export type SearchMode = "CONTENT" | "TITLE" | "ALL";
 
 interface SearchBarProps {
     defaultMode?: SearchMode; // 기본: "both"
-    initialQuery?: string;
-    onSearch?: (params: { query: string; mode: SearchMode }) => void; // 결과 콜백
+    initialKeyword?: string;
+    initialMode?: SearchMode;
+    onSearch?: (params: { keyword: string; mode: SearchMode }) => void; // 결과 콜백
 }
 
 export function SearchBar({
-    defaultMode = "both",
-    initialQuery = "",
+    defaultMode = "ALL",
+    initialKeyword = "",
     onSearch,
 }: SearchBarProps) {
-    const [value, setValue] = useState(initialQuery);
+    const [value, setValue] = useState(initialKeyword);
     const [mode, setMode] = useState<SearchMode>(defaultMode);
 
     const handleSearch = useCallback(() => {
         const q = value.trim();
         if (!q) return;
-        onSearch?.({ query: q, mode });
+        onSearch?.({ keyword: q, mode });
     }, [value, mode, onSearch]);
 
     return (
@@ -37,18 +38,18 @@ export function SearchBar({
             <View style={styles.modeRow}>
                 <ModePill
                     label="내용+제목"
-                    active={mode === "both"}
-                    onPress={() => setMode("both")}
+                    active={mode === "ALL"}
+                    onPress={() => setMode("ALL")}
                 />
                 <ModePill
                     label="내용"
-                    active={mode === "content"}
-                    onPress={() => setMode("content")}
+                    active={mode === "CONTENT"}
+                    onPress={() => setMode("CONTENT")}
                 />
                 <ModePill
                     label="제목"
-                    active={mode === "title"}
-                    onPress={() => setMode("title")}
+                    active={mode === "TITLE"}
+                    onPress={() => setMode("TITLE")}
                 />
             </View>
 
