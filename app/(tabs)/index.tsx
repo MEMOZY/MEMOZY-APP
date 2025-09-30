@@ -64,9 +64,7 @@ export default function HomeScreen() {
                 refetchFriends();
             }}
             onEndReached={() => {
-                console.log("onEndReached");
                 if (hasNextPage && !isFetchingNextPage && !isFetching) {
-                    console.log("fetchNextPage");
                     fetchNextPage();
                 }
             }}
@@ -94,21 +92,18 @@ export default function HomeScreen() {
                 {!isLoading &&
                     memories &&
                     memories.length > 0 &&
-                    memories
-                        .reverse()
-                        .slice(0, 3)
-                        .map((log) => (
-                            <LogItem
-                                key={log.id}
-                                id={log.id}
-                                imageUrl={log.thumbnailUrl}
-                                title={log.title}
-                                startDate={new Date(log.startDate)}
-                                endDate={new Date(log.endDate)}
-                                description={log.content}
-                                setSelectedLog={setSelectedLog}
-                            />
-                        ))}
+                    memories.map((log) => (
+                        <LogItem
+                            key={log.id}
+                            id={log.id}
+                            imageUrl={log.thumbnailUrl}
+                            title={log.title}
+                            startDate={new Date(log.startDate)}
+                            endDate={new Date(log.endDate)}
+                            description={log.content}
+                            setSelectedLog={setSelectedLog}
+                        />
+                    ))}
             </Titled>
         </PageLayout>
     );

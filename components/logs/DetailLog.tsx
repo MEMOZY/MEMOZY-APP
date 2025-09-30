@@ -25,7 +25,7 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const queryClient = useQueryClient();
-    const { data: memory } = useQuery({
+    const { data } = useQuery({
         queryKey: ["memory", memoryId],
         queryFn: () => getMemory(memoryId),
     });
@@ -35,6 +35,8 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
             onBackPress();
         }
     }, [memoryId]);
+
+    const memory = data?.memoryDetails;
 
     if (!memory) return null;
 
@@ -85,10 +87,14 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                         {isOptionOpen && (
                             <LogOptions
                                 memoryId={memory.id}
-                                onEdit={() => {
-                                    setIsOptionOpen(false);
-                                    setIsEditOpen(true);
-                                }}
+                                onEdit={
+                                    data?.canEdit
+                                        ? () => {
+                                              setIsOptionOpen(false);
+                                              setIsEditOpen(true);
+                                          }
+                                        : undefined
+                                }
                                 onDelete={() => {
                                     setIsOptionOpen(false);
                                     onBackPress();
@@ -143,7 +149,7 @@ export default function DetailLog({ onBackPress, memoryId }: DetailLogProps) {
                                         lightColor={Colors.gray6}
                                         darkColor={Colors.gray6}
                                     >
-                                        {accessInfo.userId}
+                                        {accessInfo.nickname}
                                     </ThemedText>
                                 </View>
                             ))}

@@ -3,6 +3,7 @@ import { apiClient } from "./client";
 export type PermissionLevel = "VIEWER" | "EDITOR" | "OWNER";
 export interface AccessInfo {
     userId: number;
+    nickname?: string;
     permissionLevel: PermissionLevel;
 }
 
@@ -22,6 +23,10 @@ export interface Memory {
         | "COUSTOM";
     memoryItems: MemoryItem[];
     accessInfos: AccessInfo[];
+}
+
+export interface MemoryDetails {
+    memoryDetails: Memory;
     permissionLevel: PermissionLevel;
     canEdit: boolean;
 }
@@ -174,7 +179,7 @@ const getMemory = async (memoryId: number) => {
         throw new Error("메모리 조회에 실패했습니다.");
     }
 
-    return response.data.memoryDetails as Memory;
+    return response.data as MemoryDetails;
 };
 
 const postMemory = async (memory: PostMemoryPayload) => {
