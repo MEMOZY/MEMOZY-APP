@@ -18,9 +18,12 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import { CalendarList } from "react-native-calendars";
+import { CalendarList, DateData } from "react-native-calendars";
 
 export default function CalendarScreen() {
+    const [selectedMonth, setSelectedMonth] = useState<String>(
+        `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
+    );
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedLog, setSelectedLog] = useState<number | null>(null);
@@ -28,9 +31,14 @@ export default function CalendarScreen() {
         Memory["category"] | null
     >(null);
 
-    const { data: memories, isLoading } = useQuery({
-        queryKey: ["memories"],
-        queryFn: getMemories,
+    const { data: memories } = useQuery({
+        enabled: selectedMonth !== null,
+        queryKey: ["memories-calendar", selectedMonth, selectedCategory],
+        queryFn: () =>
+            getMemories({
+                yearMonth: selectedMonth as `${number}-${number}`,
+                category: selectedCategory ?? undefined,
+            }),
     });
 
     const handleDayPress = (day: string) => {
@@ -38,141 +46,122 @@ export default function CalendarScreen() {
         setModalVisible(true);
     };
 
-    const filteredMemories = memories?.filter((item) => {
-        if (selectedCategory === null) {
-            return true;
-        }
-        return true;
-    });
+    const handleMonthChange = (month: DateData) => {
+        const yearMonth = month.dateString.slice(0, 7);
+        setSelectedMonth(yearMonth);
+    };
 
     return (
-        !isLoading &&
-        filteredMemories && (
-            <>
-                {selectedLog ? (
-                    <DetailLog
-                        memoryId={selectedLog}
-                        onBackPress={() => {
-                            setSelectedLog(null);
+        <>
+            {selectedLog ? (
+                <DetailLog
+                    memoryId={selectedLog}
+                    onBackPress={() => {
+                        setSelectedLog(null);
+                    }}
+                />
+            ) : (
+                <PageLayout headerTitle="Calendar" titleAlign="left">
+                    <CalendarList
+                        style={styles.calendarContainer}
+                        theme={{
+                            backgroundColor: Colors.white,
                         }}
+                        onMonthChange={handleMonthChange}
+                        futureScrollRange={0}
+                        initialNumToRender={1}
+                        horizontal={true}
+                        pagingEnabled={true}
+                        hideExtraDays={false}
+                        calendarWidth={Dimensions.get("window").width - 60}
+                        customHeader={(props: any) => (
+                            <CalendarHeader
+                                {...props}
+                                selectedCategory={selectedCategory}
+                                setSelectedCategory={setSelectedCategory}
+                            />
+                        )}
+                        dayComponent={({ date, state }) => (
+                            <CalendarDayComponent
+                                date={date}
+                                state={state}
+                                count={
+                                    memories?.content.filter(
+                                        (log) =>
+                                            log.startDate === date!.dateString
+                                    ).length
+                                }
+                                imageUrl={
+                                    memories?.content.filter(
+                                        (log) =>
+                                            log.startDate === date!.dateString
+                                    )[0]?.thumbnailUrl
+                                }
+                                onDayPress={() => {
+                                    if (!date) return;
+                                    handleDayPress(date.dateString);
+                                }}
+                            />
+                        )}
                     />
-                ) : (
-                    <PageLayout headerTitle="Calendar" titleAlign="left">
-                        <CalendarList
-                            style={styles.calendarContainer}
-                            theme={{
-                                backgroundColor: Colors.white,
-                            }}
-                            futureScrollRange={0}
-                            initialNumToRender={1}
-                            horizontal={true}
-                            pagingEnabled={true}
-                            hideExtraDays={false}
-                            calendarWidth={Dimensions.get("window").width - 60}
-                            customHeader={(props: any) => (
-                                <CalendarHeader
-                                    {...props}
-                                    selectedCategory={selectedCategory}
-                                    setSelectedCategory={setSelectedCategory}
-                                />
-                            )}
-                            dayComponent={({ date, state }) => (
-                                <CalendarDayComponent
-                                    date={date}
-                                    state={state}
-                                    count={
-                                        filteredMemories.filter(
-                                            (log) =>
-                                                log.startDate ===
-                                                date!.dateString
-                                        ).length
-                                    }
-                                    imageUrl={
-                                        filteredMemories.filter(
-                                            (log) =>
-                                                log.startDate ===
-                                                date!.dateString
-                                        )[0]?.thumbnailUrl
-                                    }
-                                    onDayPress={() => {
-                                        if (!date) return;
-                                        handleDayPress(date.dateString);
+                </PageLayout>
+            )}
+
+            {modalVisible && !selectedLog && (
+                <Modal
+                    visible={modalVisible}
+                    animationType="fade"
+                    transparent={true}
+                >
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            setModalVisible(false);
+                        }}
+                    >
+                        <View style={styles.modalOverlay}>
+                            <Pressable style={styles.modalContentContainer}>
+                                <ThemedText type="title">
+                                    {formatDate(selectedDate!)}
+                                </ThemedText>
+                                {memories &&
+                                    memories.content.length > 0 &&
+                                    memories.content.map(
+                                        (log) =>
+                                            selectedDate!.toISOString() ===
+                                                new Date(
+                                                    log.startDate
+                                                ).toISOString() && (
+                                                <LogItem
+                                                    key={log.id}
+                                                    id={log.id}
+                                                    imageUrl={log.thumbnailUrl}
+                                                    title={log.title}
+                                                    startDate={
+                                                        new Date(log.startDate)
+                                                    }
+                                                    endDate={
+                                                        new Date(log.endDate)
+                                                    }
+                                                    description={log.content}
+                                                    setSelectedLog={(logId) => {
+                                                        setSelectedLog(logId);
+                                                        setModalVisible(false);
+                                                    }}
+                                                />
+                                            )
+                                    )}
+                                <AddLogButton
+                                    onPress={() => {
+                                        setSelectedLog(null);
+                                        setModalVisible(false);
                                     }}
                                 />
-                            )}
-                        />
-                    </PageLayout>
-                )}
-
-                {modalVisible && !selectedLog && (
-                    <Modal
-                        visible={modalVisible}
-                        animationType="fade"
-                        transparent={true}
-                    >
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                setModalVisible(false);
-                            }}
-                        >
-                            <View style={styles.modalOverlay}>
-                                <Pressable style={styles.modalContentContainer}>
-                                    <ThemedText type="title">
-                                        {formatDate(selectedDate!)}
-                                    </ThemedText>
-                                    {filteredMemories.length > 0 &&
-                                        filteredMemories.map(
-                                            (log) =>
-                                                selectedDate!.toISOString() ===
-                                                    new Date(
-                                                        log.startDate
-                                                    ).toISOString() && (
-                                                    <LogItem
-                                                        key={log.id}
-                                                        id={log.id}
-                                                        imageUrl={
-                                                            log.thumbnailUrl
-                                                        }
-                                                        title={log.title}
-                                                        startDate={
-                                                            new Date(
-                                                                log.startDate
-                                                            )
-                                                        }
-                                                        endDate={
-                                                            new Date(
-                                                                log.endDate
-                                                            )
-                                                        }
-                                                        description={
-                                                            log.content
-                                                        }
-                                                        setSelectedLog={(
-                                                            logId
-                                                        ) => {
-                                                            setSelectedLog(
-                                                                logId
-                                                            );
-                                                            setModalVisible(
-                                                                false
-                                                            );
-                                                        }}
-                                                    />
-                                                )
-                                        )}
-                                    <AddLogButton
-                                        onPress={() => {
-                                            setSelectedLog(null);
-                                            setModalVisible(false);
-                                        }}
-                                    />
-                                </Pressable>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </Modal>
-                )}
-            </>
-        )
+                            </Pressable>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Modal>
+            )}
+        </>
     );
 }
 

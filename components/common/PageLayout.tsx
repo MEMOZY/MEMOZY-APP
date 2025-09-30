@@ -148,7 +148,7 @@ export default function PageLayout({
                         )
                     }
                     onScroll={handleScroll}
-                    scrollEventThrottle={100}
+                    scrollEventThrottle={1000}
                 >
                     {children}
                 </ScrollView>

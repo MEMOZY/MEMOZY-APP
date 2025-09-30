@@ -17,7 +17,7 @@ export const useNotifications = (isLoggedIn: boolean) => {
         registerForPushNotificationsAsync().then((token) => {
             setExpoPushToken(token || null);
             if (token) {
-                postDeviceToken("iOS", token);
+                postDeviceToken("IOS", token);
             }
         });
 
