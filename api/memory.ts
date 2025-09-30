@@ -91,9 +91,18 @@ export interface SearchMemoryResponse {
     last: boolean;
 }
 
+export interface GetMemoriesPayload {
+    yearMonth?: `${number}-${number}`; // 2025-09
+    category?: Memory["category"];
+    page?: number;
+    size?: number;
+}
+
+export interface GetMemoriesResponse extends SearchMemoryResponse {}
+
 const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
     const response = await apiClient
-        .put(`memory/${memoryId}`, memory, {
+        .put(`memories/${memoryId}`, memory, {
             withAuth: true,
         })
         .catch((error) => {
@@ -113,7 +122,7 @@ const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
 
 const deleteMemory = async (memoryId: number) => {
     const response = await apiClient
-        .delete(`memory/${memoryId}`, {
+        .delete(`memories/${memoryId}`, {
             withAuth: true,
         })
         .catch((error) => {
@@ -131,9 +140,10 @@ const deleteMemory = async (memoryId: number) => {
     return true;
 };
 
-const getMemories = async () => {
+const getMemories = async (payload: GetMemoriesPayload) => {
     const response = await apiClient
-        .get("memory", {
+        .get("memories", {
+            params: payload,
             withAuth: true,
         })
         .catch((error) => {
@@ -148,12 +158,12 @@ const getMemories = async () => {
         throw new Error("메모리 조회에 실패했습니다.");
     }
 
-    return response.data.memories as MemoryThumbnail[];
+    return response.data as GetMemoriesResponse;
 };
 
 const getMemory = async (memoryId: number) => {
     const response = await apiClient
-        .get(`memory/${memoryId}`, {
+        .get(`memories/${memoryId}`, {
             withAuth: true,
         })
         .catch((error) => {
@@ -169,7 +179,7 @@ const getMemory = async (memoryId: number) => {
 
 const postMemory = async (memory: PostMemoryPayload) => {
     const response = await apiClient
-        .post("memory", memory, {
+        .post("memories", memory, {
             withAuth: true,
         })
         .catch((error) => {
@@ -190,7 +200,7 @@ const postMemory = async (memory: PostMemoryPayload) => {
 const postMemoryTemp = async (memoryItems: MemoryItem[]) => {
     const response = await apiClient
         .post(
-            "memory/temp",
+            "memories/temp",
             { memoryItems: memoryItems },
             {
                 withAuth: true,
@@ -213,7 +223,7 @@ const postMemoryTemp = async (memoryItems: MemoryItem[]) => {
 
 const getMemoryTempItems = async (sessionId: string) => {
     const response = await apiClient
-        .get(`memory/temp/${sessionId}/items`, {
+        .get(`memories/temp/${sessionId}/items`, {
             withAuth: true,
         })
         .catch((error) => {
@@ -233,7 +243,7 @@ const getMemoryTempItems = async (sessionId: string) => {
 
 const searchMemories = async (payload: SearchMemoryPayload) => {
     const response = await apiClient
-        .get("memory/search", {
+        .get("memories/search", {
             params: payload,
             withAuth: true,
         })

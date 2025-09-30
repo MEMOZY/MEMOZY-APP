@@ -1,12 +1,12 @@
 import { apiClient } from "./client";
 
 const postDeviceToken = async (
-    platform: "iOS" | "Android",
+    platform: "IOS" | "Android",
     deviceToken: string
 ) => {
     const response = await apiClient
         .post(
-            `device-token`,
+            `device-tokens`,
             {
                 platform,
                 deviceToken,
