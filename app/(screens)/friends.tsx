@@ -13,7 +13,7 @@ import { ReceivedFriendItem } from "@/components/friend/ReceivedFriendItem";
 import { RequestFriendItem } from "@/components/friend/RequestFriendItem";
 import { Colors } from "@/constants/Colors";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
 const tabs = ["친구 목록", "보낸 요청", "받은 요청"] as const;
@@ -21,37 +21,35 @@ type TabType = (typeof tabs)[number];
 
 export default function FriendsScreen() {
     const [selectedTab, setSelectedTab] = useState<TabType>("친구 목록");
+
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const [receivedRequests, setReceivedRequests] = useState<Friend[]>([]);
+    const [sentRequests, setSentRequests] = useState<Friend[]>([]);
+
     const queryClient = useQueryClient();
 
-    const { data: friends, isLoading: isFriendsLoading } = useQuery<Friend[]>({
-        queryKey: ["friends"],
-        queryFn: getFriends,
-    });
-
-    const { data: receivedRequests, isLoading: isReceivedRequestsLoading } =
-        useQuery<Friend[]>({
-            queryKey: ["receivedRequests"],
-            queryFn: getReceivedFriendRequests,
-        });
-
-    const { data: sentRequests, isLoading: isSentRequestsLoading } = useQuery<
-        Friend[]
-    >({
-        queryKey: ["sentRequests"],
-        queryFn: getSentFriendRequests,
-    });
+    const fetchAll = useCallback(async () => {
+        try {
+            const [f, r, s] = await Promise.all([
+                getFriends(),
+                getReceivedFriendRequests(),
+                getSentFriendRequests(),
+            ]);
+            setFriends(f);
+            setReceivedRequests(r);
+            setSentRequests(s);
+        } catch (e) {
+            console.warn("fetchAll error", e);
+        } finally {
+            queryClient.invalidateQueries({
+                queryKey: ["friends"],
+            });
+        }
+    }, []);
 
     useEffect(() => {
-        queryClient.invalidateQueries({
-            queryKey: ["friends"],
-        });
-        queryClient.invalidateQueries({
-            queryKey: ["receivedRequests"],
-        });
-        queryClient.invalidateQueries({
-            queryKey: ["sentRequests"],
-        });
-    }, []);
+        fetchAll();
+    }, [fetchAll]);
 
     const renderTabContent = () => {
         if (!friends || !sentRequests || !receivedRequests) {
@@ -70,6 +68,7 @@ export default function FriendsScreen() {
                         name={friend.nickname}
                         imageUrl={friend.profileImageUrl}
                         userId={friend.userId}
+                        fetchAll={() => fetchAll()}
                     />
                 ))
             ) : (
@@ -102,50 +101,45 @@ export default function FriendsScreen() {
     };
 
     return (
-        !isFriendsLoading &&
-        !isReceivedRequestsLoading &&
-        !isSentRequestsLoading && (
-            <PageLayout
-                headerTitle="Friends"
-                titleAlign="left"
-                hasBack
-                style={{ gap: 20 }}
-            >
-                <FriendSearchBar />
-                <View style={{ gap: 20 }}>
-                    <View style={{ flexDirection: "row", gap: 12 }}>
-                        {tabs.map((tab) => (
-                            <TouchableOpacity
-                                key={tab}
-                                onPress={() => setSelectedTab(tab)}
-                                style={{
-                                    borderBottomWidth:
-                                        selectedTab === tab ? 2 : 0,
-                                    borderBottomColor: Colors.gray6,
-                                    paddingBottom: 4,
-                                }}
+        <PageLayout
+            headerTitle="Friends"
+            titleAlign="left"
+            hasBack
+            style={{ gap: 20 }}
+        >
+            <FriendSearchBar fetchAll={fetchAll} />
+            <View style={{ gap: 20 }}>
+                <View style={{ flexDirection: "row", gap: 12 }}>
+                    {tabs.map((tab) => (
+                        <TouchableOpacity
+                            key={tab}
+                            onPress={() => setSelectedTab(tab)}
+                            style={{
+                                borderBottomWidth: selectedTab === tab ? 2 : 0,
+                                borderBottomColor: Colors.gray6,
+                                paddingBottom: 4,
+                            }}
+                        >
+                            <ThemedText
+                                type="title"
+                                lightColor={
+                                    selectedTab === tab
+                                        ? Colors.gray6
+                                        : Colors.gray4
+                                }
+                                darkColor={
+                                    selectedTab === tab
+                                        ? Colors.gray6
+                                        : Colors.gray4
+                                }
                             >
-                                <ThemedText
-                                    type="title"
-                                    lightColor={
-                                        selectedTab === tab
-                                            ? Colors.gray6
-                                            : Colors.gray4
-                                    }
-                                    darkColor={
-                                        selectedTab === tab
-                                            ? Colors.gray6
-                                            : Colors.gray4
-                                    }
-                                >
-                                    {tab}
-                                </ThemedText>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                    <View style={{ gap: 10 }}>{renderTabContent()}</View>
+                                {tab}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    ))}
                 </View>
-            </PageLayout>
-        )
+                <View style={{ gap: 10 }}>{renderTabContent()}</View>
+            </View>
+        </PageLayout>
     );
 }

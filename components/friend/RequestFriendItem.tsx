@@ -2,34 +2,29 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { CheckIcon, XIcon } from "@/assets/images/icons";
-import { useQueryClient } from "@tanstack/react-query";
 import { acceptFriendRequest, rejectFriendRequest } from "@/api/friend";
 
 interface RequestFriendItemProps {
     name: string;
     imageUrl: string;
     userId: string;
+    fetchAll: () => Promise<void>;
 }
 
 export function RequestFriendItem({
     name,
     imageUrl,
     userId,
+    fetchAll,
 }: RequestFriendItemProps) {
-    const queryClient = useQueryClient();
-
     const handleRejectFriend = async () => {
         await rejectFriendRequest(userId);
-        queryClient.invalidateQueries({
-            queryKey: ["receivedRequests"],
-        });
+        await fetchAll();
     };
 
     const handleAcceptFriend = async () => {
         await acceptFriendRequest(userId);
-        queryClient.invalidateQueries({
-            queryKey: ["receivedRequests", "friends"],
-        });
+        await fetchAll();
     };
 
     return (
