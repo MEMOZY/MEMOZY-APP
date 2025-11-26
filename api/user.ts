@@ -18,7 +18,7 @@ export interface UserUpdate {
 
 const getUser = async () => {
     const response = await apiClient
-        .get("user", {
+        .get("users", {
             withAuth: true,
         })
         .catch((error) => {
@@ -38,7 +38,7 @@ const getUser = async () => {
 
 const deleteUser = async () => {
     const response = await apiClient
-        .delete("user", {
+        .delete("users", {
             withAuth: true,
         })
         .catch((error) => {
@@ -58,7 +58,7 @@ const deleteUser = async () => {
 
 const patchUser = async (userUpdate: UserUpdate) => {
     const response = await apiClient
-        .patch("user", userUpdate, {
+        .patch("users", userUpdate, {
             withAuth: true,
         })
         .catch((error) => {
@@ -78,7 +78,7 @@ const patchUser = async (userUpdate: UserUpdate) => {
 
 const getUserById = async (userId: number) => {
     const response = await apiClient
-        .get(`user/${userId}`, {
+        .get(`users/info/${userId}`, {
             withAuth: true,
         })
         .catch((error) => {
@@ -98,7 +98,7 @@ const getUserById = async (userId: number) => {
 
 const getUserIdByFriendCode = async (friendCode: string) => {
     const response = await apiClient
-        .get(`user/${friendCode}`, {
+        .get(`users/${friendCode}`, {
             withAuth: true,
         })
         .catch((error) => {

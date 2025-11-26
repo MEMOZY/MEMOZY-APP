@@ -37,7 +37,10 @@ export default function LogEdit({
             startDate: memory.startDate,
             endDate: memory.endDate,
             memoryItems: memory.memoryItems,
-            accesses: memory.accessInfos,
+            accesses: memory.accessInfos.map((access) => ({
+                userId: access.userId,
+                permissionLevel: access.permissionLevel,
+            })),
         }).finally(() => {
             onBack();
         });

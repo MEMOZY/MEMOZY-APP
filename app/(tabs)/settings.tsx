@@ -10,7 +10,7 @@ import { useUI } from "@/hooks/useUI";
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/api/user";
+import { deleteUser, getUser } from "@/api/user";
 
 export default function SettingsScreen() {
     const { logout } = useAuth();
@@ -136,7 +136,9 @@ export default function SettingsScreen() {
                             confirmText: "회원 탈퇴",
                             color: Colors.red,
                             onConfirm: () => {
-                                logout();
+                                deleteUser().finally(() => {
+                                    logout();
+                                });
                             },
                         });
                     }}

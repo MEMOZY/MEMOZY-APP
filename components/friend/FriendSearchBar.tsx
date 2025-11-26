@@ -7,10 +7,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
-export function FriendSearchBar() {
+interface FriendSearchBarProps {
+    fetchAll: () => Promise<void>;
+}
+
+export function FriendSearchBar({ fetchAll }: FriendSearchBarProps) {
     const [code, setCode] = useState("");
     const { showModal, showSnackbar } = useUI();
-    const queryClient = useQueryClient();
 
     const handleSearch = async () => {
         if (!code.trim()) {
@@ -26,24 +29,16 @@ export function FriendSearchBar() {
 
             showModal({
                 title: "친구 추가",
-                subtitle: "친구 추가 하시겠습니까?",
-                confirmText: "추가",
+                subtitle: "친구 추가 요청을 전송하시겠습니까?",
+                confirmText: "전송",
                 cancelText: "취소",
                 onConfirm: async () => {
                     try {
                         await requestFriend(userId);
                         showSnackbar({
-                            message: "친구 추가에 성공했습니다.",
+                            message: "친구 추가 요청이 전송되었습니다.",
                         });
-                        queryClient.invalidateQueries({
-                            queryKey: ["friends"],
-                        });
-                        queryClient.invalidateQueries({
-                            queryKey: ["receivedRequests"],
-                        });
-                        queryClient.invalidateQueries({
-                            queryKey: ["sentRequests"],
-                        });
+                        await fetchAll();
                     } catch (error) {
                         showSnackbar({
                             message: "친구 추가에 실패했습니다.",

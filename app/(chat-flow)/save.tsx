@@ -12,7 +12,7 @@ import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
 import { SelectedShare } from "@/types/share";
 import { formatDateYMD } from "@/utils/formatDate";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Image, Modal, StyleSheet, View } from "react-native";
@@ -39,6 +39,7 @@ export default function SaveScreen() {
     const [selectedFriends, setSelectedFriends] = useState<SelectedShare[]>([]);
 
     const { showSnackbar } = useUI();
+    const queryClient = useQueryClient();
     return (
         !isLoading && (
             <PageLayout
@@ -118,6 +119,9 @@ export default function SaveScreen() {
                             })),
                         })
                             .then(() => {
+                                queryClient.invalidateQueries({
+                                    queryKey: ["memories", "memories-calendar"],
+                                });
                                 router.replace("/(tabs)");
                             })
                             .catch((error) => {

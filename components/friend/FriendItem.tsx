@@ -11,15 +11,17 @@ interface FriendItemProps {
     name: string;
     imageUrl: string;
     userId: string; // 추가된 userId prop
+    fetchAll: () => Promise<void>;
 }
 
-export function FriendItem({ name, imageUrl, userId }: FriendItemProps) {
-    const queryClient = useQueryClient();
+export function FriendItem({
+    name,
+    imageUrl,
+    userId,
+    fetchAll,
+}: FriendItemProps) {
     const onDeleteFriend = async () => {
-        await deleteFriend(userId);
-        queryClient.invalidateQueries({
-            queryKey: ["friends"],
-        });
+        await deleteFriend(userId).finally(() => fetchAll());
     };
     // 왼쪽 스와이프 시 나타나는 액션 정의
     const renderRightActions = () => {

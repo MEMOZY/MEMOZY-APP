@@ -5,6 +5,8 @@ import {
     View,
     RefreshControl,
     Platform,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
 } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { BackIcon } from "@/assets/images/icons";
@@ -26,6 +28,7 @@ interface PageLayoutProps {
     padding?: number;
     onRefresh?: () => Promise<void>; // 추가된 prop
     onBack?: () => void; // 뒤로가기 핸들러
+    onEndReached?: () => void;
 }
 
 export default function PageLayout({
@@ -42,6 +45,7 @@ export default function PageLayout({
     padding = 30,
     onRefresh, // 새로고침 핸들러
     onBack = () => router.back(), // 기본적으로 뒤로가기
+    onEndReached,
 }: PageLayoutProps) {
     const [refreshing, setRefreshing] = useState(false);
 
@@ -50,6 +54,17 @@ export default function PageLayout({
             setRefreshing(true);
             await onRefresh();
             setRefreshing(false);
+        }
+    };
+
+    const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
+        const paddingToBottom = 20; // 바닥 여유
+        if (
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom
+        ) {
+            onEndReached?.();
         }
     };
 
@@ -132,6 +147,8 @@ export default function PageLayout({
                             />
                         )
                     }
+                    onScroll={handleScroll}
+                    scrollEventThrottle={1000}
                 >
                     {children}
                 </ScrollView>

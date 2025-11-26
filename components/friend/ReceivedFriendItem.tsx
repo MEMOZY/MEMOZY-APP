@@ -2,27 +2,23 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { TrashIcon } from "@/assets/images/icons";
-import { useQueryClient } from "@tanstack/react-query";
 import { deleteFriend } from "@/api/friend";
 
 interface ReceivedFriendItemProps {
     name: string;
     imageUrl: string;
     userId: string;
+    fetchAll: () => Promise<void>;
 }
 
 export function ReceivedFriendItem({
     name,
     imageUrl,
     userId,
+    fetchAll,
 }: ReceivedFriendItemProps) {
-    const queryClient = useQueryClient();
-
     const handleDeleteFriend = async () => {
-        await deleteFriend(userId);
-        queryClient.invalidateQueries({
-            queryKey: ["friends"],
-        });
+        await deleteFriend(userId).finally(() => fetchAll());
     };
 
     return (
