@@ -8,7 +8,7 @@ import DetailLog from "@/components/logs/DetailLog";
 import LogItem from "@/components/logs/LogItem";
 import { Colors } from "@/constants/Colors";
 import { formatDate } from "@/utils/formatDate";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
     Dimensions,
@@ -39,6 +39,7 @@ export default function CalendarScreen() {
                 yearMonth: selectedMonth as `${number}-${number}`,
                 category: selectedCategory ?? undefined,
             }),
+        placeholderData: keepPreviousData,
     });
 
     const handleDayPress = (day: string) => {

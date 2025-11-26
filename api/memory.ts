@@ -180,13 +180,11 @@ const getMemories = async (payload: GetMemoriesPayload) => {
 };
 
 const getMemory = async (memoryId: number) => {
-    console.log("getMemory", memoryId);
     const response = await apiClient
         .get(`memories/${memoryId}`, {
             withAuth: true,
         })
         .catch((error) => {
-            console.log("getMemory error", error);
             console.log(error);
         });
 
@@ -320,11 +318,9 @@ const releaseEditLock = async (memoryId: number, token: string) => {
         throw new Error("편집 락 해제에 실패했습니다.");
     }
 
-    if (response.status !== 200) {
+    if (response.status !== 204 && response.status !== 200) {
         throw new Error("편집 락 해제에 실패했습니다.");
     }
-
-    return true;
 };
 
 const extendEditLock = async (memoryId: number, token: string) => {
@@ -347,6 +343,8 @@ const extendEditLock = async (memoryId: number, token: string) => {
     if (response.status !== 200) {
         throw new Error("편집 락 연장에 실패했습니다.");
     }
+
+    console.log("extendEditLock", response.data);
 
     return response.data as EditLockHeartbeatResponse;
 };

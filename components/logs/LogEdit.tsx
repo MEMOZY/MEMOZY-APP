@@ -38,6 +38,7 @@ export default function LogEdit({
     const markDirty = useCallback(() => setDirty(true), []);
     const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lockTokenRef = useRef<string | null>(null);
+    const savedRef = useRef(false);
 
     const clearHeartbeat = useCallback(() => {
         if (heartbeatRef.current) {
@@ -66,6 +67,16 @@ export default function LogEdit({
                 onBack();
             });
     }, [cleanupLock, onBack]);
+
+    const performExitWithoutRelease = useCallback(() => {
+        // 기록 수정이 성공한 경우에는 서버에서 편집 락을 정리하므로
+        // 클라이언트에서는 편집 락 해제 API를 호출하지 않는다.
+        setDirty(false);
+        savedRef.current = true;
+        clearHeartbeat();
+        lockTokenRef.current = null;
+        onBack();
+    }, [clearHeartbeat, onBack]);
 
     const requestExit = useCallback(() => {
         if (!dirty) {
@@ -105,7 +116,7 @@ export default function LogEdit({
             editLockToken: lockTokenRef.current,
         })
             .then(() => {
-                performExit();
+                performExitWithoutRelease();
             })
             .catch(() => {
                 showModal({
@@ -114,7 +125,7 @@ export default function LogEdit({
                     confirmText: "확인",
                 });
             });
-    }, [memory, performExit, showModal]);
+    }, [memory, performExitWithoutRelease, showModal]);
 
     // memory 변경 시 dirty 체크
     useEffect(() => {
@@ -231,9 +242,15 @@ export default function LogEdit({
 
     useEffect(() => {
         return () => {
-            cleanupLock();
+            // 저장에 성공한 경우에는 편집 락 해제 API를 별도로 호출하지 않는다.
+            if (!savedRef.current) {
+                cleanupLock();
+            } else {
+                clearHeartbeat();
+                lockTokenRef.current = null;
+            }
         };
-    }, [cleanupLock]);
+    }, [cleanupLock, clearHeartbeat]);
 
     return (
         <PageLayout
