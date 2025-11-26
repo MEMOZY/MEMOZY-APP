@@ -73,6 +73,7 @@ export interface PutMemoryPayload {
     endDate: string;
     memoryItems: MemoryItem[];
     accesses: AccessInfo[];
+    editLockToken: string;
 }
 export interface MemoryItem {
     imageUrl: string;
@@ -104,6 +105,18 @@ export interface GetMemoriesPayload {
 }
 
 export interface GetMemoriesResponse extends SearchMemoryResponse {}
+
+export interface EditLockResponse {
+    acquired: boolean;
+    token?: string;
+    ttl?: number;
+    holderId?: number;
+    holderNickname?: string;
+}
+
+export interface EditLockHeartbeatResponse {
+    ttl: number;
+}
 
 const putMemory = async (memoryId: number, memory: PutMemoryPayload) => {
     const response = await apiClient
@@ -167,11 +180,13 @@ const getMemories = async (payload: GetMemoriesPayload) => {
 };
 
 const getMemory = async (memoryId: number) => {
+    console.log("getMemory", memoryId);
     const response = await apiClient
         .get(`memories/${memoryId}`, {
             withAuth: true,
         })
         .catch((error) => {
+            console.log("getMemory error", error);
             console.log(error);
         });
 
@@ -267,6 +282,75 @@ const searchMemories = async (payload: SearchMemoryPayload) => {
     return response.data as SearchMemoryResponse;
 };
 
+const acquireEditLock = async (memoryId: number) => {
+    const response = await apiClient
+        .post(
+            `memories/${memoryId}/edit-session`,
+            {},
+            {
+                withAuth: true,
+            }
+        )
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("편집 락 획득에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("편집 락 획득에 실패했습니다.");
+    }
+
+    return response.data as EditLockResponse;
+};
+
+const releaseEditLock = async (memoryId: number, token: string) => {
+    const response = await apiClient
+        .delete(`memories/${memoryId}/edit-session`, {
+            data: { token },
+            withAuth: true,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("편집 락 해제에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("편집 락 해제에 실패했습니다.");
+    }
+
+    return true;
+};
+
+const extendEditLock = async (memoryId: number, token: string) => {
+    const response = await apiClient
+        .post(
+            `memories/${memoryId}/edit-session/heartbeat`,
+            { token },
+            {
+                withAuth: true,
+            }
+        )
+        .catch((error) => {
+            console.log(error);
+        });
+
+    if (!response) {
+        throw new Error("편집 락 연장에 실패했습니다.");
+    }
+
+    if (response.status !== 200) {
+        throw new Error("편집 락 연장에 실패했습니다.");
+    }
+
+    return response.data as EditLockHeartbeatResponse;
+};
+
 export {
     putMemory,
     deleteMemory,
@@ -276,4 +360,7 @@ export {
     getMemoryTempItems,
     getMemory,
     searchMemories,
+    acquireEditLock,
+    releaseEditLock,
+    extendEditLock,
 };

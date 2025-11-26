@@ -1,11 +1,17 @@
-import { Memory, putMemory } from "@/api/memory";
+import {
+    Memory,
+    acquireEditLock,
+    extendEditLock,
+    putMemory,
+    releaseEditLock,
+} from "@/api/memory";
 import PageLayout from "@/components/common/PageLayout";
 import { ThemedText } from "@/components/common/ThemedText";
 import LogCard from "@/components/edit/LogCard";
 import { Colors } from "@/constants/Colors";
 import { useUI } from "@/hooks/useUI";
-import { useNavigation, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useNavigation } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
     BackHandler,
     StyleSheet,
@@ -28,9 +34,64 @@ export default function LogEdit({
     const { showModal } = useUI();
     const navigation = useNavigation();
     const [dirty, setDirty] = useState(false);
+    const [lockToken, setLockToken] = useState<string | null>(null);
     const markDirty = useCallback(() => setDirty(true), []);
+    const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const lockTokenRef = useRef<string | null>(null);
+
+    const clearHeartbeat = useCallback(() => {
+        if (heartbeatRef.current) {
+            clearInterval(heartbeatRef.current);
+            heartbeatRef.current = null;
+        }
+    }, []);
+
+    const cleanupLock = useCallback(async () => {
+        clearHeartbeat();
+        const token = lockTokenRef.current;
+        if (!token) return;
+        lockTokenRef.current = null;
+        try {
+            await releaseEditLock(memory.id, token);
+        } catch (error) {
+            console.log("편집 락 해제 실패", error);
+        }
+    }, [memory.id, clearHeartbeat]);
+
+    const performExit = useCallback(() => {
+        setDirty(false);
+        cleanupLock()
+            .catch(() => {})
+            .finally(() => {
+                onBack();
+            });
+    }, [cleanupLock, onBack]);
+
+    const requestExit = useCallback(() => {
+        if (!dirty) {
+            performExit();
+            return;
+        }
+        showModal({
+            title: "정말 취소하시겠습니까?",
+            subtitle: "진행 중인 작업이 모두 취소됩니다.",
+            confirmText: "취소",
+            cancelText: "돌아가기",
+            onConfirm: () => {
+                performExit();
+            },
+        });
+    }, [dirty, showModal, performExit]);
 
     const handleSave = useCallback(() => {
+        if (!lockTokenRef.current) {
+            showModal({
+                title: "편집 준비 중입니다.",
+                subtitle: "잠시 후 다시 시도해주세요.",
+                confirmText: "확인",
+            });
+            return;
+        }
         putMemory(memory.id, {
             title: memory.title,
             category: memory.category,
@@ -41,10 +102,19 @@ export default function LogEdit({
                 userId: access.userId,
                 permissionLevel: access.permissionLevel,
             })),
-        }).finally(() => {
-            onBack();
-        });
-    }, [memory]);
+            editLockToken: lockTokenRef.current,
+        })
+            .then(() => {
+                performExit();
+            })
+            .catch(() => {
+                showModal({
+                    title: "저장에 실패했습니다.",
+                    subtitle: "잠시 후 다시 시도해주세요.",
+                    confirmText: "확인",
+                });
+            });
+    }, [memory, performExit, showModal]);
 
     // memory 변경 시 dirty 체크
     useEffect(() => {
@@ -58,43 +128,35 @@ export default function LogEdit({
         const beforeRemove = navigation.addListener(
             "beforeRemove",
             (e: any) => {
-                if (!dirty) return; // 변경 없으면 그냥 나감
-
-                e.preventDefault(); // 이탈 막기 → 모달 띄우기
-
+                if (!dirty) return;
+                e.preventDefault();
                 showModal({
                     title: "정말 취소하시겠습니까?",
                     subtitle: "진행 중인 작업이 모두 취소됩니다.",
                     confirmText: "취소",
                     cancelText: "돌아가기",
                     onConfirm: () => {
-                        // 확인(=정말 나가기) 시: 리스너 임시 해제 후 원래 액션 수행
-                        const sub = navigation.addListener(
-                            "beforeRemove",
-                            () => {}
-                        );
-                        sub(); // 즉시 해제
-                        setDirty(false);
-                        onBack();
+                        performExit();
                     },
                 });
             }
         );
 
-        // Android 하드웨어 백 안전망(대부분 beforeRemove로 커버됨)
         const onHardwareBack = () => {
-            if (!dirty) return false; // 기본 동작(뒤로가기)
+            if (!dirty) {
+                performExit();
+                return true;
+            }
             showModal({
                 title: "정말 취소하시겠습니까?",
                 subtitle: "진행 중인 작업이 모두 취소됩니다.",
                 confirmText: "취소",
                 cancelText: "돌아가기",
                 onConfirm: () => {
-                    setDirty(false);
-                    onBack();
+                    performExit();
                 },
             });
-            return true; // 우리가 처리했음
+            return true;
         };
         const backSub = BackHandler.addEventListener(
             "hardwareBackPress",
@@ -105,7 +167,73 @@ export default function LogEdit({
             beforeRemove();
             backSub.remove();
         };
-    }, [dirty, navigation, showModal, onBack]);
+    }, [dirty, navigation, showModal, performExit]);
+
+    useEffect(() => {
+        let mounted = true;
+        const acquireLock = async () => {
+            try {
+                const lock = await acquireEditLock(memory.id);
+                if (!lock?.acquired || !lock.token) {
+                    throw new Error("편집 락을 획득하지 못했습니다.");
+                }
+                if (mounted) {
+                    setLockToken(lock.token);
+                }
+            } catch (error) {
+                if (!mounted) return;
+                showModal({
+                    title: "편집할 수 없습니다.",
+                    subtitle: "다른 사용자가 이 기록을 편집 중입니다.",
+                    confirmText: "확인",
+                    onConfirm: () => {
+                        performExit();
+                    },
+                });
+            }
+        };
+        acquireLock();
+
+        return () => {
+            mounted = false;
+        };
+    }, [memory.id, showModal, performExit]);
+
+    useEffect(() => {
+        lockTokenRef.current = lockToken;
+    }, [lockToken]);
+
+    useEffect(() => {
+        if (!lockToken) return;
+
+        clearHeartbeat();
+        heartbeatRef.current = setInterval(async () => {
+            if (!lockTokenRef.current) return;
+            try {
+                await extendEditLock(memory.id, lockTokenRef.current);
+            } catch (error) {
+                clearHeartbeat();
+                showModal({
+                    title: "편집 세션이 만료되었습니다.",
+                    subtitle: "다시 시도해주세요.",
+                    confirmText: "확인",
+                    onConfirm: () => {
+                        performExit();
+                    },
+                });
+            }
+        }, 120000);
+
+        return () => {
+            clearHeartbeat();
+        };
+    }, [lockToken, memory.id, showModal, clearHeartbeat, performExit]);
+
+    useEffect(() => {
+        return () => {
+            cleanupLock();
+        };
+    }, [cleanupLock]);
 
     return (
         <PageLayout
@@ -113,7 +241,7 @@ export default function LogEdit({
             hasBack
             backText="취소"
             scrollView
-            onBack={onBack}
+            onBack={requestExit}
             headerRight={
                 <TouchableOpacity onPress={handleSave}>
                     <ThemedText
