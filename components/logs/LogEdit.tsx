@@ -200,6 +200,9 @@ export default function LogEdit({
                     onConfirm: () => {
                         performExit();
                     },
+                    onCancel: () => {
+                        performExit();
+                    },
                 });
             }
         };
@@ -229,6 +232,9 @@ export default function LogEdit({
                     subtitle: "다시 시도해주세요.",
                     confirmText: "확인",
                     onConfirm: () => {
+                        performExit();
+                    },
+                    onCancel: () => {
                         performExit();
                     },
                 });

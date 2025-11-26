@@ -344,8 +344,6 @@ const extendEditLock = async (memoryId: number, token: string) => {
         throw new Error("편집 락 연장에 실패했습니다.");
     }
 
-    console.log("extendEditLock", response.data);
-
     return response.data as EditLockHeartbeatResponse;
 };
 
