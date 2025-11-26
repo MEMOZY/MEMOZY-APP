@@ -3,7 +3,7 @@ import { ExpoConfig, ConfigContext } from "expo/config";
 export default ({ config }: ConfigContext): ExpoConfig => ({
     name: "memozy",
     slug: "memozy",
-    version: "1.0.1",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "memozy",
@@ -14,7 +14,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         supportsTablet: true,
         bundleIdentifier: "com.tym.memozy",
         usesAppleSignIn: true,
-        buildNumber: "2025100101",
+        buildNumber: "2025112601",
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
             NSAppTransportSecurity: {
